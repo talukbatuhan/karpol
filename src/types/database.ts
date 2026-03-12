@@ -23,6 +23,7 @@ export interface Product {
   applications: string[]
   compatible_machines: string[]
   images: string[]
+  model_3d_url?: string
   technical_drawing_url?: string
   datasheet_url?: string
   is_featured: boolean

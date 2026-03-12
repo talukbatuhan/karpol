@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { Metadata } from "next";
+import { useTranslations } from "next-intl";
+import { setRequestLocale } from "next-intl/server";
 import styles from "./products.module.css";
 import { productCategories } from "@/lib/config";
 
@@ -33,7 +35,23 @@ const categoryDescriptions: Record<string, string> = {
     "Direct replacement parts for Simec, Breton, Gaspari, and other major stone machinery.",
 };
 
-export default function ProductsPage() {
+const industries = [
+  { name: "Marble & Stone", icon: "🏗️", href: "/industries/marble-stone" },
+  { name: "Mining & Aggregate", icon: "⛏️", href: "/industries/mining" },
+  { name: "Automotive", icon: "🚗", href: "/industries/automotive" },
+  { name: "Logistics", icon: "📦", href: "/industries/logistics" },
+];
+
+type ProductsPageProps = {
+  params: Promise<{ locale: string }>;
+};
+
+export default async function ProductsPage({ params }: ProductsPageProps) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+  // In a real app, we would useTranslations here.
+  // const t = await getTranslations("Products");
+
   return (
     <main>
       {/* Hero Section */}
@@ -42,39 +60,48 @@ export default function ProductsPage() {
           <div className={styles.heroContent}>
             <span className={styles.heroEyebrow}>Engineering Database</span>
             <h1 className={styles.heroTitle}>
-              Industrial Components for Marble Machinery
+              Industrial Component Library
             </h1>
             <p className={styles.heroDescription}>
-              A comprehensive technical library of high-performance elastomer and
-              metal components engineered for durability and precision.
+              Browse our comprehensive catalog of high-performance elastomer and
+              metal components. Engineered for durability, precision, and global standards.
             </p>
           </div>
         </div>
       </section>
 
       {/* Quick Stats Strip */}
-      <div className={styles.featuresStrip}>
-        <div className={styles.featureItem}>
-          <span className={styles.featureLabel}>Material Range</span>
-          <span className={styles.featureValue}>PU, Rubber, Silicone, PTFE</span>
-        </div>
-        <div className={styles.featureItem}>
-          <span className={styles.featureLabel}>Hardness Scale</span>
-          <span className={styles.featureValue}>20 Shore A — 75 Shore D</span>
-        </div>
-        <div className={styles.featureItem}>
-          <span className={styles.featureLabel}>Manufacturing</span>
-          <span className={styles.featureValue}>Casting, CNC, Molding</span>
-        </div>
-        <div className={styles.featureItem}>
-          <span className={styles.featureLabel}>Certifications</span>
-          <span className={styles.featureValue}>ISO 9001:2015</span>
+      <div className={styles.container} style={{ position: 'relative', zIndex: 20 }}>
+        <div className={styles.featuresStrip}>
+          <div className={styles.featureItem}>
+            <span className={styles.featureLabel}>Material Range</span>
+            <span className={styles.featureValue}>PU, Rubber, Silicone, PTFE</span>
+          </div>
+          <div className={styles.featureItem}>
+            <span className={styles.featureLabel}>Hardness Scale</span>
+            <span className={styles.featureValue}>20 Shore A — 75 Shore D</span>
+          </div>
+          <div className={styles.featureItem}>
+            <span className={styles.featureLabel}>Manufacturing</span>
+            <span className={styles.featureValue}>Casting, CNC, Molding</span>
+          </div>
+          <div className={styles.featureItem}>
+            <span className={styles.featureLabel}>Quality</span>
+            <span className={styles.featureValue}>ISO 9001:2015 Certified</span>
+          </div>
         </div>
       </div>
 
       {/* Products Grid */}
       <section className={styles.section}>
         <div className={styles.container}>
+          <div className={styles.sectionHeader}>
+            <h2 className={styles.sectionTitle}>Product Categories</h2>
+            <Link href="/contact" className={styles.link} style={{ fontSize: "14px" }}>
+              Request Full Catalog
+            </Link>
+          </div>
+          
           <div className={styles.grid}>
             {productCategories.map((category) => (
               <Link
@@ -94,8 +121,23 @@ export default function ProductsPage() {
                   </p>
                 </div>
                 <div className={styles.cardFooter}>
-                  <span className={styles.link}>View Catalog</span>
+                  <span className={styles.link}>Browse {category.name.split(' ')[0]}</span>
                 </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Industries */}
+      <section className={styles.industrySection}>
+        <div className={styles.container}>
+          <h2 className={styles.sectionTitle}>Shop by Industry</h2>
+          <div className={styles.industryGrid}>
+            {industries.map((ind) => (
+              <Link key={ind.name} href={ind.href} className={styles.industryCard}>
+                <div className={styles.industryIcon}>{ind.icon}</div>
+                <span className={styles.industryTitle}>{ind.name} Solutions</span>
               </Link>
             ))}
           </div>

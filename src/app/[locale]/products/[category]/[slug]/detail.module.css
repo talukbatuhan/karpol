@@ -1,0 +1,586 @@
+/* Container & Layout */
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.main {
+  background-color: #f8fafc;
+  min-height: 100vh;
+  padding-bottom: 120px;
+}
+
+/* Section 1: Product Header */
+.header {
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 40px 0;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.breadcrumbLink {
+  color: #64748b;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.breadcrumbLink:hover {
+  color: #0f172a;
+}
+
+.breadcrumbCurrent {
+  color: #0f172a;
+  font-weight: 600;
+}
+
+.titleWrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 32px;
+}
+
+.productTitle {
+  font-size: 36px;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1.2;
+  margin: 0 0 16px 0;
+  letter-spacing: -0.02em;
+}
+
+.categoryBadge {
+  display: inline-block;
+  background: #f1f5f9;
+  color: #475569;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  margin-bottom: 16px;
+}
+
+.shortDesc {
+  font-size: 18px;
+  color: #64748b;
+  max-width: 800px;
+  line-height: 1.6;
+}
+
+.headerActions {
+  display: flex;
+  gap: 16px;
+}
+
+.actionBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.primaryBtn {
+  background: #f97316; /* Industrial Orange */
+  color: white;
+  border: 1px solid #ea580c;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.primaryBtn:hover {
+  background: #ea580c;
+}
+
+.secondaryBtn {
+  background: white;
+  color: #0f172a;
+  border: 1px solid #e2e8f0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.secondaryBtn:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+/* Grid Layout for Content */
+.contentGrid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 64px;
+  margin-top: 64px;
+}
+
+/* Section 2: Visuals */
+.visualsSection {
+  position: sticky;
+  top: 100px;
+}
+
+.visualTabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.visualTab {
+  padding: 8px 16px;
+  border-radius: 6px;
+  background: #f1f5f9;
+  color: #64748b;
+  font-weight: 600;
+  font-size: 13px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.visualTabActive {
+  background: #0f172a;
+  color: white;
+  border-color: #0f172a;
+}
+
+.mainImageFrame {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  aspect-ratio: 4/3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.mainImage {
+  object-fit: contain;
+  width: 100%;
+  height: 100%;
+}
+
+.thumbnails {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+}
+
+.thumbBtn {
+  aspect-ratio: 1;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: white;
+  padding: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.thumbBtn:hover, .thumbBtnActive {
+  border-color: #f97316;
+  box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.1);
+}
+
+/* Section 3: Technical Specs */
+.sectionTitle {
+  font-size: 24px;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sectionTitle::before {
+  content: "";
+  display: block;
+  width: 4px;
+  height: 24px;
+  background: #f97316;
+  border-radius: 2px;
+}
+
+.specsTable {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+  margin-bottom: 48px;
+}
+
+.specsTable th,
+.specsTable td {
+  padding: 16px 24px;
+  text-align: left;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.specsTable th {
+  background: #f8fafc;
+  font-weight: 600;
+  color: #475569;
+  width: 40%;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.specsTable td {
+  color: #0f172a;
+  font-weight: 500;
+  font-size: 15px;
+}
+
+.specsTable tr:last-child th,
+.specsTable tr:last-child td {
+  border-bottom: none;
+}
+
+/* Section 4: Applications */
+.applicationsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-bottom: 48px;
+}
+
+.appCard {
+  background: white;
+  border: 1px solid #e2e8f0;
+  padding: 20px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  transition: all 0.2s;
+}
+
+.appCard:hover {
+  border-color: #94a3b8;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.appIcon {
+  font-size: 24px;
+  color: #64748b;
+}
+
+.appText {
+  font-weight: 600;
+  color: #0f172a;
+  font-size: 15px;
+}
+
+/* Section 5: Engineering Advantages */
+.advantagesList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 48px;
+}
+
+.advantageItem {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.checkIcon {
+  color: #10b981; /* Emerald 500 */
+  background: #ecfdf5;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.advantageText {
+  color: #334155;
+  line-height: 1.6;
+}
+
+/* Machine Compatibility */
+.machineTagContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 48px;
+}
+
+.machineTag {
+  background: #f1f5f9;
+  color: #475569;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 100px;
+  border: 1px solid #e2e8f0;
+  transition: all 0.2s;
+}
+
+.machineTag:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+/* Engineering Resources (Downloads) */
+.downloadsPanel {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 24px;
+  margin-top: 48px;
+}
+
+.downloadGrid {
+  display: grid;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.downloadLink {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  background: white;
+  color: #0f172a;
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 14px;
+  border: 1px solid #e2e8f0;
+  transition: all 0.2s;
+}
+
+.downloadLink:hover {
+  border-color: #94a3b8;
+  transform: translateX(4px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.downloadMeta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.downloadIcon {
+  font-size: 20px;
+}
+
+.downloadAction {
+  color: #f97316;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Section 6: Related Products */
+.relatedSection {
+  margin-top: 80px;
+  padding-top: 80px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.relatedGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  margin-top: 32px;
+}
+
+.relatedCard {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.2s;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.relatedCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  border-color: #f97316;
+}
+
+.relatedImageWrapper {
+  width: 100%;
+  aspect-ratio: 4/3;
+  position: relative;
+  background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.relatedImage {
+  object-fit: contain;
+  padding: 16px;
+}
+
+.relatedContent {
+  padding: 16px;
+}
+
+.relatedTitle {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+.relatedMeta {
+  font-size: 13px;
+  color: #64748b;
+}
+
+/* Section 7: CTA Box */
+.ctaSection {
+  background: #1e293b; /* Slate 800 */
+  color: white;
+  padding: 48px;
+  border-radius: 16px;
+  margin-top: 64px;
+  text-align: center;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+  linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 30px 30px;
+}
+
+.ctaTitle {
+  font-size: 30px;
+  font-weight: 800;
+  margin-bottom: 16px;
+  color: white;
+}
+
+.ctaText {
+  color: #cbd5e1;
+  font-size: 18px;
+  max-width: 600px;
+  margin: 0 auto 32px;
+}
+
+.ctaButtons {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+
+/* Size Table specific styles */
+.sizeTableContainer {
+  overflow-x: auto;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: white;
+  margin-bottom: 48px;
+}
+
+.sizeTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.sizeTable th {
+  background: #f8fafc;
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 600;
+  color: #475569;
+  border-bottom: 1px solid #e2e8f0;
+  white-space: nowrap;
+}
+
+.sizeTable td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #e2e8f0;
+  color: #334155;
+}
+
+.sizeTable tr:last-child td {
+  border-bottom: none;
+}
+
+.sizeTable tr:hover {
+  background: #f8fafc;
+}
+
+@media (max-width: 1024px) {
+  .contentGrid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  
+  .visualsSection {
+    position: static;
+  }
+
+  .relatedGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .titleWrapper {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .headerActions {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .actionBtn, .primaryBtn, .secondaryBtn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .applicationsGrid {
+    grid-template-columns: 1fr;
+  }
+}
