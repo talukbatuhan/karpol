@@ -1,0 +1,30 @@
+{
+  "Navigation": {
+    "home": "Home",
+    "products": "Products",
+    "industries": "Industries",
+    "services": "Services",
+    "about": "About Us",
+    "contact": "Contact",
+    "search": "Search..."
+  },
+  "Hero": {
+    "title": "Industrial Components for Marble Machinery",
+    "description": "High-performance elastomer and metal components engineered for durability and precision.",
+    "cta_products": "Explore Products",
+    "cta_quote": "Request a Quote"
+  },
+  "Product": {
+    "sku": "SKU",
+    "material": "Material",
+    "hardness": "Hardness",
+    "view_details": "View Technical Details",
+    "request_quote": "Request Quote",
+    "download_pdf": "Download Datasheet"
+  },
+  "Common": {
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "back": "Back"
+  }
+}

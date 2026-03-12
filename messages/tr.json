@@ -1,0 +1,30 @@
+{
+  "Navigation": {
+    "home": "Anasayfa",
+    "products": "Ürünler",
+    "industries": "Endüstriler",
+    "services": "Hizmetler",
+    "about": "Hakkımızda",
+    "contact": "İletişim",
+    "search": "Arama..."
+  },
+  "Hero": {
+    "title": "Mermer Makineleri İçin Endüstriyel Parçalar",
+    "description": "Dayanıklılık ve hassasiyet için tasarlanmış yüksek performanslı elastomer ve metal bileşenler.",
+    "cta_products": "Ürünleri İncele",
+    "cta_quote": "Teklif İste"
+  },
+  "Product": {
+    "sku": "Stok Kodu",
+    "material": "Malzeme",
+    "hardness": "Sertlik",
+    "view_details": "Teknik Detaylar",
+    "request_quote": "Teklif İste",
+    "download_pdf": "PDF İndir"
+  },
+  "Common": {
+    "loading": "Yükleniyor...",
+    "error": "Bir hata oluştu",
+    "back": "Geri"
+  }
+}

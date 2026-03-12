@@ -4,6 +4,37 @@
 
 ---
 
+## [0.1.0] — 2026-03-11
+
+### 🆕 Added — Next.js + Supabase Initialization
+- ✅ Next.js 15 project created (App Router, TypeScript, ESLint, Turbopack)
+- ✅ Supabase JS + SSR packages installed
+- ✅ Supabase client setup (browser, server, middleware)
+- ✅ TypeScript database types for 8 tables
+- ✅ Site configuration with navigation structure
+- ✅ SQL schema with tables, indexes, RLS policies, seed data
+- ✅ Environment variables template (`.env.example`)
+- ✅ Full `src/` directory structure:
+  - `app/` — All route directories created
+  - `components/` — ui, layout, sections, products, forms
+  - `lib/` — Supabase clients, config
+  - `types/` — Database type definitions
+  - `hooks/`, `utils/` — Empty, ready for use
+
+### 📄 Key Files Created
+| File | Purpose |
+|---|---|
+| `src/lib/supabase-client.ts` | Browser-side Supabase client |
+| `src/lib/supabase-server.ts` | Server-side Supabase client (SSR) |
+| `src/lib/supabase-middleware.ts` | Session management utility |
+| `src/middleware.ts` | Next.js middleware for auth |
+| `src/lib/config.ts` | Site config, navigation, categories |
+| `src/types/database.ts` | All TypeScript types |
+| `docs/development/supabase_schema.sql` | Full database schema |
+| `.env.example` | Environment template |
+
+---
+
 ## [0.0.1] — 2026-03-11
 
 ### 📋 Project Initialization

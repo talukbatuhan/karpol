@@ -9,14 +9,30 @@
 | Layer | Technology | Notes |
 |---|---|---|
 | **Framework** | Next.js 15 (App Router) | SSR + SSG hybrid for SEO |
+| **Database** | Supabase (PostgreSQL) | Products, articles, RFQ data |
+| **Auth** | Supabase Auth | Admin panel authentication |
+| **Storage** | Supabase Storage | Product images, catalogs, PDFs |
 | **Styling** | Vanilla CSS + CSS Custom Properties | Design token system |
 | **Language** | TypeScript | Type safety |
-| **CMS** | Headless (TBD: Strapi / Sanity) | Product data management |
-| **Hosting** | Vercel / VPS | Edge functions + CDN |
+| **Hosting** | Vercel | Edge functions + CDN |
 | **Analytics** | Google Analytics 4 + Search Console | Conversion tracking |
-| **Forms** | Custom API routes | RFQ + contact forms |
+| **Forms** | Next.js API Routes + Supabase | RFQ + contact form submissions |
 | **Images** | Next/Image + WebP | Auto-optimization |
 | **i18n** | next-intl | EN, TR, DE, AR |
+
+### Supabase Architecture
+```
+src/lib/
+├── supabase-client.ts      # Browser client (client components)
+├── supabase-server.ts      # Server client (SSR, API routes)
+├── supabase-middleware.ts   # Session management
+└── config.ts               # Site configuration
+
+src/types/
+└── database.ts             # TypeScript types (auto-generated)
+
+src/middleware.ts            # Next.js middleware (session refresh)
+```
 
 ---
 
@@ -175,16 +191,29 @@ npm run sitemap
 ## 📝 Environment Variables
 
 ```env
-# .env.local
+# .env.local — Şablonu .env.example dosyasından kopyalayın
+# cp .env.example .env.local
+
+# SUPABASE
+NEXT_PUBLIC_SUPABASE_URL=https://YOUR_PROJECT_ID.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=YOUR_ANON_KEY
+SUPABASE_SERVICE_ROLE_KEY=YOUR_SERVICE_ROLE_KEY
+
+# SITE
 NEXT_PUBLIC_SITE_URL=https://karpol.net
 NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX
 NEXT_PUBLIC_WHATSAPP=+90XXXXXXXXXX
 
-# Server-only
+# EMAIL (Server-only)
 SMTP_HOST=smtp.example.com
 SMTP_PORT=587
 SMTP_USER=noreply@karpol.net
 SMTP_PASS=*****
-CMS_API_URL=https://cms.karpol.net/api
-CMS_API_TOKEN=*****
 ```
+
+## 🗄 Database Setup
+
+1. Supabase'de yeni proje oluşturun: [supabase.com](https://supabase.com)
+2. `.env.local` dosyasına URL ve key'leri yapıştırın
+3. SQL Editor'da şemayı çalıştırın: `docs/development/supabase_schema.sql`
+4. Bu şema 8 tablo, indexler, RLS politikaları ve örnek verileri otomatik oluşturur

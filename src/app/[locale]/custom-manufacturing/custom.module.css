@@ -1,0 +1,298 @@
+.hero {
+  background: linear-gradient(rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.9)),
+    url("https://karpol.net/images/cnc-machining-hero.webp") center/cover;
+  color: #ffffff;
+  padding: 96px 0;
+  text-align: center;
+}
+
+.heroContent {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.heroTitle {
+  font-size: clamp(36px, 5vw, 56px);
+  font-weight: 800;
+  line-height: 1.1;
+  margin-bottom: 24px;
+  letter-spacing: -0.02em;
+}
+
+.heroText {
+  font-size: 20px;
+  color: #cbd5e1;
+  line-height: 1.6;
+  margin-bottom: 40px;
+}
+
+.section {
+  padding: 80px 0;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.bgLight {
+  background-color: #f8fafc;
+}
+
+.sectionHeader {
+  text-align: center;
+  margin-bottom: 64px;
+}
+
+.sectionTitle {
+  font-size: 32px;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 16px;
+}
+
+.sectionDesc {
+  font-size: 18px;
+  color: #64748b;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Capabilities Grid */
+.capabilityGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 32px;
+}
+
+.capabilityCard {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 32px;
+  transition: all 0.2s ease;
+}
+
+.capabilityCard:hover {
+  border-color: #ea580c;
+  transform: translateY(-4px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.icon {
+  width: 48px;
+  height: 48px;
+  background: #fff7ed;
+  color: #ea580c;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  font-size: 24px;
+  margin-bottom: 24px;
+}
+
+.cardTitle {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 12px;
+}
+
+.cardText {
+  font-size: 15px;
+  color: #64748b;
+  line-height: 1.6;
+}
+
+/* Process Steps */
+.processRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  position: relative;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.processRow::before {
+  content: "";
+  position: absolute;
+  top: 24px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #e2e8f0;
+  z-index: 0;
+}
+
+.step {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  flex: 1;
+  background: #ffffff; /* to hide line behind number */
+}
+
+.stepNumber {
+  width: 50px;
+  height: 50px;
+  background: #ffffff;
+  border: 2px solid #ea580c;
+  color: #ea580c;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 18px;
+  margin: 0 auto 16px;
+}
+
+.stepTitle {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 8px;
+}
+
+.stepDesc {
+  font-size: 14px;
+  color: #64748b;
+  padding: 0 12px;
+}
+
+/* Upload Form */
+.formContainer {
+  max-width: 800px;
+  margin: 0 auto;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 40px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.uploadArea {
+  border: 2px dashed #cbd5e1;
+  border-radius: 8px;
+  padding: 48px;
+  text-align: center;
+  background: #f8fafc;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 32px;
+}
+
+.uploadArea:hover {
+  border-color: #ea580c;
+  background: #fff7ed;
+}
+
+.uploadIcon {
+  font-size: 48px;
+  color: #94a3b8;
+  margin-bottom: 16px;
+}
+
+.uploadText {
+  font-size: 16px;
+  font-weight: 600;
+  color: #475569;
+}
+
+.uploadSubtext {
+  font-size: 14px;
+  color: #94a3b8;
+  margin-top: 8px;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #475569;
+}
+
+.input,
+.select,
+.textarea {
+  padding: 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  font-size: 15px;
+  transition: border-color 0.2s;
+}
+
+.input:focus,
+.select:focus,
+.textarea:focus {
+  outline: none;
+  border-color: #ea580c;
+}
+
+.textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.submitButton {
+  width: 100%;
+  padding: 16px;
+  background: #ea580c;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.submitButton:hover {
+  background: #c2410c;
+}
+
+@media (max-width: 768px) {
+  .processRow {
+    flex-direction: column;
+    gap: 32px;
+    align-items: flex-start;
+  }
+
+  .processRow::before {
+    top: 0;
+    bottom: 0;
+    left: 24px;
+    width: 2px;
+    height: auto;
+  }
+
+  .step {
+    display: flex;
+    gap: 16px;
+    text-align: left;
+    padding-left: 0;
+  }
+
+  .stepNumber {
+    margin: 0;
+    flex-shrink: 0;
+  }
+
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .formContainer {
+    padding: 24px;
+  }
+}

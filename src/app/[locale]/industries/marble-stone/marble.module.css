@@ -1,0 +1,206 @@
+.hero {
+  position: relative;
+  min-height: 500px;
+  display: flex;
+  align-items: center;
+  background: linear-gradient(rgba(26, 26, 46, 0.8), rgba(26, 26, 46, 0.9)),
+    url("https://karpol.net/images/marble-factory-hero.webp") center/cover;
+  color: #ffffff;
+  padding: 64px 0;
+}
+
+.heroContent {
+  max-width: 800px;
+}
+
+.heroTitle {
+  font-size: clamp(40px, 5vw, 64px);
+  font-weight: 800;
+  line-height: 1.1;
+  margin-bottom: 24px;
+}
+
+.heroDescription {
+  font-size: 20px;
+  line-height: 1.6;
+  color: #e2e8f0;
+  margin-bottom: 32px;
+  max-width: 600px;
+}
+
+.section {
+  padding: 80px 0;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.bgLight {
+  background-color: #f8fafc;
+}
+
+.sectionTitle {
+  font-size: 32px;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin-bottom: 16px;
+}
+
+.sectionText {
+  font-size: 18px;
+  color: #475569;
+  line-height: 1.7;
+  max-width: 70ch;
+  margin-bottom: 40px;
+}
+
+/* Machine Grid */
+.machineGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 32px;
+  margin-top: 48px;
+}
+
+.machineCard {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 24px;
+  transition: all 0.2s ease;
+}
+
+.machineCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  border-color: #ea580c;
+}
+
+.machineIcon {
+  font-size: 32px;
+  margin-bottom: 16px;
+  display: inline-block;
+  padding: 12px;
+  background: #fff7ed;
+  border-radius: 8px;
+  color: #ea580c;
+}
+
+.machineTitle {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin-bottom: 12px;
+}
+
+.partList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.partItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 15px;
+  color: #475569;
+}
+
+.partItem::before {
+  content: "•";
+  color: #ea580c;
+  font-weight: bold;
+}
+
+/* Advantages */
+.advantageGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 48px;
+  align-items: center;
+}
+
+.advantageList {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.advantageItem {
+  display: flex;
+  gap: 16px;
+}
+
+.checkIcon {
+  color: #2ecc71;
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.advantageTitle {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin-bottom: 4px;
+}
+
+.advantageDesc {
+  font-size: 15px;
+  color: #64748b;
+  line-height: 1.6;
+}
+
+/* CTA Box */
+.ctaBox {
+  background: #1a1a2e;
+  color: #ffffff;
+  padding: 64px;
+  border-radius: 16px;
+  text-align: center;
+  margin-top: 64px;
+}
+
+.ctaTitle {
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 16px;
+}
+
+.ctaText {
+  font-size: 18px;
+  color: #94a3b8;
+  margin-bottom: 32px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.primaryButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 28px;
+  background: #ea580c;
+  color: #ffffff;
+  font-weight: 700;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.primaryButton:hover {
+  background: #c2410c;
+}
+
+@media (max-width: 768px) {
+  .heroTitle {
+    font-size: 36px;
+  }
+  
+  .advantageGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .ctaBox {
+    padding: 32px 24px;
+  }
+}
