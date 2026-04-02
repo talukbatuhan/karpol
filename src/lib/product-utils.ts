@@ -1,5 +1,12 @@
 import { Product, ProductSizeRow } from "@/types/database";
 
+export type GalleryItem = {
+  title: string;
+  url: string;
+  code?: string;
+  specs?: { label: string; value: string }[];
+};
+
 export function sanitizeAssetUrl(url: string) {
   const trimmed = url.trim().replace(/[`"'<>]/g, "");
   const withoutTrailingParen = trimmed.replace(/\)+$/, "");
@@ -79,27 +86,33 @@ export function normalizeGalleryItems(input: unknown) {
                       Boolean(spec?.label) && Boolean(spec?.value),
                   )
               : [];
-          return {
+
+          const galleryItem: GalleryItem = {
             title:
               typeof rawTitle === "string" && rawTitle.trim().length > 0
                 ? rawTitle
                 : `Product Image ${index + 1}`,
             url: rawUrl,
-            code:
-              typeof rawCode === "string" && rawCode.trim().length > 0
-                ? normalizeVariantCode(rawCode)
-                : undefined,
-            specs,
           };
+
+          if (typeof rawCode === "string" && rawCode.trim().length > 0) {
+            galleryItem.code = normalizeVariantCode(rawCode);
+          }
+
+          if (specs.length > 0) {
+            galleryItem.specs = specs;
+          }
+
+          return galleryItem;
         }
       }
 
       return null;
     })
-    .filter((item): item is { title: string; url: string; code?: string; specs?: { label: string; value: string }[] } => item !== null);
+    .filter((item): item is GalleryItem => item !== null);
 }
 
-export function getSupabaseJsonGallery(product: Product | null) {
+export function getSupabaseJsonGallery(product: Product | null): GalleryItem[] {
   if (!product) {
     return [];
   }

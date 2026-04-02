@@ -1,0 +1,391 @@
+/* ============================================================
+   CustomRFQForm.module.css — Karpol RFQ Form Component
+   Matches: Industrial Luxury · Dark Precision · Gold System
+   ============================================================ */
+
+/* ── Tokens (inherited via parent, but also defined here) ── */
+.form {
+  --gold: #c8a85a;
+  --gold-dim: rgba(200, 168, 90, 0.10);
+  --gold-glow: rgba(200, 168, 90, 0.22);
+  --gold-border: rgba(200, 168, 90, 0.22);
+  --dark-800: var(--bg-secondary);
+  --dark-700: var(--bg-tertiary);
+  --border: rgba(255, 255, 255, 0.08);
+  --slate-400: #94a3b8;
+  --slate-300: #cbd5e1;
+  --white: #f8fafc;
+  --radius: 8px;
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ── Section Label ───────────────────────────────────────── */
+.sectionLabel {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold);
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 4px;
+}
+
+/* ── Grid ────────────────────────────────────────────────── */
+.grid2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+@media (max-width: 640px) {
+  .grid2 { grid-template-columns: 1fr; }
+}
+
+/* ── Field ───────────────────────────────────────────────── */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* ── Inputs ──────────────────────────────────────────────── */
+.input,
+.textarea,
+.select {
+  width: 100%;
+  padding: 11px 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text-main);
+  font-size: 0.9375rem;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 180ms, background 180ms, box-shadow 180ms;
+  box-sizing: border-box;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.input::placeholder,
+.textarea::placeholder {
+  color: rgba(148, 163, 184, 0.38);
+}
+
+.input:focus,
+.textarea:focus,
+.select:focus {
+  border-color: var(--gold-border);
+  background: rgba(200, 168, 90, 0.04);
+  box-shadow: 0 0 0 3px rgba(200, 168, 90, 0.08);
+}
+
+.textarea {
+  min-height: 130px;
+  resize: vertical;
+  line-height: 1.65;
+}
+
+/* Select wrapper */
+.selectWrap {
+  position: relative;
+}
+
+.select {
+  cursor: pointer;
+  padding-right: 36px;
+}
+
+.select option {
+  background: var(--bg-tertiary);
+  color: var(--text-main);
+}
+
+.selectChevron {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  pointer-events: none;
+  flex-shrink: 0;
+}
+
+/* ── Upload Zone ─────────────────────────────────────────── */
+.uploadZone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 32px 24px;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1.5px dashed rgba(255, 255, 255, 0.14);
+  border-radius: var(--radius);
+  cursor: pointer;
+  text-align: center;
+  transition: background 200ms, border-color 200ms, box-shadow 200ms;
+}
+
+.uploadZone:hover {
+  background: var(--gold-dim);
+  border-color: var(--gold-border);
+}
+
+.uploadZoneDragging {
+  background: var(--gold-dim);
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(200, 168, 90, 0.1);
+}
+
+.uploadIconWrap {
+  width: 48px;
+  height: 48px;
+  background: var(--gold-dim);
+  border: 1px solid var(--gold-border);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gold);
+  margin-bottom: 4px;
+  transition: background 200ms;
+}
+
+.uploadZoneDragging .uploadIconWrap {
+  background: rgba(200, 168, 90, 0.2);
+}
+
+.uploadText {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text-main);
+  margin: 0;
+}
+
+.uploadSub {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.uploadBtn {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 7px 16px;
+  background: var(--border-color);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-dim);
+  pointer-events: none;
+}
+
+/* ── File List ───────────────────────────────────────────── */
+.fileList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.fileItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  transition: background 180ms;
+}
+
+.fileItem:hover {
+  background: rgba(255, 255, 255, 0.055);
+}
+
+.fileItemIcon {
+  width: 30px;
+  height: 30px;
+  background: var(--gold-dim);
+  border: 1px solid var(--gold-border);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gold);
+  flex-shrink: 0;
+}
+
+.fileItemBody {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.fileName {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fileSize {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.fileRemove {
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  color: var(--text-muted);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 180ms, color 180ms, border-color 180ms;
+}
+
+.fileRemove:hover {
+  background: rgba(244, 63, 94, 0.12);
+  border-color: rgba(244, 63, 94, 0.25);
+  color: #f43f5e;
+}
+
+/* ── Submit Button ───────────────────────────────────────── */
+.submitBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 14px 28px;
+  width: 100%;
+  background: var(--gold);
+  color: var(--bg-main);
+  border: none;
+  border-radius: var(--radius);
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  box-shadow: 0 4px 24px var(--gold-glow);
+  transition: background 200ms, box-shadow 200ms, transform 200ms;
+  margin-top: 8px;
+}
+
+.submitBtn:hover:not(:disabled) {
+  background: #d4b46a;
+  box-shadow: 0 8px 36px rgba(200, 168, 90, 0.4);
+  transform: translateY(-2px);
+}
+
+.submitBtn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Loading state */
+.btnLoading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.spinner {
+  display: block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(8, 10, 14, 0.25);
+  border-top-color: var(--bg-main);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Success State ───────────────────────────────────────── */
+.success {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 56px 24px;
+  gap: 14px;
+  animation: fadeUp 0.4s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+.successIconWrap {
+  width: 72px;
+  height: 72px;
+  background: rgba(110, 198, 160, 0.1);
+  border: 1px solid rgba(110, 198, 160, 0.25);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6ec6a0;
+  margin-bottom: 4px;
+}
+
+.successTitle {
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--text-main);
+}
+
+.successText {
+  font-size: 0.9375rem;
+  line-height: 1.75;
+  color: var(--text-muted);
+  max-width: 400px;
+}
+
+.resetBtn {
+  margin-top: 8px;
+  padding: 10px 20px;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text-dim);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 200ms, color 200ms, background 200ms;
+  font-family: inherit;
+}
+
+.resetBtn:hover {
+  border-color: var(--gold-border);
+  color: var(--gold);
+  background: var(--gold-dim);
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

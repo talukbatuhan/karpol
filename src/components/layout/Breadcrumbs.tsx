@@ -9,10 +9,10 @@ import styles from "./Breadcrumbs.module.css";
 // Helper to map slugs to readable names
 const nameMap: Record<string, string> = {
   products: "Products",
-  industries: "Industries",
   knowledge: "Knowledge Base",
   about: "About Us",
   contact: "Contact",
+  catalog: "E-Katalog",
   "custom-manufacturing": "Custom Manufacturing",
   "marble-stone": "Marble & Stone",
   "polyurethane": "Polyurethane",

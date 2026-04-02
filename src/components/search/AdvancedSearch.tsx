@@ -4,24 +4,56 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { productCategories } from "@/lib/config";
+import { getAllArticles } from "@/lib/data/knowledge-base";
+import { getRichProductsByCategory } from "@/lib/product-content";
 import styles from "./AdvancedSearch.module.css";
 
-// Mock data for search - In a real app, this would come from an API or index
-const SEARCH_INDEX = [
-  ...productCategories.map((cat) => ({
-    id: cat.slug,
+type SearchItemType = "Category" | "Product" | "Article";
+
+type SearchItem = {
+  id: string;
+  title: string;
+  type: SearchItemType;
+  url: string;
+  icon: string;
+  meta?: string;
+};
+
+// Build a lightweight in-memory index from existing static data
+const buildSearchIndex = (): SearchItem[] => {
+  const categoryItems: SearchItem[] = productCategories.map((cat) => ({
+    id: `category:${cat.slug}`,
     title: cat.name,
     type: "Category",
     url: `/products/${cat.slug}`,
     icon: cat.icon,
-  })),
-  { id: "p1", title: "Polyurethane Roller 90 Shore A", type: "Product", url: "/products/polyurethane-components/pu-roller-90a", icon: "⚙️" },
-  { id: "p2", title: "Vulkollan Wheel 200mm", type: "Product", url: "/products/vulkollan-components/vk-wheel-200", icon: "⚙️" },
-  { id: "p3", title: "Rubber Buffer Element", type: "Product", url: "/products/rubber-components/rubber-buffer", icon: "⬛" },
-  { id: "a1", title: "Polyurethane vs Rubber", type: "Article", url: "/knowledge/polyurethane-vs-rubber", icon: "📄" },
-  { id: "a2", title: "Shore Hardness Guide", type: "Article", url: "/knowledge/understanding-shore-hardness", icon: "📄" },
-  { id: "s1", title: "Marble Industry Solutions", type: "Industry", url: "/industries/marble-stone", icon: "🏗️" },
-];
+  }));
+
+  const productItems: SearchItem[] = productCategories.flatMap((cat) => {
+    const richProducts = getRichProductsByCategory(cat.slug);
+    return richProducts.map((p) => ({
+      id: `product:${cat.slug}:${p.slug}`,
+      title: p.name,
+      type: "Product" as const,
+      url: `/products/${cat.slug}/${p.slug}`,
+      icon: "⚙️",
+      meta: p.shortDescription,
+    }));
+  });
+
+  const articleItems: SearchItem[] = getAllArticles().map((article) => ({
+    id: `article:${article.slug}`,
+    title: article.title,
+    type: "Article" as const,
+    url: `/knowledge/${article.slug}`,
+    icon: "📄",
+    meta: article.category,
+  }));
+
+  return [...categoryItems, ...productItems, ...articleItems];
+};
+
+const SEARCH_INDEX: SearchItem[] = buildSearchIndex();
 
 type AdvancedSearchProps = {
   isOpen: boolean;
@@ -49,13 +81,16 @@ export default function AdvancedSearch({ isOpen, onClose }: AdvancedSearchProps)
 
   useEffect(() => {
     if (!query) {
-      setResults(SEARCH_INDEX.slice(0, 5)); // Show recent/popular by default
+      setResults(SEARCH_INDEX.slice(0, 8));
       return;
     }
 
-    const filtered = SEARCH_INDEX.filter((item) =>
-      item.title.toLowerCase().includes(query.toLowerCase())
-    );
+    const normalizedQuery = query.toLowerCase();
+    const filtered = SEARCH_INDEX.filter((item) => {
+      const titleMatch = item.title.toLowerCase().includes(normalizedQuery);
+      const metaMatch = item.meta?.toLowerCase().includes(normalizedQuery);
+      return titleMatch || metaMatch;
+    });
     setResults(filtered);
     setActiveIndex(0);
   }, [query]);
@@ -81,8 +116,18 @@ export default function AdvancedSearch({ isOpen, onClose }: AdvancedSearchProps)
   if (!isOpen) return null;
 
   return (
-    <div className={styles.searchOverlay} onClick={onClose}>
-      <div className={styles.searchModal} onClick={(e) => e.stopPropagation()}>
+    <div
+      className={styles.searchOverlay}
+      onClick={onClose}
+      role="presentation"
+    >
+      <div
+        className={styles.searchModal}
+        onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Search"
+      >
         <div className={styles.searchInputWrapper}>
           <span className={styles.searchIcon}>🔍</span>
           <input
@@ -117,22 +162,25 @@ export default function AdvancedSearch({ isOpen, onClose }: AdvancedSearchProps)
                         <div className={styles.resultIcon}>{item.icon}</div>
                         <div className={styles.resultContent}>
                           <div className={styles.resultTitle}>{item.title}</div>
-                          <div className={styles.resultMeta}>Jump to Category</div>
+                          <div className={styles.resultMeta}>Jump to category</div>
                         </div>
-                        {index === activeIndex && <span style={{fontSize: "12px", color: "#94a3b8"}}>↵</span>}
+                        {index === activeIndex && (
+                          <span style={{ fontSize: "12px", color: "#94a3b8" }}>↵</span>
+                        )}
                       </Link>
                     ))}
                 </>
               )}
 
-              {results.some((r) => r.type !== "Category") && (
+              {results.some((r) => r.type === "Product") && (
                 <>
-                  <div className={styles.groupLabel} style={{ marginTop: "8px" }}>Results</div>
+                  <div className={styles.groupLabel} style={{ marginTop: "8px" }}>
+                    Products
+                  </div>
                   {results
-                    .filter((r) => r.type !== "Category")
-                    .map((item, index) => {
-                      // Adjust index for continuous navigation
-                      const globalIndex = results.findIndex(r => r.id === item.id);
+                    .filter((r) => r.type === "Product")
+                    .map((item) => {
+                      const globalIndex = results.findIndex((r) => r.id === item.id);
                       return (
                         <Link
                           key={item.id}
@@ -145,9 +193,47 @@ export default function AdvancedSearch({ isOpen, onClose }: AdvancedSearchProps)
                           <div className={styles.resultIcon}>{item.icon}</div>
                           <div className={styles.resultContent}>
                             <div className={styles.resultTitle}>{item.title}</div>
-                            <div className={styles.resultMeta}>{item.type}</div>
+                            {item.meta && (
+                              <div className={styles.resultMeta}>{item.meta}</div>
+                            )}
                           </div>
-                          {globalIndex === activeIndex && <span style={{fontSize: "12px", color: "#94a3b8"}}>↵</span>}
+                          {globalIndex === activeIndex && (
+                            <span style={{ fontSize: "12px", color: "#94a3b8" }}>↵</span>
+                          )}
+                        </Link>
+                      );
+                    })}
+                </>
+              )}
+
+              {results.some((r) => r.type === "Article") && (
+                <>
+                  <div className={styles.groupLabel} style={{ marginTop: "8px" }}>
+                    Articles
+                  </div>
+                  {results
+                    .filter((r) => r.type === "Article")
+                    .map((item) => {
+                      const globalIndex = results.findIndex((r) => r.id === item.id);
+                      return (
+                        <Link
+                          key={item.id}
+                          href={item.url}
+                          className={styles.resultItem}
+                          onClick={onClose}
+                          data-active={globalIndex === activeIndex}
+                          onMouseEnter={() => setActiveIndex(globalIndex)}
+                        >
+                          <div className={styles.resultIcon}>{item.icon}</div>
+                          <div className={styles.resultContent}>
+                            <div className={styles.resultTitle}>{item.title}</div>
+                            {item.meta && (
+                              <div className={styles.resultMeta}>{item.meta}</div>
+                            )}
+                          </div>
+                          {globalIndex === activeIndex && (
+                            <span style={{ fontSize: "12px", color: "#94a3b8" }}>↵</span>
+                          )}
                         </Link>
                       );
                     })}
@@ -161,9 +247,19 @@ export default function AdvancedSearch({ isOpen, onClose }: AdvancedSearchProps)
           )}
         </div>
         
-        <div style={{ padding: "8px 16px", background: "#f8fafc", borderTop: "1px solid #e2e8f0", fontSize: "11px", color: "#94a3b8", display: "flex", justifyContent: "space-between" }}>
-           <span>Tip: Use arrow keys to navigate</span>
-           <span>KARPOL Engineering Search</span>
+        <div
+          style={{
+            padding: "8px 16px",
+            background: "#f8fafc",
+            borderTop: "1px solid #e2e8f0",
+            fontSize: "11px",
+            color: "#94a3b8",
+            display: "flex",
+            justifyContent: "space-between",
+          }}
+        >
+          <span>Tip: Use ↑ ↓ and ↵ to navigate</span>
+          <span>KARPOL Engineering Search</span>
         </div>
       </div>
     </div>

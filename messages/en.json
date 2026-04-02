@@ -2,17 +2,34 @@
   "Navigation": {
     "home": "Home",
     "products": "Products",
-    "industries": "Industries",
     "services": "Services",
     "about": "About Us",
     "contact": "Contact",
-    "search": "Search..."
+    "search": "Search...",
+    "custom manufacturing": "Custom Manufacturing",
+    "factory & technology": "Factory & Technology",
+    "technical knowledge": "Technical Knowledge",
+    "catalog": "Catalog",
+    "e-catalog": "E-Catalog"
   },
   "Hero": {
-    "title": "Industrial Components for Marble Machinery",
-    "description": "High-performance elastomer and metal components engineered for durability and precision.",
-    "cta_products": "Explore Products",
-    "cta_quote": "Request a Quote"
+    "headline": "Precision Engineered. Globally Delivered.",
+    "subheadline": "Advanced industrial components and custom manufacturing solutions for the world's most demanding machinery.",
+    "primaryBtn": "Explore Products",
+    "secondaryBtn": "Our Capabilities",
+    "badge": "KARPOL INDUSTRIAL — EST. 1999",
+    "partnersLabel": "Trusted raw material partners",
+    "stats": {
+      "years": "Years Experience",
+      "countries": "Countries Served",
+      "parts": "Parts Delivered",
+      "iso": "9001 Certified"
+    },
+    "scrollLabel": "Scroll",
+    "trust1": "ISO 9001 Certified",
+    "trust2": "Exporting to 50+ Countries",
+    "trust3": "20+ Years Experience",
+    "trust4": "Premium Materials"
   },
   "Product": {
     "sku": "SKU",
@@ -22,9 +39,240 @@
     "request_quote": "Request Quote",
     "download_pdf": "Download Datasheet"
   },
+  "ProductDetail": {
+    "specs": "Technical Specifications",
+    "applications": "Typical Applications",
+    "advantages": "Engineering Advantages",
+    "compatibility": "Machine Compatibility",
+    "downloads": "Engineering Resources",
+    "sizes": "Standard Sizes",
+    "related": "Related Products",
+    "cta_title": "Need a Custom Solution?",
+    "cta_text": "We specialize in custom manufacturing for specific industrial requirements. Our engineering team is ready to assist.",
+    "cta_button": "Get Custom Quote",
+    "contact_engineer": "Contact Engineer"
+  },
+  "RFQModal": {
+    "title": "Request for Quote",
+    "fullName": "Full Name",
+    "company": "Company",
+    "email": "Work Email",
+    "phone": "Phone / WhatsApp",
+    "quantity": "Desired Quantity",
+    "notes": "Technical Notes / Requirements",
+    "notesPlaceholder": "Please specify any custom dimensions, hardness requirements, or machine details...",
+    "cancel": "Cancel",
+    "submit": "Submit Request",
+    "sending": "Sending...",
+    "successTitle": "Request Sent Successfully",
+    "successMessage": "Thank you for your inquiry. Our engineering team will review your requirements and send a formal quote within 24 hours.",
+    "close": "Close"
+  },
+  "CustomManufacturing": {
+    "heroTitle": "Custom Engineering & Manufacturing",
+    "heroText": "From technical drawing to final product. We transform raw materials into high-precision industrial components.",
+    "processTitle": "Manufacturing Process",
+    "processDesc": "Our standardized workflow ensures quality and precision at every stage.",
+    "step1": "Drawing Analysis",
+    "step1Desc": "Review of CAD/DWG files and material selection.",
+    "step2": "Mold & Tooling",
+    "step2Desc": "In-house CNC machining of precision molds.",
+    "step3": "Prototyping",
+    "step3Desc": "Sample production and hardness verification.",
+    "step4": "Mass Production",
+    "step4Desc": "High-volume manufacturing and quality control.",
+    "capabilitiesTitle": "Production Capabilities",
+    "capabilitiesDesc": "Advanced manufacturing technologies for diverse industrial needs.",
+    "cap1": "Polyurethane Casting",
+    "cap1Desc": "Custom hardness (60-95 Shore A) and color options.",
+    "cap2": "CNC Machining",
+    "cap2Desc": "Precision milling of aluminum and engineering plastics.",
+    "cap3": "Rubber Molding",
+    "cap3Desc": "Compression and injection molding for NR, NBR, EPDM.",
+    "cap4": "Metal Bonding",
+    "cap4Desc": "High-strength chemical bonding of rubber/PU to metal.",
+    "formTitle": "Start Your Project",
+    "formDesc": "Send us your requirements and technical drawings for a detailed engineering quote."
+  },
+  "CustomRFQ": {
+    "fullName": "Full Name",
+    "company": "Company",
+    "email": "Work Email",
+    "phone": "Phone / WhatsApp",
+    "material": "Preferred Material",
+    "hardness": "Hardness (Shore A/D)",
+    "notes": "Technical Notes / Requirements",
+    "notesPlaceholder": "Describe application, working conditions (temp, load, chemical), and special tolerances...",
+    "uploadText": "Drag & drop technical drawings here",
+    "uploadSubtext": "Supports PDF, DWG, DXF, STEP (Max 10MB)",
+    "submit": "Submit Project Request",
+    "sending": "Uploading...",
+    "successTitle": "Project Received",
+    "successMessage": "Your project files have been securely received. Our engineering team will analyze the drawings and contact you shortly.",
+    "materials": {
+      "polyurethane": "Polyurethane (PU)",
+      "vulkollan": "Vulkollan®",
+      "rubber": "Rubber (NR/NBR/EPDM)",
+      "plastic": "Engineering Plastics (PE/PA/POM)",
+      "metal": "Aluminum / Steel",
+      "other": "Other / Unsure"
+    }
+  },
   "Common": {
     "loading": "Loading...",
     "error": "Something went wrong",
-    "back": "Back"
+    "back": "Back",
+    "request_quote": "Request Quote"
+  },
+  "Home": {
+    "materialsTitle": "Engineered Materials",
+    "materialsSubtitle": "High-performance polymers and metals for extreme durability.",
+    "materialsDescription": "High-performance polymer and metal components engineered for demanding industrial environments.",
+    "trustStrip": {
+      "item1Sub": "Global Standard",
+      "item2Sub": "Worldwide Logistics",
+      "item3Sub": "Manufacturing Expert",
+      "item4Sub": "Covestro & Lanxess"
+    },
+    "why": {
+      "eyebrow": "Why Karpol?",
+      "title": "Engineered for\nPerformance",
+      "description": "We combine decades of material science expertise with advanced manufacturing capabilities to deliver components that last longer and perform better.",
+      "visual": {
+        "qualityRate": "Quality Pass Rate",
+        "quoteTime": "Average Quote Time"
+      },
+      "cards": {
+        "materialsTitle": "Premium Materials",
+        "materialsDesc": "We use only high-grade raw materials from trusted global suppliers like Covestro and Lanxess.",
+        "engineeringTitle": "Custom Engineering",
+        "engineeringDesc": "From prototype to mass production, our engineering team designs molds and parts to your exact specifications.",
+        "logisticsTitle": "Global Logistics",
+        "logisticsDesc": "Fast and reliable shipping to 50+ countries with full export documentation and real-time tracking.",
+        "speedTitle": "Fast Turnaround",
+        "speedDesc": "Streamlined production processes ensure on-time delivery even for complex custom orders."
+      },
+      "learnMoreCta": "Learn About Our Factory"
+    },
+    "cta": {
+      "eyebrow": "Get Started Today",
+      "title": "Ready to optimize\nyour machinery?",
+      "description": "Get a competitive quote for your custom parts or standard components today. Our engineers respond within 48 hours.",
+      "primaryCta": "Request a Quote",
+      "secondaryCta": "Explore Products"
+    },
+    "products": {
+      "polyurethane": {
+        "title": "Polyurethane",
+        "desc": "Custom hardness casting for high abrasion resistance."
+      },
+      "vulkollan": {
+        "title": "Vulkollan®",
+        "desc": "Original licensed material for extreme load bearing."
+      },
+      "rubber": {
+        "title": "Industrial Rubber",
+        "desc": "NR, NBR, EPDM molding for vibration isolation."
+      },
+      "silicone": {
+        "title": "Silicone",
+        "desc": "High-temperature resistant seals and rollers."
+      },
+      "cnc": {
+        "title": "CNC Machining",
+        "desc": "Precision aluminum and steel components."
+      },
+      "custom": {
+        "title": "Custom Parts",
+        "desc": "Tailor-made solutions from your technical drawings."
+      }
+    }
+  },
+  "About": {
+    "metadata": {
+      "title": "About KARPOL | 15 Years of Engineering Excellence",
+      "description": "Learn how KARPOL engineers high-performance polyurethane, rubber, and engineering plastic components from Denizli, Turkey for global industrial machinery."
+    },
+    "hero": {
+      "kicker": "KARPOL INDUSTRIAL",
+      "title": "15 Years of Engineering Excellence",
+      "subtitle": "From our high-tech facility in Denizli to the world's most demanding industries, we engineer components that don't fail.",
+      "primaryCta": "Request a Quote",
+      "secondaryCta": "Explore Products"
+    },
+    "trust": {
+      "yearsTitle": "15+ Years Experience",
+      "yearsMeta": "Industrial manufacturing focus",
+      "locationTitle": "Based in Denizli, TR",
+      "locationMeta": "Merkezefendi industrial zone",
+      "exportTitle": "Global Export Network",
+      "exportMeta": "Trusted by international buyers"
+    },
+    "story": {
+      "eyebrow": "Facility & Origin",
+      "title": "Built for Industrial Reliability",
+      "p1": "KARPOL operates a modern production facility in Denizli Merkezefendi, Zorlu Sanayi Sitesi—where disciplined industrial standards meet advanced CNC machining and polymer casting technologies.",
+      "p2": "We manufacture polyurethane, rubber, and engineering plastic solutions for critical applications across marble processing, mining, and automation—delivering consistent performance, repeatability, and long service life.",
+      "facilityLabel": "Production Facility",
+      "facilityValue": "Modern plant designed for repeatable, high-tolerance manufacturing",
+      "techLabel": "Core Technologies",
+      "techValue": "CNC machining, polymer casting, and engineered bonding processes",
+      "qualityLabel": "Quality Approach",
+      "qualityValue": "Process discipline, incoming control, and final inspection at every stage",
+      "addressLabel": "Factory Location",
+      "addressValue": "Zorlu Sanayi Sitesi, Bozburun Mahallesi, Merkezefendi / Denizli, Turkey",
+      "imageAlt": "factory exterior facade"
+    },
+    "values": {
+      "eyebrow": "What We Stand For",
+      "title": "B2B Values That Reduce Risk",
+      "lead": "We earn trust by engineering predictability: materials, tolerances, lead times, and documentation aligned with industrial procurement standards.",
+      "cards": {
+        "quality": {
+          "title": "Uncompromising Quality",
+          "text": "Stable raw materials, controlled processes, and traceable outputs for repeatable performance."
+        },
+        "material": {
+          "title": "Material Science Expertise",
+          "text": "Polyurethane, rubber, and engineering plastics engineered for abrasion, load, and chemical resistance."
+        },
+        "prototype": {
+          "title": "Rapid Prototyping & Custom Mfg",
+          "text": "Fast iteration from technical drawing to tested part—built for your machine and your conditions."
+        },
+        "delivery": {
+          "title": "Reliable Delivery & Support",
+          "text": "Export-ready packaging, clear communication, and B2B documentation for smooth procurement."
+        }
+      }
+    },
+    "cta": {
+      "title": "Let’s Engineer Your Next Component",
+      "text": "Share your drawing, application details, and target performance. Our team will recommend the right material and production method.",
+      "primaryCta": "Contact Sales",
+      "secondaryCta": "Browse Catalog"
+    }
+  }
+  ,
+  "Catalog": {
+    "title": "E-Catalog",
+    "toolbar": {
+      "page": "Page",
+      "zoom_in": "Zoom In",
+      "zoom_out": "Zoom Out",
+      "thumbnails": "Thumbnails",
+      "fullscreen": "Full Screen",
+      "exit_fullscreen": "Exit Full Screen",
+      "go_to": "Go to page",
+      "previous": "Previous",
+      "next": "Next",
+      "share": "Share",
+      "download_page": "Download Page",
+      "copy_link": "Copy link",
+      "copied": "Copied"
+    },
+    "loading": "Loading catalog…",
+    "error": "Unable to load the catalog. Please try again later.",
+    "missing_image": "This page is missing or unavailable."
   }
 }

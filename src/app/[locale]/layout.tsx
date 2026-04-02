@@ -1,25 +1,11 @@
 import type { Metadata } from "next";
 import Script from "next/script";
-import { Inter, Roboto_Mono } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages, setRequestLocale } from "next-intl/server";
 import Footer from "@/components/layout/Footer";
 import Header from "@/components/layout/Header";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import { siteConfig } from "@/lib/config";
-import "../globals.css";
-
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-  display: "swap",
-});
-
-const robotoMono = Roboto_Mono({
-  variable: "--font-roboto-mono",
-  subsets: ["latin"],
-  display: "swap",
-});
 
 export const metadata: Metadata = {
   title: {
@@ -65,20 +51,16 @@ export default async function RootLayout({
   };
 
   return (
-    <html lang={locale}>
-      <body className={`${inter.variable} ${robotoMono.variable}`}>
-        <NextIntlClientProvider messages={messages}>
-          <Script
-            id="org-schema"
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }}
-          />
-          <Header />
-          <Breadcrumbs />
-          {children}
-          <Footer />
-        </NextIntlClientProvider>
-      </body>
-    </html>
+    <NextIntlClientProvider messages={messages}>
+      <Script
+        id="org-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }}
+      />
+      <Header />
+      <Breadcrumbs />
+      {children}
+      <Footer />
+    </NextIntlClientProvider>
   );
 }

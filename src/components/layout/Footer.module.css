@@ -1,102 +1,58 @@
+/* ============================================================
+   Footer.module.css — Karpol Footer
+   Matches: Industrial Luxury · Dark · Gold Accent System
+   ============================================================ */
+
 .footer {
-  border-top: 1px solid var(--color-border);
-  background: var(--color-surface);
-  padding-top: 64px;
-  padding-bottom: 32px;
+  --gold: #c8a85a;
+  --gold-dim: rgba(200, 168, 90, 0.10);
+  --gold-border: rgba(200, 168, 90, 0.20);
+  --dark-900: var(--bg-main);
+  --dark-800: var(--bg-secondary);
+  --dark-700: var(--bg-tertiary);
+  --border: var(--border-color);
+  --text: #f1f5f9;
+  --muted: #64748b;
+  --muted-hover: #94a3b8;
+  --radius: 7px;
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+
+  position: relative;
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border);
 }
 
+/* Gold line at top */
+.accentBar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--gold) 30%,
+    var(--gold) 70%,
+    transparent 100%
+  );
+  opacity: 0.5;
+}
+
+/* ── Main Grid ────────────────────────────────────────────── */
 .inner {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr;
-  gap: 48px;
-  margin-bottom: 48px;
+  grid-template-columns: 2fr 1fr 1fr 1.4fr;
+  gap: 64px;
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 72px 40px 64px;
 }
 
-.brandColumn {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.brand {
-  color: var(--color-primary);
-  font-size: 24px;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-}
-
-.description {
-  color: var(--color-text-secondary);
-  font-size: 15px;
-  line-height: 1.6;
-  max-width: 320px;
-}
-
-.columnTitle {
-  color: var(--color-primary);
-  font-size: 14px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  margin-bottom: 20px;
-}
-
-.linkList {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.link {
-  color: var(--color-text-secondary);
-  font-size: 14px;
-  transition: color 0.2s ease;
-}
-
-.link:hover {
-  color: var(--color-primary);
-}
-
-.contactInfo {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  color: var(--color-text-secondary);
-  font-size: 14px;
-}
-
-.bottom {
-  border-top: 1px solid var(--color-border);
-  padding-top: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.copyright {
-  color: var(--color-text-secondary);
-  font-size: 13px;
-}
-
-.social {
-  display: flex;
-  gap: 16px;
-}
-
-.socialLink {
-  color: var(--color-text-secondary);
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.socialLink:hover {
-  color: var(--color-primary);
-}
-
-@media (max-width: 1024px) {
+@media (max-width: 1100px) {
   .inner {
     grid-template-columns: 1fr 1fr;
-    gap: 32px;
+    gap: 48px;
   }
 }
 
@@ -104,11 +60,292 @@
   .inner {
     grid-template-columns: 1fr;
     gap: 40px;
+    padding: 56px 20px 48px;
   }
+}
 
-  .bottom {
+/* ── Brand Column ─────────────────────────────────────────── */
+.brandCol {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.brand {
+  display: inline-flex;
+  margin-bottom: 20px;
+  transition: opacity 200ms;
+}
+
+.brand:hover {
+  opacity: 0.8;
+}
+
+.logo {
+  height: 38px;
+  width: auto;
+  filter: brightness(0) invert(1);
+  opacity: 0.9;
+}
+
+.description {
+  font-size: 0.875rem;
+  line-height: 1.75;
+  color: var(--muted);
+  max-width: 300px;
+  margin-bottom: 28px;
+}
+
+/* Socials */
+.socials {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.socialBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: var(--bg-hover);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--muted);
+  text-decoration: none;
+  transition: background 200ms, border-color 200ms, color 200ms;
+}
+
+.socialBtn:hover {
+  background: var(--gold-dim);
+  border-color: var(--gold-border);
+  color: var(--gold);
+}
+
+/* ISO badge */
+.certBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 6px 12px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  width: fit-content;
+}
+
+.certDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 6px var(--gold);
+  flex-shrink: 0;
+}
+
+/* ── Nav Columns ──────────────────────────────────────────── */
+.col {}
+
+.colTitle {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 20px;
+}
+
+.linkList {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.link {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 8px;
+  font-size: 0.875rem;
+  color: var(--muted);
+  text-decoration: none;
+  border-radius: 5px;
+  transition: color 180ms, background 180ms, padding-left 180ms;
+  margin: 0 -8px;
+}
+
+.link:hover {
+  color: var(--text);
+  background: rgba(255,255,255,0.04);
+  padding-left: 14px;
+}
+
+.linkArrow {
+  flex-shrink: 0;
+  opacity: 0;
+  color: var(--gold);
+  transition: opacity 180ms;
+}
+
+.link:hover .linkArrow {
+  opacity: 1;
+}
+
+/* "View All" link */
+.linkAll {
+  margin-top: 6px;
+  color: var(--gold);
+  font-weight: 600;
+  font-size: 0.8rem;
+  letter-spacing: 0.03em;
+  gap: 5px;
+}
+
+.linkAll:hover {
+  color: #d4b46a;
+  background: var(--gold-dim);
+}
+
+/* ── Contact Column ───────────────────────────────────────── */
+.contactList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 24px;
+}
+
+.contactItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 8px 0;
+  font-size: 0.875rem;
+  color: var(--muted);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  transition: color 180ms;
+}
+
+a.contactItem:hover {
+  color: var(--text);
+}
+
+.contactIcon {
+  width: 28px;
+  height: 28px;
+  background: var(--gold-dim);
+  border: 1px solid var(--gold-border);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gold);
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.addressLines {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 2px;
+  line-height: 1.55;
+}
+
+.addressLine {
+  display: block;
+}
+
+/* Quote button */
+.quoteBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 20px;
+  background: var(--gold);
+  color: var(--bg-main);
+  border-radius: var(--radius);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  width: 100%;
+  justify-content: center;
+  box-shadow: 0 2px 16px rgba(200, 168, 90, 0.2);
+  transition: background 200ms, box-shadow 200ms, transform 200ms;
+}
+
+.quoteBtn:hover {
+  background: #d4b46a;
+  box-shadow: 0 4px 28px rgba(200, 168, 90, 0.38);
+  transform: translateY(-1px);
+}
+
+.quoteBtn svg {
+  transition: transform 180ms;
+}
+
+.quoteBtn:hover svg {
+  transform: translateX(3px);
+}
+
+/* ── Bottom Bar ───────────────────────────────────────────── */
+.bottomBar {
+  border-top: 1px solid var(--border);
+}
+
+.bottomInner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 20px 40px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 640px) {
+  .bottomInner {
     flex-direction: column;
-    gap: 16px;
     align-items: flex-start;
+    padding: 20px;
+    gap: 12px;
   }
+}
+
+.copyright {
+  font-size: 0.8rem;
+  color: var(--muted);
+  letter-spacing: 0.02em;
+}
+
+.bottomLinks {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.bottomLink {
+  font-size: 0.8rem;
+  color: var(--muted);
+  text-decoration: none;
+  letter-spacing: 0.02em;
+  transition: color 180ms;
+}
+
+.bottomLink:hover {
+  color: var(--gold);
+}
+
+.bottomDot {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.2);
 }

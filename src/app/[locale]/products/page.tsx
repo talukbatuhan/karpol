@@ -1,6 +1,5 @@
-import Link from "next/link";
 import { Metadata } from "next";
-import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { setRequestLocale } from "next-intl/server";
 import styles from "./products.module.css";
 import { productCategories } from "@/lib/config";
@@ -34,13 +33,6 @@ const categoryDescriptions: Record<string, string> = {
   "marble-machine-spare-parts":
     "Direct replacement parts for Simec, Breton, Gaspari, and other major stone machinery.",
 };
-
-const industries = [
-  { name: "Marble & Stone", icon: "🏗️", href: "/industries/marble-stone" },
-  { name: "Mining & Aggregate", icon: "⛏️", href: "/industries/mining" },
-  { name: "Automotive", icon: "🚗", href: "/industries/automotive" },
-  { name: "Logistics", icon: "📦", href: "/industries/logistics" },
-];
 
 type ProductsPageProps = {
   params: Promise<{ locale: string }>;
@@ -106,7 +98,7 @@ export default async function ProductsPage({ params }: ProductsPageProps) {
             {productCategories.map((category) => (
               <Link
                 key={category.slug}
-                href={`/products/${category.slug}`}
+                href={{ pathname: "/products/[category]", params: { category: category.slug } }}
                 className={styles.card}
               >
                 <div className={styles.cardHeader}>
@@ -123,21 +115,6 @@ export default async function ProductsPage({ params }: ProductsPageProps) {
                 <div className={styles.cardFooter}>
                   <span className={styles.link}>Browse {category.name.split(' ')[0]}</span>
                 </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Industries */}
-      <section className={styles.industrySection}>
-        <div className={styles.container}>
-          <h2 className={styles.sectionTitle}>Shop by Industry</h2>
-          <div className={styles.industryGrid}>
-            {industries.map((ind) => (
-              <Link key={ind.name} href={ind.href} className={styles.industryCard}>
-                <div className={styles.industryIcon}>{ind.icon}</div>
-                <span className={styles.industryTitle}>{ind.name} Solutions</span>
               </Link>
             ))}
           </div>

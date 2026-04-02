@@ -3,10 +3,10 @@ import Link from "next/link";
 import Script from "next/script";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import styles from "./detail.module.css";
-import ProductImageGallery from "@/components/product/ProductImageGallery";
-import Product3DViewer from "@/components/product/Product3DViewer";
 import ProductVisualsWrapper from "@/components/product/ProductVisualsWrapper";
+import RFQModalWrapper from "@/components/product/RFQModalWrapper";
 import { getProductByCategoryAndSlug, getProductsByCategorySlug } from "@/lib/data/public-data";
 import { getRichProductContent } from "@/lib/product-content";
 import { 
@@ -33,6 +33,9 @@ export async function generateMetadata({
     richContent?.shortDescription ??
     "KARPOL Industrial Engineering Solutions & High-Performance Components.";
 
+  const ogImage =
+    product?.images?.[0] ?? richContent?.imageGallery?.[0]?.url ?? null;
+
   return {
     title: `${title} | KARPOL Engineering`,
     description,
@@ -40,7 +43,7 @@ export async function generateMetadata({
       title: `${title} | KARPOL`,
       description,
       type: "website",
-      images: product?.image_url ? [product.image_url] : [],
+      images: ogImage ? [ogImage] : [],
     },
   };
 }
@@ -49,6 +52,7 @@ export default async function ProductDetailPage({
   params,
 }: ProductDetailPageProps) {
   const { category, slug, locale } = await params;
+  const t = await getTranslations("ProductDetail");
   
   // Data Fetching
   const richContent = getRichProductContent(category, slug);
@@ -56,9 +60,7 @@ export default async function ProductDetailPage({
   
   if (!product && !richContent) {
     if (error) console.error("Product fetch error:", error);
-    // If absolutely nothing found, show 404
-    // notFound(); 
-    // Or show a graceful error state in the UI as requested by user previously
+    notFound();
   }
 
   // Derived Data
@@ -81,57 +83,9 @@ export default async function ProductDetailPage({
             })),
           )
         : (richContent?.imageGallery ?? []);
-  
-  // Ensure we have at least one image if available in main product
-  if (rawGallery.length === 0 && product?.image_url) {
-    rawGallery.push({ title: "Main View", url: product.image_url });
-  }
 
   const galleryImages = rawGallery.filter((asset) => isImageUrl(asset.url));
   const model3dUrl = product?.model_3d_url ?? richContent?.modelEmbedUrl;
-
-  // JSON-LD Schema Construction
-  const schemaData = {
-    "@context": "https://schema.org",
-    "@type": "Product",
-    name: pageTitle,
-    description: pageDescription,
-    sku: product?.sku ?? slug,
-    image: galleryImages.map((img) => img.url),
-    brand: { "@type": "Brand", name: "KARPOL" },
-    manufacturer: { 
-      "@type": "Organization", 
-      "name": "KARPOL Industrial Components",
-      "url": "https://karpol.net"
-    },
-    category: category,
-    material: material,
-    color: product?.color,
-    additionalProperty: [
-      {
-        "@type": "PropertyValue",
-        "name": "Hardness",
-        "value": hardness ? `${hardness} ${hardnessUnit}` : undefined
-      },
-      {
-        "@type": "PropertyValue",
-        "name": "3D Model Available",
-        "value": !!model3dUrl
-      }
-    ].filter(p => p.value !== undefined),
-    isSimilarTo: compatibleMachines.map(machine => ({
-      "@type": "Product",
-      "name": `Spare part for ${machine}`,
-      "description": `Compatible industrial component for ${machine} marble processing machinery.`
-    })),
-    offers: {
-      "@type": "Offer",
-      "availability": "https://schema.org/InStock",
-      "price": "0",
-      "priceCurrency": "USD",
-      "url": `https://karpol.net/${locale}/products/${category}/${slug}`
-    }
-  };
 
   // Documents
   const drawingLinks = uniqueByUrl([
@@ -176,7 +130,7 @@ export default async function ProductDetailPage({
     { label: "Hardness", value: hardness ? `${hardness} ${hardnessUnit}` : "Various Available" },
     { label: "Working Temp", value: product?.temperature_min && product?.temperature_max ? `${product.temperature_min}°C to ${product.temperature_max}°C` : "-30°C to +80°C" },
     { label: "Load Capacity", value: "Heavy Duty Industrial" },
-    { label: "Dimensions", value: product?.size_range ?? "See Size Table" },
+    { label: "Dimensions", value: "See Size Table" },
   ];
 
   // Size Table
@@ -207,6 +161,49 @@ export default async function ProductDetailPage({
 
   relatedProducts = relatedProducts.slice(0, 4);
 
+  // JSON-LD Schema Construction
+  const schemaData = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: pageTitle,
+    description: pageDescription,
+    sku: product?.sku ?? slug,
+    image: galleryImages.map((img) => img.url),
+    brand: { "@type": "Brand", name: "KARPOL" },
+    manufacturer: { 
+      "@type": "Organization", 
+      "name": "KARPOL Industrial Components",
+      "url": "https://karpol.net"
+    },
+    category: category,
+    material: material,
+    color: product?.color,
+    additionalProperty: [
+      {
+        "@type": "PropertyValue",
+        "name": "Hardness",
+        "value": hardness ? `${hardness} ${hardnessUnit}` : undefined
+      },
+      {
+        "@type": "PropertyValue",
+        "name": "3D Model Available",
+        "value": !!model3dUrl
+      }
+    ].filter(p => p.value !== undefined),
+    isSimilarTo: compatibleMachines.map(machine => ({
+      "@type": "Product",
+      "name": `Spare part for ${machine}`,
+      "description": `Compatible industrial component for ${machine} marble processing machinery.`
+    })),
+    offers: {
+      "@type": "Offer",
+      "availability": "https://schema.org/InStock",
+      "price": "0",
+      "priceCurrency": "USD",
+      "url": `https://karpol.net/${locale}/products/${category}/${slug}`
+    }
+  };
+
   return (
     <main className={styles.main}>
       {/* SECTION 1: Header */}
@@ -227,14 +224,12 @@ export default async function ProductDetailPage({
               <p className={styles.shortDesc}>{pageDescription}</p>
             </div>
             
-            <div className={styles.headerActions}>
-              <Link href={`/${locale}/contact?subject=Quote Request: ${pageTitle}`} className={styles.primaryBtn}>
-                Request Quote
-              </Link>
-              <Link href={`/${locale}/contact`} className={styles.secondaryBtn}>
-                Contact Engineer
-              </Link>
-            </div>
+            <RFQModalWrapper 
+              productName={pageTitle}
+              sku={product?.sku}
+              contactLink={`/${locale}/contact`}
+              buttonText={t("cta_button")} // Passing translated button text
+            />
           </div>
         </div>
       </header>
@@ -252,7 +247,7 @@ export default async function ProductDetailPage({
 
             {/* SECTION 4: Applications */}
             <div style={{ marginTop: "64px" }}>
-              <h2 className={styles.sectionTitle}>Typical Applications</h2>
+              <h2 className={styles.sectionTitle}>{t("applications")}</h2>
               <div className={styles.applicationsGrid}>
                 {applications.map((app, i) => (
                   <div key={i} className={styles.appCard}>
@@ -266,7 +261,7 @@ export default async function ProductDetailPage({
             {/* Machine Compatibility */}
             {compatibleMachines.length > 0 && (
               <div style={{ marginTop: "48px" }}>
-                <h2 className={styles.sectionTitle}>Machine Compatibility</h2>
+                <h2 className={styles.sectionTitle}>{t("compatibility")}</h2>
                 <div className={styles.machineTagContainer}>
                   {compatibleMachines.map((machine, i) => (
                     <span key={i} className={styles.machineTag}>{machine}</span>
@@ -278,7 +273,7 @@ export default async function ProductDetailPage({
             {/* Size Table if available */}
             {sizeTableRows.length > 0 && (
               <div style={{ marginTop: "48px" }}>
-                <h2 className={styles.sectionTitle}>Standard Sizes</h2>
+                <h2 className={styles.sectionTitle}>{t("sizes")}</h2>
                 <div className={styles.sizeTableContainer}>
                   <table className={styles.sizeTable}>
                     <thead>
@@ -310,7 +305,7 @@ export default async function ProductDetailPage({
           {/* Right Column: Specs & Advantages */}
           <div>
             {/* SECTION 3: Technical Specs */}
-            <h2 className={styles.sectionTitle}>Technical Specifications</h2>
+            <h2 className={styles.sectionTitle}>{t("specs")}</h2>
             <table className={styles.specsTable}>
               <tbody>
                 {specs.map((spec, i) => (
@@ -330,7 +325,7 @@ export default async function ProductDetailPage({
 
             {/* SECTION 5: Engineering Advantages */}
             <div style={{ marginTop: "48px" }}>
-              <h2 className={styles.sectionTitle}>Engineering Advantages</h2>
+              <h2 className={styles.sectionTitle}>{t("advantages")}</h2>
               <div className={styles.advantagesList}>
                 {advantages.map((adv, i) => (
                   <div key={i} className={styles.advantageItem}>
@@ -344,7 +339,7 @@ export default async function ProductDetailPage({
             {/* Engineering Resources (Downloads) */}
             {(drawingLinks.length > 0 || documentLinks.length > 0) && (
               <div className={styles.downloadsPanel}>
-                <h2 className={styles.sectionTitle} style={{ marginBottom: "16px", fontSize: "20px" }}>Engineering Resources</h2>
+                <h2 className={styles.sectionTitle} style={{ marginBottom: "16px", fontSize: "20px" }}>{t("downloads")}</h2>
                 <p style={{ color: "#64748b", fontSize: "14px", marginBottom: "16px" }}>
                   Login required for 3D CAD files.
                 </p>
@@ -373,14 +368,13 @@ export default async function ProductDetailPage({
 
             {/* SECTION 7: CTA Box */}
             <div className={styles.ctaSection}>
-              <h3 className={styles.ctaTitle}>Need a Custom Solution?</h3>
+              <h3 className={styles.ctaTitle}>{t("cta_title")}</h3>
               <p className={styles.ctaText}>
-                We specialize in custom manufacturing for specific industrial requirements. 
-                Our engineering team is ready to assist.
+                {t("cta_text")}
               </p>
               <div className={styles.ctaButtons}>
                 <Link href={`/${locale}/contact`} className={styles.primaryBtn} style={{ background: "white", color: "#0f172a", border: "none" }}>
-                  Get Custom Quote
+                  {t("cta_button")}
                 </Link>
               </div>
             </div>
@@ -390,7 +384,7 @@ export default async function ProductDetailPage({
         {/* SECTION 6: Related Products */}
         {relatedProducts.length > 0 && (
           <div className={styles.relatedSection}>
-            <h2 className={styles.sectionTitle}>Related Products</h2>
+            <h2 className={styles.sectionTitle}>{t("related")}</h2>
             <div className={styles.relatedGrid}>
               {relatedProducts.map((p) => (
                 <Link
@@ -399,9 +393,9 @@ export default async function ProductDetailPage({
                   className={styles.relatedCard}
                 >
                   <div className={styles.relatedImageWrapper}>
-                    {p.image_url ? (
+                    {p.images?.[0] ? (
                       <Image
-                        src={p.image_url}
+                        src={p.images[0]}
                         alt={p.name}
                         fill
                         className={styles.relatedImage}

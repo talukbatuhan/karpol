@@ -2,17 +2,34 @@
   "Navigation": {
     "home": "Anasayfa",
     "products": "Ürünler",
-    "industries": "Endüstriler",
     "services": "Hizmetler",
     "about": "Hakkımızda",
     "contact": "İletişim",
-    "search": "Arama..."
+    "search": "Arama...",
+    "custom manufacturing": "Özel İmalat",
+    "factory & technology": "Fabrika & Teknoloji",
+    "technical knowledge": "Teknik Bilgi",
+    "catalog": "Katalog",
+    "e-catalog": "E-Katalog"
   },
   "Hero": {
-    "title": "Mermer Makineleri İçin Endüstriyel Parçalar",
-    "description": "Dayanıklılık ve hassasiyet için tasarlanmış yüksek performanslı elastomer ve metal bileşenler.",
-    "cta_products": "Ürünleri İncele",
-    "cta_quote": "Teklif İste"
+    "headline": "Hassas Mühendislik. Küresel Çözümler.",
+    "subheadline": "Dünyanın en zorlu makineleri için geliştirilmiş ileri endüstriyel bileşenler ve özel imalat çözümleri.",
+    "primaryBtn": "Ürünleri Keşfet",
+    "secondaryBtn": "Kabiliyetlerimiz",
+    "badge": "KARPOL INDUSTRIAL — EST. 1999",
+    "partnersLabel": "Güvenilir hammadde ortakları",
+    "stats": {
+      "years": "Yıllık Deneyim",
+      "countries": "Hizmet Verilen Ülke",
+      "parts": "Teslim Edilen Parça",
+      "iso": "9001 Sertifikalı"
+    },
+    "scrollLabel": "Aşağı Kaydırın",
+    "trust1": "ISO 9001 Sertifikalı",
+    "trust2": "50+ Ülkeye İhracat",
+    "trust3": "20+ Yıllık Deneyim",
+    "trust4": "Premium Hammadde"
   },
   "Product": {
     "sku": "Stok Kodu",
@@ -22,9 +39,240 @@
     "request_quote": "Teklif İste",
     "download_pdf": "PDF İndir"
   },
+  "ProductDetail": {
+    "specs": "Teknik Özellikler",
+    "applications": "Tipik Uygulamalar",
+    "advantages": "Mühendislik Avantajları",
+    "compatibility": "Makine Uyumluluğu",
+    "downloads": "Mühendislik Kaynakları",
+    "sizes": "Standart Ölçüler",
+    "related": "İlgili Ürünler",
+    "cta_title": "Özel Bir Çözüme mi İhtiyacınız Var?",
+    "cta_text": "Özel endüstriyel gereksinimleriniz için özel üretim yapıyoruz. Mühendislik ekibimiz yardıma hazır.",
+    "cta_button": "Özel Teklif Alın",
+    "contact_engineer": "Mühendise Danışın"
+  },
+  "RFQModal": {
+    "title": "Hızlı Teklif Formu",
+    "fullName": "Ad Soyad",
+    "company": "Firma Adı",
+    "email": "Kurumsal E-posta",
+    "phone": "Telefon / WhatsApp",
+    "quantity": "İhtiyaç Miktarı",
+    "notes": "Teknik Notlar / Gereksinimler",
+    "notesPlaceholder": "Lütfen özel ölçü, sertlik veya makine detaylarını belirtiniz...",
+    "cancel": "İptal",
+    "submit": "Teklif İste",
+    "sending": "Gönderiliyor...",
+    "successTitle": "Talebiniz Alındı",
+    "successMessage": "İlginiz için teşekkür ederiz. Mühendislik ekibimiz talebinizi inceleyip 24 saat içinde dönüş yapacaktır.",
+    "close": "Kapat"
+  },
+  "CustomManufacturing": {
+    "heroTitle": "Özel Mühendislik & İmalat",
+    "heroText": "Teknik çizimden son ürüne. Hammaddeleri yüksek hassasiyetli endüstriyel bileşenlere dönüştürüyoruz.",
+    "processTitle": "İmalat Süreci",
+    "processDesc": "Standartlaştırılmış iş akışımız her aşamada kalite ve hassasiyet sağlar.",
+    "step1": "Çizim Analizi",
+    "step1Desc": "CAD/DWG dosyalarının incelenmesi ve malzeme seçimi.",
+    "step2": "Kalıp & Aparat",
+    "step2Desc": "Hassas kalıpların CNC tezgahlarında işlenmesi.",
+    "step3": "Prototipleme",
+    "step3Desc": "Numune üretimi ve sertlik doğrulama.",
+    "step4": "Seri Üretim",
+    "step4Desc": "Yüksek hacimli imalat ve kalite kontrol.",
+    "capabilitiesTitle": "Üretim Kabiliyetleri",
+    "capabilitiesDesc": "Çeşitli endüstriyel ihtiyaçlar için ileri imalat teknolojileri.",
+    "cap1": "Poliüretan Döküm",
+    "cap1Desc": "Özel sertlik (60-95 Shore A) ve renk seçenekleri.",
+    "cap2": "CNC İşleme",
+    "cap2Desc": "Alüminyum ve mühendislik plastiklerinin hassas işlenmesi.",
+    "cap3": "Kauçuk Kalıplama",
+    "cap3Desc": "NR, NBR, EPDM için kompresyon ve enjeksiyon kalıplama.",
+    "cap4": "Metal Yapıştırma",
+    "cap4Desc": "Kauçuk/PU ile metalin yüksek mukavemetli kimyasal yapışması.",
+    "formTitle": "Projenizi Başlatın",
+    "formDesc": "Detaylı mühendislik teklifi için gereksinimlerinizi ve teknik çizimlerinizi gönderin."
+  },
+  "CustomRFQ": {
+    "fullName": "Ad Soyad",
+    "company": "Firma Adı",
+    "email": "Kurumsal E-posta",
+    "phone": "Telefon / WhatsApp",
+    "material": "Tercih Edilen Malzeme",
+    "hardness": "Sertlik (Shore A/D)",
+    "notes": "Teknik Notlar / Gereksinimler",
+    "notesPlaceholder": "Uygulama detayları, çalışma koşulları (sıcaklık, yük, kimyasal) ve özel toleransları belirtiniz...",
+    "uploadText": "Teknik çizimleri buraya sürükleyin",
+    "uploadSubtext": "PDF, DWG, DXF, STEP (Maks 10MB)",
+    "submit": "Proje Talebi Gönder",
+    "sending": "Yükleniyor...",
+    "successTitle": "Proje Alındı",
+    "successMessage": "Proje dosyalarınız güvenli bir şekilde alındı. Mühendislik ekibimiz çizimleri analiz edip kısa sürede sizinle iletişime geçecektir.",
+    "materials": {
+      "polyurethane": "Poliüretan (PU)",
+      "vulkollan": "Vulkollan®",
+      "rubber": "Kauçuk (NR/NBR/EPDM)",
+      "plastic": "Mühendislik Plastikleri (PE/PA/POM)",
+      "metal": "Alüminyum / Çelik",
+      "other": "Diğer / Emin Değilim"
+    }
+  },
   "Common": {
     "loading": "Yükleniyor...",
     "error": "Bir hata oluştu",
-    "back": "Geri"
+    "back": "Geri",
+    "request_quote": "Teklif İste"
+  },
+  "Home": {
+    "materialsTitle": "Mühendislik Malzemeleri",
+    "materialsSubtitle": "Aşırı dayanıklılık için yüksek performanslı polimerler ve metaller.",
+    "materialsDescription": "Zorlu endüstriyel çalışma koşulları için tasarlanmış yüksek performanslı polimer ve metal bileşenler.",
+    "trustStrip": {
+      "item1Sub": "Global Standart",
+      "item2Sub": "Dünya Çapında Lojistik",
+      "item3Sub": "Üretim Uzmanı",
+      "item4Sub": "Covestro & Lanxess"
+    },
+    "why": {
+      "eyebrow": "Neden Karpol?",
+      "title": "Performans için\nMühendislik",
+      "description": "Onlarca yıllık malzeme bilimi deneyimini, ileri üretim kabiliyetleriyle birleştirerek daha uzun ömürlü ve daha güvenilir bileşenler üretiyoruz.",
+      "visual": {
+        "qualityRate": "Kalite Geçiş Oranı",
+        "quoteTime": "Ortalama Teklif Süresi"
+      },
+      "cards": {
+        "materialsTitle": "Premium Malzemeler",
+        "materialsDesc": "Sadece Covestro ve Lanxess gibi güvenilir global tedarikçilerden yüksek kaliteli hammaddeler kullanıyoruz.",
+        "engineeringTitle": "Özel Mühendislik",
+        "engineeringDesc": "Prototipten seri üretime kadar kalıp ve parçalarınızı tam teknik şartnamenize göre tasarlıyoruz.",
+        "logisticsTitle": "Global Lojistik",
+        "logisticsDesc": "50+ ülkeye hızlı ve güvenilir sevkiyat, eksiksiz ihracat dokümantasyonu ve anlık takip ile.",
+        "speedTitle": "Hızlı Termin",
+        "speedDesc": "Optimize edilmiş üretim süreçleri sayesinde karmaşık özel işlerde bile zamanında teslimat sağlıyoruz."
+      },
+      "learnMoreCta": "Fabrikamızı Keşfedin"
+    },
+    "cta": {
+      "eyebrow": "Bugün Başlayın",
+      "title": "Makinelerinizi birlikte\noptimize edelim mi?",
+      "description": "Standart ürünleriniz veya özel parçalarınız için rekabetçi teklif alın. Mühendislik ekibimiz 48 saat içinde dönüş yapar.",
+      "primaryCta": "Teklif İste",
+      "secondaryCta": "Ürünleri İncele"
+    },
+    "products": {
+      "polyurethane": {
+        "title": "Poliüretan",
+        "desc": "Yüksek aşınma direnci için özel sertlikte döküm."
+      },
+      "vulkollan": {
+        "title": "Vulkollan®",
+        "desc": "Aşırı yük taşıma için orijinal lisanslı malzeme."
+      },
+      "rubber": {
+        "title": "Endüstriyel Kauçuk",
+        "desc": "Titreşim izolasyonu için NR, NBR, EPDM kalıplama."
+      },
+      "silicone": {
+        "title": "Silikon",
+        "desc": "Yüksek sıcaklığa dayanıklı contalar ve silindirler."
+      },
+      "cnc": {
+        "title": "CNC İşleme",
+        "desc": "Hassas alüminyum ve çelik bileşenler."
+      },
+      "custom": {
+        "title": "Özel İmalat",
+        "desc": "Teknik çizimlerinizden size özel çözümler."
+      }
+    }
+  },
+  "About": {
+    "metadata": {
+      "title": "KARPOL Hakkında | 15 Yıllık Mühendislik Mükemmelliği",
+      "description": "KARPOL’ün Denizli, Türkiye’deki üretim tesisinden global endüstriyel makineler için poliüretan, kauçuk ve mühendislik plastiği çözümlerini nasıl geliştirdiğini keşfedin."
+    },
+    "hero": {
+      "kicker": "KARPOL INDUSTRIAL",
+      "title": "15 Yıllık Mühendislik Mükemmelliği",
+      "subtitle": "Denizli’deki ileri üretim tesisimizden dünyanın en zorlu endüstrilerine; arıza kabul etmeyen bileşenler tasarlıyor ve üretiyoruz.",
+      "primaryCta": "Teklif İste",
+      "secondaryCta": "Ürünleri Keşfet"
+    },
+    "trust": {
+      "yearsTitle": "15+ Yıl Deneyim",
+      "yearsMeta": "Endüstriyel üretim odağı",
+      "locationTitle": "Denizli, TR",
+      "locationMeta": "Merkezefendi sanayi bölgesi",
+      "exportTitle": "Global İhracat Ağı",
+      "exportMeta": "Uluslararası alıcıların tercihi"
+    },
+    "story": {
+      "eyebrow": "Tesis & Köken",
+      "title": "Endüstriyel Güvenilirlik İçin Kuruldu",
+      "p1": "KARPOL, Denizli Merkezefendi’de Zorlu Sanayi Sitesi’nde modern bir üretim tesisi işletir; burada geleneksel endüstriyel disiplin, ileri CNC işleme ve polimer döküm teknolojileriyle birleşir.",
+      "p2": "Başta mermer, madencilik ve otomasyon olmak üzere kritik uygulamalar için poliüretan, kauçuk ve mühendislik plastiği çözümleri üretir; tutarlı performans, tekrarlanabilirlik ve uzun servis ömrü sağlar.",
+      "facilityLabel": "Üretim Tesisi",
+      "facilityValue": "Yüksek toleranslı ve tekrarlanabilir üretim için tasarlanmış modern tesis",
+      "techLabel": "Temel Teknolojiler",
+      "techValue": "CNC işleme, polimer döküm ve mühendislik yapıştırma süreçleri",
+      "qualityLabel": "Kalite Yaklaşımı",
+      "qualityValue": "Proses disiplini, giriş kontrolü ve her aşamada final kontrol",
+      "addressLabel": "Fabrika Lokasyonu",
+      "addressValue": "Zorlu Sanayi Sitesi, Bozburun Mahallesi, Merkezefendi / Denizli, Türkiye",
+      "imageAlt": "fabrika dış cephe"
+    },
+    "values": {
+      "eyebrow": "İlkemiz",
+      "title": "B2B Riskini Azaltan Değerler",
+      "lead": "Güven; öngörülebilirlikle kazanılır: malzeme, tolerans, termin ve dokümantasyon endüstriyel satın alma standartlarına uygun olmalıdır.",
+      "cards": {
+        "quality": {
+          "title": "Tavizsiz Kalite",
+          "text": "Stabil hammadde, kontrollü süreçler ve izlenebilir çıktı ile tekrarlanabilir performans."
+        },
+        "material": {
+          "title": "Malzeme Bilimi Uzmanlığı",
+          "text": "Aşınma, yük ve kimyasal dayanım için optimize edilmiş poliüretan, kauçuk ve mühendislik plastikleri."
+        },
+        "prototype": {
+          "title": "Hızlı Prototip & Özel Üretim",
+          "text": "Teknik çizimden test edilmiş parçaya hızlı iterasyon; makinenize ve şartlarınıza göre üretim."
+        },
+        "delivery": {
+          "title": "Güvenilir Teslimat & Destek",
+          "text": "İhracata hazır paketleme, net iletişim ve sorunsuz tedarik için B2B dokümantasyon."
+        }
+      }
+    },
+    "cta": {
+      "title": "Bir Sonraki Parçanızı Birlikte Tasarlayalım",
+      "text": "Çiziminizi, uygulama detaylarını ve hedef performansı paylaşın. Ekibimiz uygun malzeme ve üretim yöntemini önerir.",
+      "primaryCta": "Satışa Ulaşın",
+      "secondaryCta": "Kataloğu İnceleyin"
+    }
+  }
+  ,
+  "Catalog": {
+    "title": "E-Katalog",
+    "toolbar": {
+      "page": "Sayfa",
+      "zoom_in": "Yakınlaştır",
+      "zoom_out": "Uzaklaştır",
+      "thumbnails": "Thumbnails",
+      "fullscreen": "Tam Ekran",
+      "exit_fullscreen": "Tam Ekranı Kapat",
+      "go_to": "Sayfaya Git",
+      "previous": "Önceki",
+      "next": "Sonraki",
+      "share": "Paylaş",
+      "download_page": "Sayfayı İndir",
+      "copy_link": "Bağlantıyı Kopyala",
+      "copied": "Kopyalandı"
+    },
+    "loading": "Katalog yükleniyor…",
+    "error": "Katalog yüklenemedi. Lütfen daha sonra tekrar deneyin.",
+    "missing_image": "Bazı sayfalar görüntülenemiyor."
   }
 }

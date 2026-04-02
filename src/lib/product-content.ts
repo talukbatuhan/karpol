@@ -221,6 +221,38 @@ const contentMap: Record<string, RichProductContent> = {
       "Pedrini Block Cutter"
     ]
   },
+  "silicone-components:high-temp-seal": {
+    name: "High-Temp Silicone Seal",
+    slug: "high-temp-seal",
+    category: "silicone-components",
+    shortDescription: "Heat resistant silicone seal for industrial ovens and machinery.",
+    intro: "Designed to withstand extreme temperatures up to 250°C, ensuring leak-proof performance in demanding environments.",
+    modelEmbedUrl: null,
+    imageGallery: [
+      { title: "Silicone Seal Ring", url: "https://placehold.co/800x600/e2e8f0/1e293b?text=Silicone+Seal" },
+    ],
+    technicalDrawings: [],
+    documents: [],
+    specs: [
+      { label: "Material", value: "VMQ Silicone" },
+      { label: "Hardness", value: "70 Shore A" },
+      { label: "Temp Range", value: "-60°C / +250°C" },
+    ],
+    sizeTable: [
+      { size: "S-100", outerDiameter: "100 mm", innerDiameter: "90 mm", width: "5 mm" },
+    ],
+    highlights: [
+      "Excellent heat resistance",
+      "Food grade available (FDA)",
+      "UV and ozone resistant"
+    ],
+    applications: [
+      "Industrial Ovens",
+      "Food Processing Machinery",
+      "Chemical Tanks"
+    ],
+    compatibleMachines: []
+  },
 };
 
 export function getRichProductContent(

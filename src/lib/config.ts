@@ -5,6 +5,7 @@
 
 export const siteConfig = {
   name: 'KARPOL',
+  legalName: 'KARPOL Poliüretan Ltd. Şti.',
   title: 'KARPOL — Precision Engineered Industrial Components',
   description: 'Global manufacturer of polyurethane, rubber, silicone, Viton, PTFE, and aluminum industrial components for marble processing, mining, construction, and automation industries.',
   url: process.env.NEXT_PUBLIC_SITE_URL || 'https://karpol.net',
@@ -12,11 +13,11 @@ export const siteConfig = {
   
   contact: {
     email: 'info@karpol.net',
-    phone: '+90 XXX XXX XX XX',
+    phone: '+90 542 665 25 60',
     address: {
-      street: '',
-      city: '',
-      country: 'Turkey',
+      street: 'Bozburun Mahallesi, 7151 Sokak No:13/1',
+      city: 'Merkezefendi / Denizli',
+      country: 'Türkiye',
     },
   },
 
@@ -36,39 +37,26 @@ export const siteConfig = {
 
 export const navigation = {
   main: [
-    { label: 'Home', href: '/' },
-    { label: 'About', href: '/about' },
+    { label: 'Home', key: 'home', href: '/' },
+    { label: 'About', key: 'about', href: '/about' },
     { 
-      label: 'Products', 
+      label: 'Products',
+      key: 'products',
       href: '/products',
       children: [
-        { label: 'Polyurethane Products', href: '/products/polyurethane' },
-        { label: 'Vulkolan Products', href: '/products/vulkolan' },
-        { label: 'Rubber Products', href: '/products/rubber' },
-        { label: 'Silicone Products', href: '/products/silicone' },
-        { label: 'Viton Products', href: '/products/viton' },
-        { label: 'PTFE / Teflon Products', href: '/products/ptfe-teflon' },
-        { label: 'Aluminum CNC Parts', href: '/products/aluminum-cnc' },
-        { label: 'Engineering Plastics', href: '/products/engineering-plastics' },
+        { label: 'Polyurethane Components', href: '/products/polyurethane-components' },
+        { label: 'Vulkollan Components', href: '/products/vulkollan-components' },
+        { label: 'Rubber Components', href: '/products/rubber-components' },
+        { label: 'Silicone Components', href: '/products/silicone-components' },
+        { label: 'Technical Plastics', href: '/products/technical-plastics' },
+        { label: 'Aluminum Machined Parts', href: '/products/aluminum-machined-parts' },
       ],
     },
-    { 
-      label: 'Industries', 
-      href: '/industries',
-      children: [
-        { label: 'Marble & Stone Processing', href: '/industries/marble-stone' },
-        { label: 'Mining', href: '/industries/mining' },
-        { label: 'Construction Machinery', href: '/industries/construction' },
-        { label: 'Automation Systems', href: '/industries/automation' },
-        { label: 'Chemical Industry', href: '/industries/chemical' },
-        { label: 'Food Industry', href: '/industries/food' },
-      ],
-    },
-    { label: 'Custom Manufacturing', href: '/custom-manufacturing' },
-    { label: 'Factory & Technology', href: '/factory-technology' },
-    { label: 'Technical Knowledge', href: '/knowledge' },
-    { label: 'Catalog', href: '/catalog' },
-    { label: 'Contact', href: '/contact' },
+    { label: 'Custom Manufacturing', key: 'custom manufacturing', href: '/custom-manufacturing' },
+    { label: 'Factory & Technology', key: 'factory & technology', href: '/factory-technology' },
+    { label: 'Technical Knowledge', key: 'technical knowledge', href: '/knowledge' },
+    { label: 'E-Katalog', key: 'e-catalog', href: '/catalog' },
+    { label: 'Contact', key: 'contact', href: '/contact' },
   ],
 } as const
 
@@ -76,6 +64,7 @@ export const productCategories = [
   { slug: 'polyurethane-components', name: 'Polyurethane Components', prefix: 'PU', icon: '🔶' },
   { slug: 'vulkollan-components', name: 'Vulkollan Components', prefix: 'VK', icon: '⚙️' },
   { slug: 'rubber-components', name: 'Rubber Components', prefix: 'RB', icon: '⬛' },
+  { slug: 'silicone-components', name: 'Silicone Components', prefix: 'SI', icon: '🔹' },
   { slug: 'technical-plastics', name: 'Technical Plastics', prefix: 'TP', icon: '🔷' },
   { slug: 'aluminum-machined-parts', name: 'Aluminum Machined Parts', prefix: 'AL', icon: '🔩' },
   { slug: 'chrome-plated-components', name: 'Chrome Plated Components', prefix: 'CR', icon: '✨' },

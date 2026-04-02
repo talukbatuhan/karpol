@@ -2,53 +2,79 @@
 
 import { useLocale } from "next-intl";
 import { usePathname, useRouter } from "@/i18n/navigation";
-import { useState, useTransition } from "react";
-import styles from "./Header.module.css"; // Reuse existing styles
+import { useTransition, useState, useRef, useEffect } from "react";
+import { Globe, ChevronDown } from "lucide-react";
+import styles from "./Header.module.css";
 
 export default function LanguageSwitcher() {
   const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
   const [isPending, startTransition] = useTransition();
-  const [open, setOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const onSelectChange = (nextLocale: "en" | "tr") => {
-    setOpen(false);
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const switchLocale = (nextLocale: "en" | "tr") => {
     startTransition(() => {
+      // @ts-expect-error - next-intl types are too strict for generic pathname
       router.replace(pathname, { locale: nextLocale });
+      setIsOpen(false);
     });
   };
 
   return (
-    <div className={styles.dropdown} style={{ marginLeft: "16px", borderLeft: "1px solid #e2e8f0", paddingLeft: "16px" }}>
+    <div className={`${styles.dropdown} ${isOpen ? styles.dropdownOpen : ""}`} ref={dropdownRef}>
       <button
-        className={styles.dropdownTrigger}
-        onClick={() => setOpen((prev) => !prev)}
-        disabled={isPending}
+        onClick={() => setIsOpen(!isOpen)}
+        className={`${styles.iconBtn} ${isOpen ? styles.active : ""}`}
         aria-label="Select Language"
+        aria-expanded={isOpen}
       >
-        {locale === "tr" ? "🇹🇷 TR" : "🇺🇸 EN"}
-        <span style={{ fontSize: "10px", marginLeft: "2px" }}>▼</span>
+        <Globe size={18} strokeWidth={2} />
+        <span style={{ fontSize: '0.75rem', fontWeight: 600, marginLeft: 2, marginRight: 2 }}>
+          {locale.toUpperCase()}
+        </span>
+        <ChevronDown
+          size={13}
+          strokeWidth={2.5}
+          className={`${styles.chevron} ${isOpen ? styles.chevronOpen : ""}`}
+        />
       </button>
-      
-      {open && (
-        <div className={styles.dropdownMenu} style={{ minWidth: "120px", right: 0, left: "auto" }}>
+
+      <div className={styles.dropdownMenuRight}>
+        <div className={styles.dropdownInner}>
           <button
             className={styles.dropdownItem}
-            onClick={() => onSelectChange("en")}
-            style={{ width: "100%", textAlign: "left", background: "none", border: "none", cursor: "pointer" }}
+            onClick={() => switchLocale("en")}
+            disabled={isPending}
+            style={{ width: "100%", border: "none", background: locale === "en" ? "rgba(255, 255, 255, 0.05)" : "transparent", cursor: "pointer", fontFamily: "inherit" }}
           >
-            🇺🇸 English
+            <span className={styles.dropdownItemText} style={{ color: locale === "en" ? "var(--h-accent)" : "inherit", textAlign: "left" }}>
+              English (EN)
+            </span>
           </button>
           <button
             className={styles.dropdownItem}
-            onClick={() => onSelectChange("tr")}
-            style={{ width: "100%", textAlign: "left", background: "none", border: "none", cursor: "pointer" }}
+            onClick={() => switchLocale("tr")}
+            disabled={isPending}
+            style={{ width: "100%", border: "none", background: locale === "tr" ? "rgba(255, 255, 255, 0.05)" : "transparent", cursor: "pointer", fontFamily: "inherit" }}
           >
-            🇹🇷 Türkçe
+            <span className={styles.dropdownItemText} style={{ color: locale === "tr" ? "var(--h-accent)" : "inherit", textAlign: "left" }}>
+              Türkçe (TR)
+            </span>
           </button>
         </div>
-      )}
+      </div>
     </div>
   );
 }

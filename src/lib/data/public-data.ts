@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase-server";
 import { productCategories as staticCategories } from "@/lib/config";
 import { getRichProductsByCategory, getRichProductContent } from "@/lib/product-content";
-import type { Industry, Product, ProductCategory } from "@/types/database";
+import type { Product, ProductCategory } from "@/types/database";
 
 type DataResponse<T> = {
   data: T[];
@@ -27,24 +27,6 @@ export async function getProductCategories(): Promise<DataResponse<ProductCatego
     }
 
     return { data: (data ?? []) as ProductCategory[], error: null };
-  } catch {
-    return { data: [], error: "Supabase bağlantısı kurulamadı." };
-  }
-}
-
-export async function getIndustries(): Promise<DataResponse<Industry>> {
-  try {
-    const supabase = await createClient();
-    const { data, error } = await supabase
-      .from("industries")
-      .select("*")
-      .order("sort_order", { ascending: true });
-
-    if (error) {
-      return { data: [], error: error.message };
-    }
-
-    return { data: (data ?? []) as Industry[], error: null };
   } catch {
     return { data: [], error: "Supabase bağlantısı kurulamadı." };
   }
