@@ -1,336 +1,206 @@
+// src/components/catalog/CatalogViewer.tsx
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import styles from "./CatalogViewer.module.css";
-import CatalogToolbar from "./CatalogToolbar";
-import CatalogThumbnails from "./CatalogThumbnails";
 import type { CatalogManifest, CatalogPageAsset } from "@/lib/data/catalog-storage";
-import type { PointerEvent } from "react";
+import styles from "./CatalogViewer.module.css";
 
 type Props = {
   catalog: CatalogManifest;
-  initialPageIndex?: number; // 0-based
+  initialPageIndex?: number;
 };
 
-const ZOOM_MIN = 1;
-const ZOOM_MAX = 3;
-const ZOOM_STEP = 0.25;
-
-export default function CatalogViewer({
-  catalog,
-  initialPageIndex = 0,
-}: Props) {
+export default function CatalogViewer({ catalog, initialPageIndex = 0 }: Props) {
   const t = useTranslations("Catalog");
   const pages = catalog.pages;
   const totalPages = catalog.totalPages;
 
-  const [pageIndex, setPageIndex] = useState<number>(
-    Math.max(0, Math.min(totalPages - 1, initialPageIndex)),
-  );
-  const [direction, setDirection] = useState<1 | -1>(1);
+  const bookRef = useRef<any>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [pageFlipLoaded, setPageFlipLoaded] = useState(false);
+  const [currentPage, setCurrentPage] = useState(initialPageIndex);
+  const [isMobile, setIsMobile] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
-  const [zoom, setZoom] = useState<number>(1);
-  const [pan, setPan] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
-  const [thumbsOpen, setThumbsOpen] = useState<boolean>(false);
-  const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
-  const [copied, setCopied] = useState<boolean>(false);
-
-  const [imageError, setImageError] = useState<boolean>(false);
-  const stageRef = useRef<HTMLDivElement | null>(null);
-
-  const currentPage: CatalogPageAsset | null = pages[pageIndex] ?? null;
-
-  const isShareSupported = useMemo(() => {
-    if (typeof navigator === "undefined") return false;
-    const hasShare = typeof (navigator as any).share === "function";
-    const hasClipboard = typeof (navigator as any).clipboard?.writeText === "function";
-    return hasShare || hasClipboard;
+  // Detect mobile
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
   }, []);
 
-  const goToIndex = useCallback(
-    (idx: number) => {
-      const safe = Math.max(0, Math.min(totalPages - 1, idx));
-      if (safe === pageIndex) return;
-      setDirection(safe > pageIndex ? 1 : -1);
-      setPageIndex(safe);
-      setPan({ x: 0, y: 0 });
-      setZoom(1);
-      setImageError(false);
-    },
-    [pageIndex, totalPages],
-  );
-
-  const onPrev = useCallback(() => goToIndex(pageIndex - 1), [goToIndex, pageIndex]);
-  const onNext = useCallback(() => goToIndex(pageIndex + 1), [goToIndex, pageIndex]);
-
-  const onZoomIn = useCallback(() => {
-    setZoom((z) => Math.min(ZOOM_MAX, Math.round((z + ZOOM_STEP) * 100) / 100));
-    setPan({ x: 0, y: 0 });
-    setImageError(false);
-  }, []);
-
-  const onZoomOut = useCallback(() => {
-    setZoom((z) => Math.max(ZOOM_MIN, Math.round((z - ZOOM_STEP) * 100) / 100));
-    setPan({ x: 0, y: 0 });
-    setImageError(false);
-  }, []);
-
-  const toggleFullscreen = useCallback(async () => {
-    const el = stageRef.current;
-    if (!el) return;
-
-    try {
-      if (!document.fullscreenElement) {
-        await el.requestFullscreen();
-      } else {
-        await document.exitFullscreen();
-      }
-    } catch {
-      // Ignore if browser blocks fullscreen.
-    }
-  }, []);
-
+  // Fullscreen listener
   useEffect(() => {
     const handler = () => setIsFullscreen(Boolean(document.fullscreenElement));
     document.addEventListener("fullscreenchange", handler);
     return () => document.removeEventListener("fullscreenchange", handler);
   }, []);
 
-  // Keyboard navigation.
+  // Initialize PageFlip
   useEffect(() => {
-    const onKeyDown = (e: KeyboardEvent) => {
-      // Avoid interfering with typing into inputs.
-      const target = e.target as HTMLElement | null;
-      if (target && (target.tagName === "INPUT" || target.tagName === "TEXTAREA")) return;
+    if (!containerRef.current || pages.length === 0) return;
 
+    let pf: any;
+
+    import("page-flip").then(({ PageFlip }) => {
+      const el = containerRef.current!;
+      // Remove old instance if any
+      el.innerHTML = "";
+
+      const isDouble = !isMobile;
+      const w = isDouble ? Math.min(el.clientWidth / 2, 480) : Math.min(el.clientWidth, 520);
+      const h = w * (297 / 210); // A4 portrait ratio
+
+      pf = new PageFlip(el, {
+        width: w,
+        height: h,
+        size: "fixed",
+        minWidth: isDouble ? 200 : 140,
+        minHeight: isDouble ? 283 : 198,
+        maxWidth: isDouble ? 480 : 520,
+        maxHeight: isDouble ? 679 : 736,
+        drawShadow: true,
+        flippingTime: 700,
+        usePortrait: !isDouble,
+        startZIndex: 5,
+        autoSize: true,
+        showCover: true,
+        mobileScrollSupport: false,
+        clickEventForward: true,
+        useMouseEvents: true,
+        swipeDistance: 30,
+      });
+
+      // Build page elements
+      const pageEls: HTMLElement[] = pages.map((page, idx) => {
+        const div = document.createElement("div");
+        div.className = styles.flipPage;
+
+        if (page.url) {
+          const img = document.createElement("img");
+          img.src = page.url;
+          img.alt = `Sayfa ${page.pageNumber}`;
+          img.className = styles.flipPageImg;
+          img.loading = idx < 4 ? "eager" : "lazy";
+          div.appendChild(img);
+        } else {
+          div.innerHTML = `<div class="${styles.flipPageMissing}"><span>${page.pageNumber}</span></div>`;
+        }
+
+        return div;
+      });
+
+      pf.loadFromHTML(pageEls);
+
+      pf.on("flip", (e: any) => {
+        setCurrentPage(e.data);
+      });
+
+      pf.turnToPage(initialPageIndex);
+      bookRef.current = pf;
+      setPageFlipLoaded(true);
+    });
+
+    return () => {
+      if (pf) {
+        try { pf.destroy?.(); } catch {}
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isMobile, pages]);
+
+  const onPrev = useCallback(() => bookRef.current?.flipPrev("bottom"), []);
+  const onNext = useCallback(() => bookRef.current?.flipNext("bottom"), []);
+
+  const toggleFullscreen = useCallback(async () => {
+    const el = containerRef.current?.parentElement;
+    if (!el) return;
+    try {
+      if (!document.fullscreenElement) await el.requestFullscreen();
+      else await document.exitFullscreen();
+    } catch {}
+  }, []);
+
+  // Keyboard
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
       if (e.key === "ArrowLeft") onPrev();
       if (e.key === "ArrowRight") onNext();
-      if (e.key === "+" || e.key === "=") onZoomIn();
-      if (e.key === "-" || e.key === "_") onZoomOut();
-      if (e.key === "Escape" && thumbsOpen) setThumbsOpen(false);
     };
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [onNext, onPrev, onZoomIn, onZoomOut, thumbsOpen]);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onPrev, onNext]);
 
-  // Preload next/prev to feel instant.
-  useEffect(() => {
-    const preload = (idx: number) => {
-      const url = pages[idx]?.url;
-      if (!url) return;
-      const img = new Image();
-      img.decoding = "async";
-      img.src = url;
-    };
-    preload(pageIndex + 1);
-    preload(pageIndex - 1);
-  }, [pageIndex, pages]);
-
-  const onShare = useCallback(async () => {
-    const url = window.location.href;
-    try {
-      const res = (navigator as any).share;
-      if (typeof res === "function") {
-        await res.call(navigator, { title: t("title"), url });
-        return;
-      }
-    } catch {
-      // fallback below
-    }
-
-    try {
-      await navigator.clipboard.writeText(url);
-      setCopied(true);
-      window.setTimeout(() => setCopied(false), 1200);
-    } catch {
-      // Ignore; UI will remain.
-    }
-  }, [t]);
-
-  const onDownloadPage = useCallback(() => {
-    const url = currentPage?.url;
-    if (!url) return;
-
-    // Simple "download" strategy: open in new tab (browser handles download policy).
-    const a = document.createElement("a");
-    a.href = url;
-    a.target = "_blank";
-    a.rel = "noopener noreferrer";
-    a.click();
-  }, [currentPage]);
-
-  // Swipe / pan: swipe when zoom === 1, drag-to-pan when zoom > 1.
-  const gestureRef = useRef<{
-    mode: "none" | "swipe" | "pan";
-    startX: number;
-    startY: number;
-    startPanX: number;
-    startPanY: number;
-  }>({
-    mode: "none",
-    startX: 0,
-    startY: 0,
-    startPanX: 0,
-    startPanY: 0,
-  });
-
-  const onPointerDown = (e: PointerEvent) => {
-    if (!stageRef.current) return;
-    (e.currentTarget as HTMLDivElement).setPointerCapture?.(e.pointerId);
-
-    const isPan = zoom > 1.01;
-    gestureRef.current.mode = isPan ? "pan" : "swipe";
-    gestureRef.current.startX = e.clientX;
-    gestureRef.current.startY = e.clientY;
-    gestureRef.current.startPanX = pan.x;
-    gestureRef.current.startPanY = pan.y;
-    setImageError(false);
-  };
-
-  const onPointerMove = (e: PointerEvent) => {
-    if (gestureRef.current.mode !== "pan") return;
-    const dx = e.clientX - gestureRef.current.startX;
-    const dy = e.clientY - gestureRef.current.startY;
-    setPan({
-      x: gestureRef.current.startPanX + dx,
-      y: gestureRef.current.startPanY + dy,
-    });
-  };
-
-  const onPointerUp = (e: PointerEvent) => {
-    const mode = gestureRef.current.mode;
-    gestureRef.current.mode = "none";
-
-    if (mode !== "swipe") return;
-    const dx = e.clientX - gestureRef.current.startX;
-    const dy = e.clientY - gestureRef.current.startY;
-    const absX = Math.abs(dx);
-    const absY = Math.abs(dy);
-
-    // Swipe threshold: avoid accidental moves.
-    if (absX < 60 || absX < absY) return;
-    if (dx < 0) onNext();
-    else onPrev();
-  };
-
-  const pageVariants = useMemo(() => {
-    return {
-      initial: (custom: 1 | -1) => ({
-        opacity: 0,
-        x: custom * 70,
-        rotateY: custom * -10,
-      }),
-      animate: { opacity: 1, x: 0, rotateY: 0 },
-      exit: (custom: 1 | -1) => ({
-        opacity: 0,
-        x: custom * -70,
-        rotateY: custom * 10,
-      }),
-    };
-  }, []);
+  const displayPage = isMobile ? currentPage + 1 : Math.floor(currentPage / 2) * 2 + 1;
 
   if (!pages.length) {
     return (
       <div className={styles.shell}>
         <div className={styles.empty}>
-          <div className={styles.emptyTitle}>{t("loading")}</div>
-          <div className={styles.emptySub}>{t("error")}</div>
+          <p className={styles.emptyTitle}>{t("loading")}</p>
+          <p className={styles.emptySub}>{t("error")}</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className={styles.shell} aria-label="E-catalog viewer">
-      <div className={styles.viewerOuter}>
-        <CatalogThumbnails
-          pages={pages}
-          currentIndex={pageIndex}
-          onSelect={(idx) => goToIndex(idx)}
-          thumbsOpen={thumbsOpen}
-        />
+    <div className={styles.shell}>
+      {/* Toolbar */}
+      <div className={styles.toolbar}>
+        <button className={styles.toolBtn} onClick={onPrev} disabled={currentPage === 0} aria-label="Önceki sayfa">
+          ‹
+        </button>
 
-        <div
-          className={styles.stageWrap}
-          style={{ paddingTop: thumbsOpen ? 6 : 6 }}
-        >
-          <div className={styles.stageFrame}>
-            <CatalogToolbar
-              pageIndex={pageIndex}
-              totalPages={totalPages}
-              zoom={zoom}
-              thumbsOpen={thumbsOpen}
-              fullscreen={isFullscreen}
-              onPrev={onPrev}
-              onNext={onNext}
-              onToggleThumbs={() => setThumbsOpen((v) => !v)}
-              onToggleFullscreen={toggleFullscreen}
-              onZoomIn={onZoomIn}
-              onZoomOut={onZoomOut}
-              onGoToPage={(n) => goToIndex(n - 1)}
-              onShare={onShare}
-              onDownloadPage={onDownloadPage}
-              isShareSupported={isShareSupported}
-              copied={copied}
-            />
+        <span className={styles.pageInfo}>
+          {displayPage} / {totalPages}
+        </span>
 
-            <div
-              ref={stageRef}
-              className={styles.stage}
-              onPointerDown={onPointerDown}
-              onPointerMove={onPointerMove}
-              onPointerUp={onPointerUp}
-              onDoubleClick={() => {
-                setZoom(1);
-                setPan({ x: 0, y: 0 });
-                setImageError(false);
-              }}
-              role="application"
-              aria-label="Catalog page stage"
-            >
-              <AnimatePresence mode="wait" initial={false} custom={direction}>
-                <motion.div
-                  key={pageIndex}
-                  className={styles.pageMotion}
-                  custom={direction}
-                  variants={pageVariants}
-                  initial="initial"
-                  animate="animate"
-                  exit="exit"
-                  style={{ transformStyle: "preserve-3d" }}
-                >
-                  <div className={styles.pageViewport}>
-                    {currentPage?.url && !imageError ? (
-                      <img
-                        src={currentPage.url}
-                        alt={`Catalog page ${currentPage.pageNumber}`}
-                        className={styles.pageImage}
-                        draggable={false}
-                        onError={() => setImageError(true)}
-                        style={{
-                          transform: `translate3d(${pan.x}px, ${pan.y}px, 0) scale(${zoom})`,
-                        }}
-                      />
-                    ) : (
-                      <div className={styles.missingState}>
-                        <div className={styles.missingTitle}>
-                          {t("missing_image")}
-                        </div>
-                        <div className={styles.missingSub}>
-                          {currentPage ? `#${currentPage.pageNumber}` : ""}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </motion.div>
-              </AnimatePresence>
-            </div>
+        <button className={styles.toolBtn} onClick={onNext} disabled={currentPage >= totalPages - 1} aria-label="Sonraki sayfa">
+          ›
+        </button>
+
+        <button className={styles.toolBtnIcon} onClick={toggleFullscreen} aria-label="Tam ekran">
+          {isFullscreen ? (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/></svg>
+          ) : (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+          )}
+        </button>
+      </div>
+
+      {/* Book Stage */}
+      <div className={styles.bookStage}>
+        {!pageFlipLoaded && (
+          <div className={styles.loadingOverlay}>
+            <div className={styles.spinner} />
+            <p>Katalog yükleniyor…</p>
           </div>
+        )}
+        <div ref={containerRef} className={styles.bookContainer} />
+      </div>
+
+      {/* Page strip */}
+      <div className={styles.pageStrip}>
+        <div className={styles.pageStripInner}>
+          {pages.map((p, idx) => (
+            <button
+              key={idx}
+              className={`${styles.stripBtn} ${idx === currentPage ? styles.stripBtnActive : ""}`}
+              onClick={() => { bookRef.current?.turnToPage(idx); setCurrentPage(idx); }}
+              aria-label={`${p.pageNumber}. sayfaya git`}
+            >
+              {p.thumbUrl || p.url ? (
+                <img src={p.thumbUrl || p.url || ""} alt="" className={styles.stripImg} loading="lazy" />
+              ) : (
+                <span className={styles.stripNum}>{p.pageNumber}</span>
+              )}
+            </button>
+          ))}
         </div>
       </div>
     </div>
   );
 }
-
