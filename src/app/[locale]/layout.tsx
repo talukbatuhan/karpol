@@ -6,6 +6,7 @@ import Footer from "@/components/layout/Footer";
 import Header from "@/components/layout/Header";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import { siteConfig } from "@/lib/config";
+import { isRtlLocale } from "@/lib/i18n-helpers";
 
 export const metadata: Metadata = {
   title: {
@@ -17,10 +18,10 @@ export const metadata: Metadata = {
 };
 
 export function generateStaticParams() {
-  return [{ locale: "en" }, { locale: "tr" }];
+  return [{ locale: "en" }, { locale: "tr" }, { locale: "de" }, { locale: "ar" }];
 }
 
-export default async function RootLayout({
+export default async function LocaleLayout({
   children,
   params,
 }: Readonly<{
@@ -30,6 +31,7 @@ export default async function RootLayout({
   const { locale } = await params;
   setRequestLocale(locale);
   const messages = await getMessages();
+  const dir = isRtlLocale(locale) ? "rtl" : "ltr";
 
   const orgSchema = {
     "@context": "https://schema.org",
@@ -52,15 +54,17 @@ export default async function RootLayout({
 
   return (
     <NextIntlClientProvider messages={messages}>
-      <Script
-        id="org-schema"
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }}
-      />
-      <Header />
-      <Breadcrumbs />
-      {children}
-      <Footer />
+      <div lang={locale} dir={dir}>
+        <Script
+          id="org-schema"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }}
+        />
+        <Header />
+        <Breadcrumbs />
+        {children}
+        <Footer />
+      </div>
     </NextIntlClientProvider>
   );
 }

@@ -1,38 +1,18 @@
 /* ============================================
-   KARPOL — Database Types
-   Supabase tablo tipleri
+   KARPOL — Database Types v2.0
+   JSONB-based i18n for EN, TR, DE, AR
    ============================================ */
 
-export interface Product {
-  id: string
-  created_at: string
-  updated_at: string
-  slug: string
-  sku: string
-  name: string
-  name_tr?: string
-  description: string
-  description_tr?: string
-  category_id: string
-  material: string
-  hardness?: string
-  hardness_unit?: string
-  temperature_min?: number
-  temperature_max?: number
-  color?: string
-  applications: string[]
-  compatible_machines: string[]
-  images: string[]
-  model_3d_url?: string
-  technical_drawing_url?: string
-  datasheet_url?: string
-  is_featured: boolean
-  is_active: boolean
-  sort_order: number
-  size_table?: ProductSizeRow[]
-  gallery_json?: (string | ProductGalleryAsset)[]
-  gallery_images?: (string | ProductGalleryAsset)[]
-  product_gallery?: (string | ProductGalleryAsset)[]
+export type SupportedLocale = 'en' | 'tr' | 'de' | 'ar'
+
+export type LocalizedField = Partial<Record<SupportedLocale, string>>
+export type LocalizedArrayField = Partial<Record<SupportedLocale, string[]>>
+
+export interface ProductSpecification {
+  label: string
+  value: string
+  unit?: string
+  test_method?: string
 }
 
 export interface ProductSizeRow {
@@ -44,42 +24,77 @@ export interface ProductSizeRow {
 }
 
 export interface ProductGalleryAsset {
-  url?: string
-  src?: string
-  image_url?: string
-  title?: string
-  alt?: string
+  url: string
+  alt?: LocalizedField
+  type?: 'photo' | 'technical' | 'application'
 }
 
 export interface ProductCategory {
   id: string
-  created_at: string
+  parent_id?: string | null
   slug: string
-  name: string
-  name_tr?: string
-  description: string
-  description_tr?: string
+  name: LocalizedField
+  description: LocalizedField
   image_url?: string
   icon?: string
-  prefix: string // PU-, VK-, RB-, etc.
+  prefix: string
   sort_order: number
   is_active: boolean
+  meta_title?: LocalizedField
+  meta_description?: LocalizedField
+  created_at: string
+  updated_at: string
+}
+
+export interface Product {
+  id: string
+  slug: string
+  sku: string
+  name: LocalizedField
+  description: LocalizedField
+  short_description?: LocalizedField
+  category_id: string
+  material?: string
+  hardness?: string
+  hardness_unit?: string
+  temperature_min?: number
+  temperature_max?: number
+  color?: string
+  weight?: string
+  dimensions?: Record<string, string>
+  applications?: LocalizedArrayField
+  compatible_machines: string[]
+  specifications?: ProductSpecification[]
+  size_table?: ProductSizeRow[]
+  images: string[]
+  gallery?: ProductGalleryAsset[]
+  model_3d_url?: string
+  technical_drawing_url?: string
+  datasheet_url?: string
+  is_featured: boolean
+  is_active: boolean
+  sort_order: number
+  meta_title?: LocalizedField
+  meta_description?: LocalizedField
+  created_at: string
+  updated_at: string
 }
 
 export interface Industry {
   id: string
-  created_at: string
   slug: string
-  name: string
-  name_tr?: string
-  description: string
-  description_tr?: string
-  challenges: string[]
-  solutions: string[]
+  name: LocalizedField
+  description: LocalizedField
+  challenges?: LocalizedArrayField
+  solutions?: LocalizedArrayField
   image_url?: string
   hero_image_url?: string
   is_featured: boolean
   sort_order: number
+  meta_title?: LocalizedField
+  meta_description?: LocalizedField
+  created_at: string
+  updated_at: string
 }
 
 export interface IndustryProduct {
@@ -91,23 +106,22 @@ export interface IndustryProduct {
 
 export interface Article {
   id: string
-  created_at: string
-  updated_at: string
-  published_at?: string
   slug: string
-  title: string
-  title_tr?: string
-  excerpt: string
-  excerpt_tr?: string
-  content: string
-  content_tr?: string
+  title: LocalizedField
+  excerpt: LocalizedField
+  content: LocalizedField
   cover_image_url?: string
-  category: 'material' | 'industry' | 'process' | 'technical'
+  category: 'material' | 'industry' | 'process' | 'technical' | 'guide'
   tags: string[]
   target_keyword?: string
+  author?: string
   is_published: boolean
   is_featured: boolean
-  author?: string
+  published_at?: string
+  meta_title?: LocalizedField
+  meta_description?: LocalizedField
+  created_at: string
+  updated_at: string
 }
 
 export interface RFQSubmission {
@@ -117,15 +131,22 @@ export interface RFQSubmission {
   email: string
   phone?: string
   company?: string
+  country?: string
   industry?: string
   product_interest?: string
   quantity?: string
   material_preference?: string
   hardness_requirement?: string
+  urgency: 'standard' | 'urgent' | 'critical'
   message: string
   file_urls: string[]
-  status: 'new' | 'reviewed' | 'quoted' | 'closed'
-  notes?: string
+  source_page?: string
+  locale?: string
+  status: 'new' | 'in_review' | 'quoted' | 'accepted' | 'rejected' | 'closed'
+  assigned_to?: string
+  internal_notes?: string
+  quoted_at?: string
+  quoted_amount?: number
 }
 
 export interface ContactSubmission {
@@ -135,8 +156,10 @@ export interface ContactSubmission {
   email: string
   phone?: string
   company?: string
+  country?: string
   subject: string
   message: string
+  locale?: string
   status: 'new' | 'read' | 'replied'
 }
 
@@ -145,8 +168,44 @@ export interface CatalogDownload {
   created_at: string
   email: string
   company?: string
+  country?: string
+  locale?: string
   catalog_name: string
   file_url: string
+}
+
+export interface MediaLibraryItem {
+  id: string
+  file_name: string
+  file_url: string
+  file_type: 'image' | 'document' | '3d-model' | 'technical-drawing'
+  mime_type?: string
+  file_size?: number
+  alt_text?: LocalizedField
+  tags: string[]
+  uploaded_by?: string
+  created_at: string
+}
+
+export interface PageContent {
+  id: string
+  page_key: string
+  section_key: string
+  content: LocalizedField | Record<string, unknown>
+  media_urls: string[]
+  sort_order: number
+  is_active: boolean
+  updated_at: string
+}
+
+export interface AdminActivityLog {
+  id: string
+  user_id?: string
+  action: 'create' | 'update' | 'delete' | 'status_change'
+  entity_type: 'product' | 'article' | 'rfq' | 'category' | 'industry' | 'media' | 'page_content' | 'contact'
+  entity_id?: string
+  details?: Record<string, unknown>
+  created_at: string
 }
 
 /* ============================================
@@ -163,12 +222,12 @@ export type Database = {
       }
       product_categories: {
         Row: ProductCategory
-        Insert: Omit<ProductCategory, 'id' | 'created_at'>
+        Insert: Omit<ProductCategory, 'id' | 'created_at' | 'updated_at'>
         Update: Partial<Omit<ProductCategory, 'id' | 'created_at'>>
       }
       industries: {
         Row: Industry
-        Insert: Omit<Industry, 'id' | 'created_at'>
+        Insert: Omit<Industry, 'id' | 'created_at' | 'updated_at'>
         Update: Partial<Omit<Industry, 'id' | 'created_at'>>
       }
       industry_products: {
@@ -195,6 +254,21 @@ export type Database = {
         Row: CatalogDownload
         Insert: Omit<CatalogDownload, 'id' | 'created_at'>
         Update: Partial<Omit<CatalogDownload, 'id' | 'created_at'>>
+      }
+      media_library: {
+        Row: MediaLibraryItem
+        Insert: Omit<MediaLibraryItem, 'id' | 'created_at'>
+        Update: Partial<Omit<MediaLibraryItem, 'id' | 'created_at'>>
+      }
+      page_content: {
+        Row: PageContent
+        Insert: Omit<PageContent, 'id' | 'updated_at'>
+        Update: Partial<Omit<PageContent, 'id'>>
+      }
+      admin_activity_log: {
+        Row: AdminActivityLog
+        Insert: Omit<AdminActivityLog, 'id' | 'created_at'>
+        Update: never
       }
     }
   }

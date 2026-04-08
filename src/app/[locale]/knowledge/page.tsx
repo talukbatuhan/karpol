@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import Link from "next/link";
-import { getAllArticles } from "@/lib/data/knowledge-base";
+import { getPublishedArticles } from "@/lib/data/public-data";
+import { getLocalizedField } from "@/lib/i18n-helpers";
 import styles from "./knowledge.module.css";
 
 export const metadata: Metadata = {
@@ -9,8 +10,9 @@ export const metadata: Metadata = {
     "Technical guides, material selection tips, and maintenance best practices for polyurethane and rubber components.",
 };
 
-export default function KnowledgePage() {
-  const articles = getAllArticles();
+export default async function KnowledgePage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  const { data: articles } = await getPublishedArticles();
 
   return (
     <main className={styles.section}>
@@ -26,23 +28,30 @@ export default function KnowledgePage() {
         </header>
 
         <div className={styles.grid}>
-          {articles.map((article) => (
-            <Link
-              key={article.slug}
-              href={`/knowledge/${article.slug}`}
-              className={styles.card}
-            >
-              <div className={styles.cardContent}>
-                <div className={styles.meta}>
-                  <span className={styles.category}>{article.category}</span>
-                  <span>{article.readTime}</span>
+          {articles.length > 0 ? (
+            articles.map((article) => (
+              <Link
+                key={article.slug}
+                href={`/${locale}/knowledge/${article.slug}`}
+                className={styles.card}
+              >
+                <div className={styles.cardContent}>
+                  <div className={styles.meta}>
+                    <span className={styles.category}>{article.category}</span>
+                  </div>
+                  <h2 className={styles.cardTitle}>{getLocalizedField(article.title, locale)}</h2>
+                  <p className={styles.excerpt}>{getLocalizedField(article.excerpt, locale)}</p>
+                  <span className={styles.readMore}>Read Article →</span>
                 </div>
-                <h2 className={styles.cardTitle}>{article.title}</h2>
-                <p className={styles.excerpt}>{article.excerpt}</p>
-                <span className={styles.readMore}>Read Article →</span>
-              </div>
-            </Link>
-          ))}
+              </Link>
+            ))
+          ) : (
+            <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '80px 20px' }}>
+              <p style={{ fontSize: 18, color: 'var(--text-muted)' }}>
+                No articles published yet. Check back soon for technical guides and industry insights.
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </main>

@@ -1,0 +1,277 @@
+{
+  "Navigation": {
+    "home": "Startseite",
+    "products": "Produkte",
+    "services": "Dienstleistungen",
+    "about": "Über uns",
+    "contact": "Kontakt",
+    "search": "Suche...",
+    "custom manufacturing": "Sonderfertigung",
+    "factory & technology": "Fabrik & Technologie",
+    "technical knowledge": "Wissensdatenbank",
+    "catalog": "Katalog",
+    "e-catalog": "E-Katalog"
+  },
+  "Hero": {
+    "headline": "Präzision entwickelt. Global geliefert.",
+    "subheadline": "Fortschrittliche Industriekomponenten und kundenspezifische Fertigungslösungen für anspruchsvollste Maschinen.",
+    "primaryBtn": "Produkte entdecken",
+    "secondaryBtn": "Unsere Kompetenzen",
+    "badge": "KARPOL INDUSTRIAL — GEGR. 1999",
+    "partnersLabel": "Vertrauenswürdige Rohstoffpartner",
+    "stats": {
+      "years": "Jahre Erfahrung",
+      "countries": "Belieferte Länder",
+      "parts": "Gelieferte Teile",
+      "iso": "9001 Zertifiziert"
+    },
+    "scrollLabel": "Scrollen",
+    "trust1": "ISO 9001 Zertifiziert",
+    "trust2": "Export in 50+ Länder",
+    "trust3": "20+ Jahre Erfahrung",
+    "trust4": "Premium-Materialien"
+  },
+  "Product": {
+    "sku": "Art.-Nr.",
+    "material": "Material",
+    "hardness": "Härte",
+    "view_details": "Technische Details",
+    "request_quote": "Angebot anfordern",
+    "download_pdf": "Datenblatt herunterladen"
+  },
+  "ProductDetail": {
+    "specs": "Technische Daten",
+    "applications": "Typische Anwendungen",
+    "advantages": "Technische Vorteile",
+    "compatibility": "Maschinenkompatibilität",
+    "downloads": "Technische Ressourcen",
+    "sizes": "Standardgrößen",
+    "related": "Verwandte Produkte",
+    "cta_title": "Individuelle Lösung benötigt?",
+    "cta_text": "Wir sind auf kundenspezifische Fertigung für spezielle industrielle Anforderungen spezialisiert.",
+    "cta_button": "Individuelles Angebot",
+    "contact_engineer": "Ingenieur kontaktieren"
+  },
+  "RFQModal": {
+    "title": "Angebotsanfrage",
+    "fullName": "Vollständiger Name",
+    "company": "Unternehmen",
+    "email": "Geschäftliche E-Mail",
+    "phone": "Telefon / WhatsApp",
+    "quantity": "Gewünschte Menge",
+    "notes": "Technische Anforderungen",
+    "notesPlaceholder": "Bitte geben Sie spezielle Abmessungen, Härteanforderungen oder Maschinendetails an...",
+    "cancel": "Abbrechen",
+    "submit": "Anfrage senden",
+    "sending": "Wird gesendet...",
+    "successTitle": "Anfrage erfolgreich gesendet",
+    "successMessage": "Vielen Dank für Ihre Anfrage. Unser Technik-Team wird Ihre Anforderungen prüfen und innerhalb von 24 Stunden ein Angebot senden.",
+    "close": "Schließen"
+  },
+  "CustomManufacturing": {
+    "heroTitle": "Kundenspezifische Fertigung",
+    "heroText": "Von der technischen Zeichnung zum Endprodukt. Wir verwandeln Rohstoffe in hochpräzise Industriekomponenten.",
+    "processTitle": "Fertigungsprozess",
+    "processDesc": "Unser standardisierter Workflow gewährleistet Qualität und Präzision in jeder Phase.",
+    "step1": "Zeichnungsanalyse",
+    "step1Desc": "Prüfung von CAD/DWG-Dateien und Materialauswahl.",
+    "step2": "Werkzeugbau",
+    "step2Desc": "Hauseigene CNC-Bearbeitung von Präzisionswerkzeugen.",
+    "step3": "Prototyping",
+    "step3Desc": "Musterproduktion und Härteverifizierung.",
+    "step4": "Serienproduktion",
+    "step4Desc": "Großserienproduktion und Qualitätskontrolle.",
+    "capabilitiesTitle": "Produktionskapazitäten",
+    "capabilitiesDesc": "Fortschrittliche Fertigungstechnologien für vielfältige industrielle Anforderungen.",
+    "cap1": "Polyurethan-Guss",
+    "cap1Desc": "Individuelle Härte (60-95 Shore A) und Farboptionen.",
+    "cap2": "CNC-Bearbeitung",
+    "cap2Desc": "Präzisionsfräsen von Aluminium und technischen Kunststoffen.",
+    "cap3": "Gummiformung",
+    "cap3Desc": "Kompression- und Spritzguss für NR, NBR, EPDM.",
+    "cap4": "Metallbindung",
+    "cap4Desc": "Hochfeste chemische Bindung von Gummi/PU an Metall.",
+    "formTitle": "Ihr Projekt starten",
+    "formDesc": "Senden Sie uns Ihre Anforderungen und technischen Zeichnungen für ein detailliertes Angebot."
+  },
+  "CustomRFQ": {
+    "fullName": "Vollständiger Name",
+    "company": "Unternehmen",
+    "email": "Geschäftliche E-Mail",
+    "phone": "Telefon / WhatsApp",
+    "material": "Bevorzugtes Material",
+    "hardness": "Härte (Shore A/D)",
+    "notes": "Technische Anforderungen",
+    "notesPlaceholder": "Beschreiben Sie Anwendung, Betriebsbedingungen (Temp., Last, Chemikalien) und Toleranzen...",
+    "uploadText": "Technische Zeichnungen hier ablegen",
+    "uploadSubtext": "PDF, DWG, DXF, STEP (Max 10MB)",
+    "submit": "Projektanfrage senden",
+    "sending": "Wird hochgeladen...",
+    "successTitle": "Projekt empfangen",
+    "successMessage": "Ihre Projektdateien wurden sicher empfangen. Unser Technik-Team wird die Zeichnungen analysieren und sich zeitnah bei Ihnen melden.",
+    "materials": {
+      "polyurethane": "Polyurethan (PU)",
+      "vulkollan": "Vulkollan®",
+      "rubber": "Gummi (NR/NBR/EPDM)",
+      "plastic": "Technische Kunststoffe (PE/PA/POM)",
+      "metal": "Aluminium / Stahl",
+      "other": "Sonstiges / Unsicher"
+    }
+  },
+  "Common": {
+    "loading": "Wird geladen...",
+    "error": "Ein Fehler ist aufgetreten",
+    "back": "Zurück",
+    "request_quote": "Angebot anfordern"
+  },
+  "Home": {
+    "materialsTitle": "Technische Werkstoffe",
+    "materialsSubtitle": "Hochleistungspolymere und -metalle für extreme Belastbarkeit.",
+    "materialsDescription": "Hochleistungs-Polymer- und Metallkomponenten für anspruchsvolle industrielle Umgebungen.",
+    "trustStrip": {
+      "item1Sub": "Globaler Standard",
+      "item2Sub": "Weltweite Logistik",
+      "item3Sub": "Fertigungsexperte",
+      "item4Sub": "Covestro & Lanxess"
+    },
+    "why": {
+      "eyebrow": "Warum Karpol?",
+      "title": "Entwickelt für\nHöchstleistung",
+      "description": "Wir kombinieren jahrzehntelange Materialwissenschaft mit fortschrittlichen Fertigungskapazitäten für langlebigere und leistungsfähigere Komponenten.",
+      "visual": {
+        "qualityRate": "Qualitätsdurchgangsrate",
+        "quoteTime": "Durchschnittliche Angebotszeit"
+      },
+      "cards": {
+        "materialsTitle": "Premium-Materialien",
+        "materialsDesc": "Ausschließlich hochwertige Rohstoffe von vertrauenswürdigen globalen Lieferanten wie Covestro und Lanxess.",
+        "engineeringTitle": "Kundenspezifische Technik",
+        "engineeringDesc": "Vom Prototyp zur Serienproduktion – Formen und Teile nach Ihren exakten Spezifikationen.",
+        "logisticsTitle": "Globale Logistik",
+        "logisticsDesc": "Schneller und zuverlässiger Versand in 50+ Länder mit vollständiger Exportdokumentation.",
+        "speedTitle": "Schnelle Lieferung",
+        "speedDesc": "Optimierte Produktionsprozesse gewährleisten pünktliche Lieferung auch bei komplexen Aufträgen."
+      },
+      "learnMoreCta": "Unsere Fabrik entdecken"
+    },
+    "cta": {
+      "eyebrow": "Jetzt starten",
+      "title": "Bereit, Ihre Maschinen\nzu optimieren?",
+      "description": "Erhalten Sie ein wettbewerbsfähiges Angebot für Ihre Sonderteile oder Standardkomponenten. Antwort innerhalb von 48 Stunden.",
+      "primaryCta": "Angebot anfordern",
+      "secondaryCta": "Produkte entdecken"
+    },
+    "products": {
+      "polyurethane": {
+        "title": "Polyurethan",
+        "desc": "Individueller Härteguss für hohe Abriebfestigkeit."
+      },
+      "vulkollan": {
+        "title": "Vulkollan®",
+        "desc": "Original-Lizenzmaterial für extreme Tragfähigkeit."
+      },
+      "rubber": {
+        "title": "Industriegummi",
+        "desc": "NR, NBR, EPDM-Formung für Schwingungsisolation."
+      },
+      "silicone": {
+        "title": "Silikon",
+        "desc": "Hochtemperaturbeständige Dichtungen und Walzen."
+      },
+      "cnc": {
+        "title": "CNC-Bearbeitung",
+        "desc": "Präzisions-Aluminium- und Stahlkomponenten."
+      },
+      "custom": {
+        "title": "Sonderteile",
+        "desc": "Maßgeschneiderte Lösungen nach Ihren technischen Zeichnungen."
+      }
+    }
+  },
+  "About": {
+    "metadata": {
+      "title": "Über KARPOL | 15 Jahre technische Exzellenz",
+      "description": "Erfahren Sie, wie KARPOL hochleistungsfähige Polyurethan-, Gummi- und Kunststoffkomponenten aus Denizli, Türkei für die globale Industrie entwickelt."
+    },
+    "hero": {
+      "kicker": "KARPOL INDUSTRIAL",
+      "title": "15 Jahre technische Exzellenz",
+      "subtitle": "Von unserem Hightech-Werk in Denizli zu den anspruchsvollsten Industrien der Welt – Komponenten, die nicht versagen.",
+      "primaryCta": "Angebot anfordern",
+      "secondaryCta": "Produkte entdecken"
+    },
+    "trust": {
+      "yearsTitle": "15+ Jahre Erfahrung",
+      "yearsMeta": "Industrielle Fertigung",
+      "locationTitle": "Standort Denizli, TR",
+      "locationMeta": "Merkezefendi Industriezone",
+      "exportTitle": "Globales Exportnetzwerk",
+      "exportMeta": "Vertraut von internationalen Käufern"
+    },
+    "story": {
+      "eyebrow": "Werk & Herkunft",
+      "title": "Gebaut für industrielle Zuverlässigkeit",
+      "p1": "KARPOL betreibt eine moderne Produktionsstätte in Denizli Merkezefendi – wo industrielle Disziplin auf fortschrittliche CNC-Bearbeitung und Polymerguss-Technologien trifft.",
+      "p2": "Wir fertigen Polyurethan-, Gummi- und Kunststofflösungen für kritische Anwendungen in Marmor, Bergbau und Automatisierung.",
+      "facilityLabel": "Produktionsstätte",
+      "facilityValue": "Moderne Anlage für reproduzierbare Hochtoleranzfertigung",
+      "techLabel": "Kerntechnologien",
+      "techValue": "CNC-Bearbeitung, Polymerguss und technische Klebeverbindungen",
+      "qualityLabel": "Qualitätsansatz",
+      "qualityValue": "Prozessdisziplin, Eingangskontrolle und Endprüfung auf jeder Stufe",
+      "addressLabel": "Fabrikstandort",
+      "addressValue": "Zorlu Sanayi Sitesi, Bozburun Mahallesi, Merkezefendi / Denizli, Türkei",
+      "imageAlt": "Fabrikfassade"
+    },
+    "values": {
+      "eyebrow": "Unsere Werte",
+      "title": "B2B-Werte, die Risiken minimieren",
+      "lead": "Vertrauen entsteht durch Berechenbarkeit: Materialien, Toleranzen, Lieferzeiten und Dokumentation nach industriellen Beschaffungsstandards.",
+      "cards": {
+        "quality": {
+          "title": "Kompromisslose Qualität",
+          "text": "Stabile Rohstoffe, kontrollierte Prozesse und rückverfolgbare Ergebnisse."
+        },
+        "material": {
+          "title": "Materialwissenschaftliche Expertise",
+          "text": "Polyurethan, Gummi und technische Kunststoffe für Verschleiß-, Last- und Chemikalienbeständigkeit."
+        },
+        "prototype": {
+          "title": "Rapid Prototyping & Sonderfertigung",
+          "text": "Schnelle Iteration von der Zeichnung zum getesteten Teil."
+        },
+        "delivery": {
+          "title": "Zuverlässige Lieferung & Support",
+          "text": "Exportfertige Verpackung, klare Kommunikation und B2B-Dokumentation."
+        }
+      }
+    },
+    "cta": {
+      "title": "Lassen Sie uns Ihre nächste Komponente entwickeln",
+      "text": "Teilen Sie Ihre Zeichnung, Anwendungsdetails und Zielleistung. Unser Team empfiehlt das richtige Material.",
+      "primaryCta": "Vertrieb kontaktieren",
+      "secondaryCta": "Katalog durchblättern"
+    }
+  },
+  "Catalog": {
+    "title": "E-Katalog",
+    "toolbar": {
+      "page": "Seite",
+      "zoom_in": "Vergrößern",
+      "zoom_out": "Verkleinern",
+      "thumbnails": "Thumbnails",
+      "fullscreen": "Vollbild",
+      "exit_fullscreen": "Vollbild beenden",
+      "go_to": "Zur Seite gehen",
+      "previous": "Vorherige",
+      "next": "Nächste",
+      "share": "Teilen",
+      "download_page": "Seite herunterladen",
+      "copy_link": "Link kopieren",
+      "copied": "Kopiert"
+    },
+    "loading": "Katalog wird geladen…",
+    "error": "Katalog konnte nicht geladen werden. Bitte versuchen Sie es später erneut.",
+    "missing_image": "Diese Seite ist nicht verfügbar."
+  }
+}

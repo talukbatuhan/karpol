@@ -1,42 +1,74 @@
 import { MetadataRoute } from "next";
 import { siteConfig } from "@/lib/config";
-import { getProductCategories } from "@/lib/data/public-data";
-import { getAllArticles } from "@/lib/data/knowledge-base";
+import { getProductCategories, getPublishedArticles, getIndustries } from "@/lib/data/public-data";
 
 const baseUrl = siteConfig.url;
+const locales = ["en", "tr", "de", "ar"];
+
+function generateAlternates(path: string) {
+  const languages: Record<string, string> = {};
+  for (const locale of locales) {
+    languages[locale] = `${baseUrl}/${locale}${path}`;
+  }
+  languages["x-default"] = `${baseUrl}/en${path}`;
+  return { languages };
+}
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const routes = [
+  const staticPaths = [
     "",
     "/about",
     "/products",
     "/custom-manufacturing",
     "/knowledge",
     "/contact",
-  ].map((route) => ({
-    url: `${baseUrl}${route}`,
-    lastModified: new Date().toISOString(),
-    changeFrequency: "monthly" as const,
-    priority: route === "" ? 1 : 0.8,
-  }));
+    "/industries",
+    "/catalog",
+    "/factory-technology",
+  ];
 
-  // Categories
+  const staticRoutes: MetadataRoute.Sitemap = staticPaths.flatMap((path) =>
+    locales.map((locale) => ({
+      url: `${baseUrl}/${locale}${path}`,
+      lastModified: new Date().toISOString(),
+      changeFrequency: "monthly" as const,
+      priority: path === "" ? 1 : 0.8,
+      alternates: generateAlternates(path),
+    }))
+  );
+
   const { data: categories } = await getProductCategories();
-  const categoryRoutes = categories.map((cat) => ({
-    url: `${baseUrl}/products/${cat.slug}`,
-    lastModified: new Date().toISOString(),
-    changeFrequency: "weekly" as const,
-    priority: 0.8,
-  }));
+  const categoryRoutes: MetadataRoute.Sitemap = categories.flatMap((cat) =>
+    locales.map((locale) => ({
+      url: `${baseUrl}/${locale}/products/${cat.slug}`,
+      lastModified: cat.updated_at || new Date().toISOString(),
+      changeFrequency: "weekly" as const,
+      priority: 0.8,
+      alternates: generateAlternates(`/products/${cat.slug}`),
+    }))
+  );
 
-  // Articles
-  const articles = getAllArticles();
-  const articleRoutes = articles.map((article) => ({
-    url: `${baseUrl}/knowledge/${article.slug}`,
-    lastModified: article.publishedAt,
-    changeFrequency: "monthly" as const,
-    priority: 0.7,
-  }));
+  const { data: articles } = await getPublishedArticles();
+  const articleRoutes: MetadataRoute.Sitemap = articles.flatMap((article) =>
+    locales.map((locale) => ({
+      url: `${baseUrl}/${locale}/knowledge/${article.slug}`,
+      lastModified: article.updated_at || article.published_at || new Date().toISOString(),
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
+      alternates: generateAlternates(`/knowledge/${article.slug}`),
+    }))
+  );
 
-  return [...routes, ...categoryRoutes, ...articleRoutes];
+  const { data: industries } = await getIndustries();
+  const industryRoutes: MetadataRoute.Sitemap = industries.flatMap((ind) =>
+    locales.map((locale) => ({
+      url: `${baseUrl}/${locale}/industries/${ind.slug}`,
+      lastModified: ind.updated_at || new Date().toISOString(),
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
+      alternates: generateAlternates(`/industries/${ind.slug}`),
+    }))
+  );
+
+  return [...staticRoutes, ...categoryRoutes, ...articleRoutes, ...industryRoutes];
 }

@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase-server";
+import { createAdminClient } from "@/lib/supabase-admin";
 
 export type CatalogPageAsset = {
   index: number;
@@ -8,53 +8,148 @@ export type CatalogPageAsset = {
 };
 
 export type CatalogManifest = {
+  schemaVersion: number;
   catalogId: string;
+  title?: string;
+  updatedAt?: string;
   totalPages: number;
   pages: CatalogPageAsset[];
 };
 
-export async function getCatalogManifest(
-  catalogId: string,
-): Promise<CatalogManifest> {
-  const supabase = await createClient();
+const CATALOG_BUCKET = "catalogs";
+const IMAGE_REGEX = /\.(png|jpe?g|webp)$/i;
 
-  const bucket = "products";
-  const folder = catalogId; // "catalogId" string'i
+function normalizePageNumber(value: string): number | null {
+  const parsed = parseInt(value.replace(/\D/g, ""), 10);
+  return Number.isNaN(parsed) ? null : parsed;
+}
 
-  console.log("[DEBUG] Listing:", bucket, folder);
+function createFallbackManifest(catalogId: string): CatalogManifest {
+  return {
+    schemaVersion: 1,
+    catalogId,
+    totalPages: 0,
+    pages: [],
+    updatedAt: new Date().toISOString(),
+  };
+}
 
-  const { data, error } = await supabase.storage
-    .from(bucket)
-    .list(folder, { limit: 500 });
+export async function getCatalogManifest(catalogId: string): Promise<CatalogManifest> {
+  const supabase = createAdminClient();
 
-  console.log("[DEBUG] Result:", { count: data?.length, error, sample: data?.slice(0, 3) });
+  // Preferred: read manifest.json
+  const { data: manifestBlob } = await supabase.storage
+    .from(CATALOG_BUCKET)
+    .download(`${catalogId}/manifest.json`);
+
+  if (manifestBlob) {
+    const parsed = JSON.parse(await manifestBlob.text()) as Partial<CatalogManifest>;
+    const pages = (parsed.pages ?? []).map((p, idx) => ({
+      index: typeof p.index === "number" ? p.index : idx,
+      pageNumber:
+        typeof p.pageNumber === "number"
+          ? p.pageNumber
+          : idx + 1,
+      url: p.url ?? null,
+      thumbUrl: p.thumbUrl ?? p.url ?? null,
+    }));
+
+    if (pages.length > 0) {
+      return {
+        schemaVersion: parsed.schemaVersion ?? 1,
+        catalogId: parsed.catalogId ?? catalogId,
+        title: parsed.title,
+        updatedAt: parsed.updatedAt ?? new Date().toISOString(),
+        totalPages: parsed.totalPages ?? pages.length,
+        pages,
+      };
+    }
+
+    // Self-heal: manifest exists but empty -> infer from pages folder
+    return buildCatalogManifestFromStorage(catalogId, parsed.title);
+  }
+
+  // Fallback: infer from /pages folder
+  return buildCatalogManifestFromStorage(catalogId);
+}
+
+export async function listCatalogIds(): Promise<string[]> {
+  const supabase = createAdminClient();
+  const { data, error } = await supabase.storage.from(CATALOG_BUCKET).list("", { limit: 200 });
+  if (error) return [];
+  return Array.from(
+    new Set(
+      (data ?? [])
+        .map((entry) => entry.name)
+        .filter((name): name is string => Boolean(name))
+        // Keep likely folder names; avoid root files like ".emptyFolderPlaceholder"
+        .filter((name) => !name.includes("."))
+    )
+  ).sort((a, b) => a.localeCompare(b));
+}
+
+export async function saveCatalogManifest(manifest: CatalogManifest): Promise<void> {
+  const supabase = createAdminClient();
+  const payload = JSON.stringify({
+    ...manifest,
+    schemaVersion: manifest.schemaVersion ?? 1,
+    updatedAt: new Date().toISOString(),
+    totalPages: manifest.totalPages ?? manifest.pages.length,
+  });
+
+  const { error } = await supabase.storage
+    .from(CATALOG_BUCKET)
+    .upload(`${manifest.catalogId}/manifest.json`, payload, {
+      contentType: "application/json",
+      upsert: true,
+      cacheControl: "60",
+    });
 
   if (error) throw new Error(error.message);
+}
 
-  const objects = (data ?? [])
-    .filter((o) => /\.(png|jpe?g|webp)$/i.test(o.name))
+export async function buildCatalogManifestFromStorage(
+  catalogId: string,
+  title?: string,
+): Promise<CatalogManifest> {
+  const supabase = createAdminClient();
+  const { data: files, error } = await supabase.storage
+    .from(CATALOG_BUCKET)
+    .list(`${catalogId}/pages`, { limit: 500 });
+
+  if (error) return createFallbackManifest(catalogId);
+
+  const pageFiles = (files ?? [])
+    .filter((o) => IMAGE_REGEX.test(o.name))
     .map((o) => ({
       name: o.name,
-      pageNumber: parseInt(o.name, 10), // "1.png" → 1, "10.png" → 10
+      pageNumber: normalizePageNumber(o.name),
     }))
-    .filter((o) => !isNaN(o.pageNumber))
-    .sort((a, b) => a.pageNumber - b.pageNumber); // sayısal sıra: 1,2,3...10,11
+    .filter((o): o is { name: string; pageNumber: number } => o.pageNumber !== null)
+    .sort((a, b) => a.pageNumber - b.pageNumber);
 
-  const totalPages = objects.length;
-  if (!totalPages) return { catalogId, totalPages: 0, pages: [] };
-
-  const pages: CatalogPageAsset[] = objects.map((o, idx) => {
-    const { data: urlData } = supabase.storage
-      .from(bucket)
-      .getPublicUrl(`${folder}/${o.name}`);
+  const pages: CatalogPageAsset[] = pageFiles.map((file, idx) => {
+    const { data: pageUrl } = supabase.storage
+      .from(CATALOG_BUCKET)
+      .getPublicUrl(`${catalogId}/pages/${file.name}`);
+    const { data: thumbUrl } = supabase.storage
+      .from(CATALOG_BUCKET)
+      .getPublicUrl(`${catalogId}/thumbs/${file.name}`);
 
     return {
       index: idx,
-      pageNumber: o.pageNumber,
-      url: urlData.publicUrl,
-      thumbUrl: urlData.publicUrl,
+      pageNumber: file.pageNumber,
+      url: pageUrl.publicUrl,
+      thumbUrl: thumbUrl.publicUrl || pageUrl.publicUrl,
     };
   });
 
-  return { catalogId, totalPages, pages };
+  return {
+    schemaVersion: 1,
+    catalogId,
+    title,
+    totalPages: pages.length,
+    pages,
+    updatedAt: new Date().toISOString(),
+  };
 }

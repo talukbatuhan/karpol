@@ -2,12 +2,12 @@
 
 .shell {
   width: 100%;
-  min-height: 100vh;
+  min-height: 100dvh;
   background: radial-gradient(ellipse at 50% 0%, #1a1008 0%, #0d0a06 60%);
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-bottom: 48px;
+  padding-bottom: 24px;
 }
 
 /* ── Toolbar ── */
@@ -21,6 +21,9 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 999px;
   backdrop-filter: blur(10px);
+  position: sticky;
+  top: 10px;
+  z-index: 30;
 }
 
 .toolBtn {
@@ -54,6 +57,19 @@
   font-size: 14px;
 }
 
+.toolBtnText {
+  height: 40px;
+  border: none;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #f0e6c8;
+  font-size: 12px;
+  padding: 0 14px;
+  cursor: pointer;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
 .pageInfo {
   font-family: 'Georgia', serif;
   color: #d4b97a;
@@ -72,7 +88,7 @@
   justify-content: center;
   align-items: center;
   margin-top: 32px;
-  min-height: 500px;
+  min-height: 420px;
 }
 
 .loadingOverlay {
@@ -107,6 +123,7 @@
   max-width: 1000px;
   display: flex;
   justify-content: center;
+  padding-inline: 8px;
 }
 
 /* PageFlip pages */
@@ -219,13 +236,60 @@
 
 /* ── Responsive ── */
 @media (max-width: 767px) {
+  .shell {
+    padding-bottom: 12px;
+  }
+
   .bookStage {
-    margin-top: 20px;
+    margin-top: 12px;
+    min-height: 320px;
   }
 
   .toolbar {
-    padding: 10px 16px;
-    gap: 12px;
+    width: calc(100% - 20px);
+    justify-content: center;
+    padding: 8px 10px;
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .toolBtn {
+    width: 36px;
+    height: 36px;
+    font-size: 20px;
+  }
+
+  .toolBtnIcon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .pageInfo {
+    min-width: 64px;
+    font-size: 13px;
+  }
+
+  .bookContainer {
+    max-width: 100%;
+    padding-inline: 2px;
+  }
+
+  .pageStrip {
+    margin-top: 14px;
+    padding: 0 8px;
+    width: 100%;
+  }
+
+  .pageStripMobileClosed {
+    display: none;
+  }
+
+  .pageStripMobileOpen {
+    display: block;
+  }
+
+  .pageStripInner {
+    padding-top: 2px;
   }
 
   .stripBtn {

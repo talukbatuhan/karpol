@@ -21,6 +21,7 @@ export default function CatalogViewer({ catalog, initialPageIndex = 0 }: Props) 
   const [pageFlipLoaded, setPageFlipLoaded] = useState(false);
   const [currentPage, setCurrentPage] = useState(initialPageIndex);
   const [isMobile, setIsMobile] = useState(false);
+  const [showThumbnails, setShowThumbnails] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   // Detect mobile
@@ -43,67 +44,91 @@ export default function CatalogViewer({ catalog, initialPageIndex = 0 }: Props) 
     if (!containerRef.current || pages.length === 0) return;
 
     let pf: any;
+    let cancelled = false;
+    let rafId: number | null = null;
 
     import("page-flip").then(({ PageFlip }) => {
-      const el = containerRef.current!;
-      // Remove old instance if any
-      el.innerHTML = "";
+      const init = () => {
+        if (cancelled || !containerRef.current) return;
+        const el = containerRef.current;
+        const containerWidth = el.clientWidth;
 
-      const isDouble = !isMobile;
-      const w = isDouble ? Math.min(el.clientWidth / 2, 480) : Math.min(el.clientWidth, 520);
-      const h = w * (297 / 210); // A4 portrait ratio
-
-      pf = new PageFlip(el, {
-        width: w,
-        height: h,
-        size: "fixed",
-        minWidth: isDouble ? 200 : 140,
-        minHeight: isDouble ? 283 : 198,
-        maxWidth: isDouble ? 480 : 520,
-        maxHeight: isDouble ? 679 : 736,
-        drawShadow: true,
-        flippingTime: 700,
-        usePortrait: !isDouble,
-        startZIndex: 5,
-        autoSize: true,
-        showCover: true,
-        mobileScrollSupport: false,
-        clickEventForward: true,
-        useMouseEvents: true,
-        swipeDistance: 30,
-      });
-
-      // Build page elements
-      const pageEls: HTMLElement[] = pages.map((page, idx) => {
-        const div = document.createElement("div");
-        div.className = styles.flipPage;
-
-        if (page.url) {
-          const img = document.createElement("img");
-          img.src = page.url;
-          img.alt = `Sayfa ${page.pageNumber}`;
-          img.className = styles.flipPageImg;
-          img.loading = idx < 4 ? "eager" : "lazy";
-          div.appendChild(img);
-        } else {
-          div.innerHTML = `<div class="${styles.flipPageMissing}"><span>${page.pageNumber}</span></div>`;
+        // During first paint / layout shifts, width can be 0.
+        // Retry on next frame until a valid width is available.
+        if (containerWidth < 240) {
+          rafId = window.requestAnimationFrame(init);
+          return;
         }
 
-        return div;
-      });
+        // Remove old instance if any
+        el.innerHTML = "";
 
-      pf.loadFromHTML(pageEls);
+        const isDouble = !isMobile;
+        const rawWidth = isDouble
+          ? Math.min(containerWidth / 2, 480)
+          : Math.min(containerWidth - 16, 560);
 
-      pf.on("flip", (e: any) => {
-        setCurrentPage(e.data);
-      });
+        const w = Math.max(220, Math.floor(rawWidth));
+        const h = Math.max(311, Math.floor(w * (297 / 210))); // A4 portrait ratio
 
-      pf.turnToPage(initialPageIndex);
-      bookRef.current = pf;
-      setPageFlipLoaded(true);
+        pf = new PageFlip(el, {
+          width: w,
+          height: h,
+          size: "fixed",
+          minWidth: isDouble ? 200 : 220,
+          minHeight: isDouble ? 283 : 311,
+          maxWidth: isDouble ? 480 : 520,
+          maxHeight: isDouble ? 679 : 736,
+          drawShadow: true,
+          flippingTime: 700,
+          usePortrait: !isDouble,
+          startZIndex: 5,
+          autoSize: true,
+          showCover: true,
+          mobileScrollSupport: false,
+          clickEventForward: true,
+          useMouseEvents: true,
+          swipeDistance: 30,
+        });
+
+        // Build page elements
+        const pageEls: HTMLElement[] = pages.map((page, idx) => {
+          const div = document.createElement("div");
+          div.className = styles.flipPage;
+
+          if (page.url) {
+            const img = document.createElement("img");
+            img.src = page.url;
+            img.alt = `Sayfa ${page.pageNumber}`;
+            img.className = styles.flipPageImg;
+            img.loading = idx < 4 ? "eager" : "lazy";
+            div.appendChild(img);
+          } else {
+            div.innerHTML = `<div class="${styles.flipPageMissing}"><span>${page.pageNumber}</span></div>`;
+          }
+
+          return div;
+        });
+
+        pf.loadFromHTML(pageEls);
+
+        pf.on("flip", (e: any) => {
+          setCurrentPage(e.data);
+        });
+
+        pf.turnToPage(initialPageIndex);
+        bookRef.current = pf;
+        setPageFlipLoaded(true);
+      };
+
+      init();
     });
 
     return () => {
+      cancelled = true;
+      if (rafId !== null) {
+        window.cancelAnimationFrame(rafId);
+      }
       if (pf) {
         try { pf.destroy?.(); } catch {}
       }
@@ -169,6 +194,16 @@ export default function CatalogViewer({ catalog, initialPageIndex = 0 }: Props) 
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
           )}
         </button>
+
+        {isMobile && (
+          <button
+            className={styles.toolBtnText}
+            onClick={() => setShowThumbnails((prev) => !prev)}
+            aria-expanded={showThumbnails}
+          >
+            {showThumbnails ? "Sayfalari Gizle" : "Sayfalar"}
+          </button>
+        )}
       </div>
 
       {/* Book Stage */}
@@ -183,7 +218,11 @@ export default function CatalogViewer({ catalog, initialPageIndex = 0 }: Props) 
       </div>
 
       {/* Page strip */}
-      <div className={styles.pageStrip}>
+      <div
+        className={`${styles.pageStrip} ${
+          isMobile ? (showThumbnails ? styles.pageStripMobileOpen : styles.pageStripMobileClosed) : ""
+        }`}
+      >
         <div className={styles.pageStripInner}>
           {pages.map((p, idx) => (
             <button

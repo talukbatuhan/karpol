@@ -35,21 +35,34 @@ export const siteConfig = {
   },
 } as const
 
-export const navigation = {
+interface NavChild {
+  label: string
+  href: string
+}
+
+interface NavItem {
+  label: string
+  key: string
+  href: string
+  children?: NavChild[]
+}
+
+export const navigation: { main: NavItem[] } = {
   main: [
     { label: 'Home', key: 'home', href: '/' },
     { label: 'About', key: 'about', href: '/about' },
-    { 
+    {
       label: 'Products',
       key: 'products',
       href: '/products',
       children: [
-        { label: 'Polyurethane Components', href: '/products/polyurethane-components' },
-        { label: 'Vulkollan Components', href: '/products/vulkollan-components' },
-        { label: 'Rubber Components', href: '/products/rubber-components' },
-        { label: 'Silicone Components', href: '/products/silicone-components' },
-        { label: 'Technical Plastics', href: '/products/technical-plastics' },
-        { label: 'Aluminum Machined Parts', href: '/products/aluminum-machined-parts' },
+        { label: 'Polyurethane Components', href: '/products/polyurethane' },
+        { label: 'Vulkollan Components', href: '/products/vulkolan' },
+        { label: 'Rubber Components', href: '/products/rubber' },
+        { label: 'Silicone Components', href: '/products/silicone' },
+        { label: 'PTFE / Teflon', href: '/products/ptfe-teflon' },
+        { label: 'Aluminum CNC Parts', href: '/products/aluminum-cnc' },
+        { label: 'Engineering Plastics', href: '/products/engineering-plastics' },
       ],
     },
     { label: 'Custom Manufacturing', key: 'custom manufacturing', href: '/custom-manufacturing' },
@@ -58,7 +71,7 @@ export const navigation = {
     { label: 'E-Katalog', key: 'e-catalog', href: '/catalog' },
     { label: 'Contact', key: 'contact', href: '/contact' },
   ],
-} as const
+}
 
 export const productCategories = [
   { slug: 'polyurethane-components', name: 'Polyurethane Components', prefix: 'PU', icon: '🔶' },

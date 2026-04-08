@@ -119,10 +119,10 @@ export function getSupabaseJsonGallery(product: Product | null): GalleryItem[] {
 
   const extendedProduct = product as Product & Record<string, unknown>;
   const candidates: unknown[] = [
-    product.gallery_json,
-    product.gallery_images,
-    product.product_gallery,
-    extendedProduct.gallery,
+    product.gallery,
+    extendedProduct.gallery_json,
+    extendedProduct.gallery_images,
+    extendedProduct.product_gallery,
     extendedProduct.images_json,
     extendedProduct.media_gallery,
   ];

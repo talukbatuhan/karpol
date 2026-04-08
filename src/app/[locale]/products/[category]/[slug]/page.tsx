@@ -9,6 +9,7 @@ import ProductVisualsWrapper from "@/components/product/ProductVisualsWrapper";
 import RFQModalWrapper from "@/components/product/RFQModalWrapper";
 import { getProductByCategoryAndSlug, getProductsByCategorySlug } from "@/lib/data/public-data";
 import { getRichProductContent } from "@/lib/product-content";
+import { getLocalizedField, getLocalizedArray } from "@/lib/i18n-helpers";
 import { 
   uniqueByUrl, 
   isImageUrl, 
@@ -23,25 +24,25 @@ type ProductDetailPageProps = {
 export async function generateMetadata({
   params,
 }: ProductDetailPageProps): Promise<Metadata> {
-  const { category, slug } = await params;
+  const { category, slug, locale } = await params;
   const richContent = getRichProductContent(category, slug);
   const { data: product } = await getProductByCategoryAndSlug(category, slug);
 
-  const title = product?.name ?? richContent?.name ?? slug;
-  const description =
-    product?.description ??
-    richContent?.shortDescription ??
-    "KARPOL Industrial Engineering Solutions & High-Performance Components.";
+  const title = product ? getLocalizedField(product.name, locale || 'en') : (richContent?.name ?? slug);
+  const desc =
+    product ? getLocalizedField(product.description, locale || 'en') :
+    (richContent?.shortDescription ??
+    "KARPOL Industrial Engineering Solutions & High-Performance Components.");
 
   const ogImage =
     product?.images?.[0] ?? richContent?.imageGallery?.[0]?.url ?? null;
 
   return {
     title: `${title} | KARPOL Engineering`,
-    description,
+    description: desc,
     openGraph: {
       title: `${title} | KARPOL`,
-      description,
+      description: desc,
       type: "website",
       images: ogImage ? [ogImage] : [],
     },
@@ -64,8 +65,8 @@ export default async function ProductDetailPage({
   }
 
   // Derived Data
-  const pageTitle = product?.name ?? richContent?.name ?? slug.replace(/-/g, " ");
-  const pageDescription = product?.description ?? richContent?.shortDescription ?? "High-performance industrial component engineered for precision and durability.";
+  const pageTitle = product ? getLocalizedField(product.name, locale) : (richContent?.name ?? slug.replace(/-/g, " "));
+  const pageDescription = product ? getLocalizedField(product.description, locale) : (richContent?.shortDescription ?? "High-performance industrial component engineered for precision and durability.");
   const material = product?.material ?? richContent?.specs.find((item) => item.label === "Malzeme" || item.label === "Material")?.value;
   const hardness = product?.hardness ?? richContent?.specs.find((item) => item.label === "Sertlik" || item.label === "Hardness")?.value;
   const hardnessUnit = product?.hardness_unit ?? "Shore A";
@@ -103,8 +104,8 @@ export default async function ProductDetailPage({
   ]);
 
   // Applications & Advantages
-  const applications = product?.applications?.length
-    ? product.applications
+  const applications = product?.applications
+    ? getLocalizedArray(product.applications, locale)
     : (richContent?.applications ?? [
         "Marble Polishing Machines",
         "Industrial Conveyor Systems",
@@ -396,7 +397,7 @@ export default async function ProductDetailPage({
                     {p.images?.[0] ? (
                       <Image
                         src={p.images[0]}
-                        alt={p.name}
+                        alt={getLocalizedField(p.name, locale)}
                         fill
                         className={styles.relatedImage}
                         sizes="(max-width: 768px) 50vw, 25vw"
@@ -406,7 +407,7 @@ export default async function ProductDetailPage({
                     )}
                   </div>
                   <div className={styles.relatedContent}>
-                    <h4 className={styles.relatedTitle}>{p.name}</h4>
+                    <h4 className={styles.relatedTitle}>{getLocalizedField(p.name, locale)}</h4>
                     <span className={styles.relatedMeta}>View Details →</span>
                   </div>
                 </Link>

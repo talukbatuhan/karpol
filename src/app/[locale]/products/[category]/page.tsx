@@ -3,16 +3,17 @@ import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getProductCategoryBySlug, getProductsByCategorySlug } from "@/lib/data/public-data";
+import { getLocalizedField } from "@/lib/i18n-helpers";
 import styles from "./category.module.css";
 
 type CategoryPageProps = {
-  params: Promise<{ category: string }>;
+  params: Promise<{ category: string; locale: string }>;
 };
 
 export async function generateMetadata({
   params,
 }: CategoryPageProps): Promise<Metadata> {
-  const { category } = await params;
+  const { category, locale } = await params;
   const { data: categoryData } = await getProductCategoryBySlug(category);
 
   if (!categoryData) {
@@ -21,20 +22,26 @@ export async function generateMetadata({
     };
   }
 
+  const name = getLocalizedField(categoryData.name, locale);
+  const desc = getLocalizedField(categoryData.description, locale);
+
   return {
-    title: `${categoryData.name} | KARPOL Industrial Products`,
-    description: categoryData.description || `Explore our high-performance ${categoryData.name} range.`,
+    title: `${name} | KARPOL Industrial Products`,
+    description: desc || `Explore our high-performance ${name} range.`,
   };
 }
 
 export default async function CategoryPage({ params }: CategoryPageProps) {
-  const { category } = await params;
+  const { category, locale } = await params;
   const { data: categoryData, error: categoryError } = await getProductCategoryBySlug(category);
-  const { data: products, error: productsError } = await getProductsByCategorySlug(category);
+  const { data: products } = await getProductsByCategorySlug(category);
 
   if (categoryError || !categoryData) {
     notFound();
   }
+
+  const categoryName = getLocalizedField(categoryData.name, locale);
+  const categoryDescription = getLocalizedField(categoryData.description, locale);
 
   return (
     <main>
@@ -48,9 +55,9 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
           </div>
           <div className={styles.headerContent}>
             <span className={styles.eyebrow}>Product Category</span>
-            <h1 className={styles.title}>{categoryData.name}</h1>
+            <h1 className={styles.title}>{categoryName}</h1>
             <p className={styles.description}>
-              {categoryData.description || "High-performance industrial components engineered for durability and precision. Browse our selection below."}
+              {categoryDescription || "High-performance industrial components engineered for durability and precision. Browse our selection below."}
             </p>
           </div>
         </div>
@@ -138,7 +145,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
                         {product.images && product.images[0] ? (
                           <Image
                             src={product.images[0]}
-                            alt={product.name}
+                            alt={getLocalizedField(product.name, locale)}
                             fill
                             className={styles.image}
                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -151,9 +158,9 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
                         )}
                       </div>
                       <div className={styles.content}>
-                        <h3 className={styles.productTitle}>{product.name}</h3>
+                        <h3 className={styles.productTitle}>{getLocalizedField(product.name, locale)}</h3>
                         <p className={styles.productDesc}>
-                          {product.description || "Industrial grade component designed for maximum durability and precision."}
+                          {getLocalizedField(product.description, locale) || "Industrial grade component designed for maximum durability and precision."}
                         </p>
                         <div className={styles.meta}>
                           {product.sku && <span className={styles.badge}>SKU: {product.sku}</span>}

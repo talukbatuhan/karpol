@@ -1,57 +1,116 @@
 :root {
-  /* Industrial Color System - LIGHT THEME (Default) */
-  --bg-main: #f8fafc;        /* Slate 50 - Very Clean Light Grey */
-  --bg-secondary: #ffffff;   /* White */
-  --bg-tertiary: #f1f5f9;    /* Slate 100 */
-  --bg-hover: #e2e8f0;       /* Slate 200 */
-  
-  --border-color: #e2e8f0;   /* Slate 200 */
-  --border-hover: #cbd5e1;   /* Slate 300 */
-  
-  --text-main: #0f172a;      /* Slate 900 - Almost Black */
-  --text-muted: #64748b;     /* Slate 500 */
-  --text-dim: #94a3b8;       /* Slate 400 */
-  
-  --gold: #c8a85a;           /* Signature Gold */
+  /* ─── Color System (Design System v1) ─── */
+  --color-primary: #1A1A2E;
+  --color-secondary: #2D2D44;
+  --color-accent: #E8611A;
+  --color-accent-hover: #CC5216;
+  --color-accent-light: #FFF3ED;
+  --color-success: #2ECC71;
+  --color-warning: #F39C12;
+  --color-error: #E74C3C;
+  --color-info: #3498DB;
+  --color-white: #FFFFFF;
+  --color-neutral-light: #F5F5F0;
+
+  --color-text-primary: #1A1A1A;
+  --color-text-secondary: #6B7280;
+  --color-text-tertiary: #9CA3AF;
+  --color-border: #E2E8F0;
+  --color-border-light: #F1F5F9;
+
+  /* ─── Theme Tokens ─── */
+  --bg-main: #F5F5F0;
+  --bg-secondary: #FFFFFF;
+  --bg-tertiary: #f1f5f9;
+  --bg-hover: #e2e8f0;
+
+  --border-color: #E2E8F0;
+  --border-hover: #cbd5e1;
+
+  --text-main: #1A1A1A;
+  --text-muted: #6B7280;
+  --text-dim: #9CA3AF;
+
+  --gold: #c8a85a;
   --gold-dim: rgba(200, 168, 90, 0.12);
   --gold-glow: rgba(200, 168, 90, 0.25);
-  
-  /* Typography */
+
+  /* ─── Typography ─── */
   --font-primary: var(--font-dm-sans), system-ui, -apple-system, sans-serif;
   --font-mono: var(--font-roboto-mono), monospace;
-  
-  /* Spacing & Radius */
+
+  /* ─── Spacing ─── */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-30: 120px;
+
+  /* ─── Radius ─── */
   --radius-sm: 2px;
   --radius-md: 4px;
   --radius-lg: 8px;
   --radius-xl: 14px;
 
-  /* Shadows */
+  /* ─── Shadows ─── */
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.08);
+  --shadow-hover: 0 8px 32px rgba(0, 0, 0, 0.12);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
-  
-  --container-max: 1400px; /* Wider for technical tables */
-  --container-padding: 2rem;
+  --shadow-modal: 0 24px 64px rgba(0, 0, 0, 0.24);
+  --shadow-nav: 0 2px 16px rgba(0, 0, 0, 0.06);
+
+  /* ─── Transitions ─── */
+  --ease-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --duration-fast: 150ms;
+  --duration-normal: 300ms;
+
+  /* ─── Layout ─── */
+  --container-max: 1200px;
+  --container-padding: 24px;
 }
 
 .dark {
-  /* Industrial Color System - DARK THEME */
   --bg-main: #080a0e;
   --bg-secondary: #0d1018;
   --bg-tertiary: #141820;
   --bg-hover: #1c2230;
-  
+
   --border-color: rgba(255, 255, 255, 0.08);
   --border-hover: rgba(200, 168, 90, 0.2);
-  
+
   --text-main: #ffffff;
   --text-muted: #94a3b8;
   --text-dim: #64748b;
-  
+
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #94a3b8;
+  --color-text-tertiary: #64748b;
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-border-light: rgba(255, 255, 255, 0.04);
+  --color-white: #0d1018;
+  --color-neutral-light: #141820;
+
   --gold: #c8a85a;
   --gold-dim: rgba(200, 168, 90, 0.12);
   --gold-glow: rgba(200, 168, 90, 0.25);
+
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.3);
+  --shadow-hover: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+/* ─── Performance: Content Visibility ─── */
+.section {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 500px;
 }
 
 html,
@@ -112,6 +171,17 @@ a {
   color: var(--color-text-secondary);
   font-size: 18px;
   line-height: 1.7;
+}
+
+/* RTL support for Arabic */
+[dir="rtl"] {
+  text-align: right;
+}
+
+[dir="rtl"] .eyebrow,
+[dir="rtl"] .section-title,
+[dir="rtl"] .section-text {
+  direction: rtl;
 }
 
 @media (max-width: 768px) {
