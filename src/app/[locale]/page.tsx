@@ -158,7 +158,7 @@ export default async function Home({ params }: HomePageProps) {
                 </div>
                 <div className={styles.productCardFooter}>
                   <span className={styles.productCardLink}>
-                    View Products <ArrowRight size={13} />
+                    {tHome("products.viewLink")} <ArrowRight size={13} />
                   </span>
                 </div>
                 <div className={styles.productCardBar} />

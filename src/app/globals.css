@@ -30,6 +30,8 @@
   --text-main: #1A1A1A;
   --text-muted: #6B7280;
   --text-dim: #9CA3AF;
+  --text-body: #4B5563;
+  --text-caption: #6B7280;
 
   --gold: #c8a85a;
   --gold-dim: rgba(200, 168, 90, 0.12);
@@ -76,6 +78,8 @@
   /* ─── Layout ─── */
   --container-max: 1200px;
   --container-padding: 24px;
+  --section-padding: 100px;
+  --section-padding-mobile: 64px;
 }
 
 .dark {
@@ -90,6 +94,8 @@
   --text-main: #ffffff;
   --text-muted: #94a3b8;
   --text-dim: #64748b;
+  --text-body: #94a3b8;
+  --text-caption: #94a3b8;
 
   --color-text-primary: #ffffff;
   --color-text-secondary: #94a3b8;
