@@ -131,7 +131,7 @@ export default function Header() {
                             style={{ animationDelay: `${idx * 40}ms` }}
                             onClick={() => setActiveDropdown(null)}
                           >
-                            <span className={styles.dropdownItemText}>{child.label}</span>
+                            <span className={styles.dropdownItemText}>{tNav(child.key)}</span>
                             <ArrowRight size={12} className={styles.dropdownArrow} />
                           </Link>
                         ))}
@@ -172,12 +172,6 @@ export default function Header() {
 
             {/* Divider */}
             <div className={styles.divider} aria-hidden="true" />
-
-            {/* CTA Button */}
-            <Link href="/contact" className={styles.ctaBtn}>
-              <span>{t("request_quote")}</span>
-              <ArrowRight size={14} className={styles.ctaArrow} strokeWidth={2.5} />
-            </Link>
 
             {/* Mobile Toggle */}
             <button
@@ -223,7 +217,7 @@ export default function Header() {
                         className={styles.mobileSubLink}
                       >
                         <ArrowRight size={11} strokeWidth={2} />
-                        {child.label}
+                        {tNav(child.key)}
                       </Link>
                     ))}
                   </div>

@@ -36,6 +36,7 @@ export const siteConfig = {
 } as const
 
 interface NavChild {
+  key: string
   label: string
   href: string
 }
@@ -56,13 +57,13 @@ export const navigation: { main: NavItem[] } = {
       key: 'products',
       href: '/products',
       children: [
-        { label: 'Polyurethane Components', href: '/products/polyurethane' },
-        { label: 'Vulkollan Components', href: '/products/vulkolan' },
-        { label: 'Rubber Components', href: '/products/rubber' },
-        { label: 'Silicone Components', href: '/products/silicone' },
-        { label: 'PTFE / Teflon', href: '/products/ptfe-teflon' },
-        { label: 'Aluminum CNC Parts', href: '/products/aluminum-cnc' },
-        { label: 'Engineering Plastics', href: '/products/engineering-plastics' },
+        { key: 'polyurethane components', label: 'Polyurethane Components', href: '/products/polyurethane' },
+        { key: 'vulkollan components', label: 'Vulkollan Components', href: '/products/vulkolan' },
+        { key: 'rubber components', label: 'Rubber Components', href: '/products/rubber' },
+        { key: 'silicone components', label: 'Silicone Components', href: '/products/silicone' },
+        { key: 'ptfe / teflon', label: 'PTFE / Teflon', href: '/products/ptfe-teflon' },
+        { key: 'aluminum cnc parts', label: 'Aluminum CNC Parts', href: '/products/aluminum-cnc' },
+        { key: 'engineering plastics', label: 'Engineering Plastics', href: '/products/engineering-plastics' },
       ],
     },
     { label: 'Custom Manufacturing', key: 'custom manufacturing', href: '/custom-manufacturing' },

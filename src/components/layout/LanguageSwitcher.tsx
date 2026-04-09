@@ -24,7 +24,14 @@ export default function LanguageSwitcher() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const switchLocale = (nextLocale: "en" | "tr") => {
+  const locales = [
+    { code: "en", label: "English" },
+    { code: "tr", label: "Turkce" },
+    { code: "de", label: "Deutsch" },
+    { code: "ar", label: "Arabic" },
+  ] as const;
+
+  const switchLocale = (nextLocale: (typeof locales)[number]["code"]) => {
     startTransition(() => {
       // @ts-expect-error - next-intl types are too strict for generic pathname
       router.replace(pathname, { locale: nextLocale });
@@ -36,7 +43,7 @@ export default function LanguageSwitcher() {
     <div className={`${styles.dropdown} ${isOpen ? styles.dropdownOpen : ""}`} ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`${styles.iconBtn} ${isOpen ? styles.active : ""}`}
+        className={`${styles.iconBtn} ${styles.langTrigger} ${isOpen ? styles.active : ""}`}
         aria-label="Select Language"
         aria-expanded={isOpen}
       >
@@ -53,26 +60,28 @@ export default function LanguageSwitcher() {
 
       <div className={styles.dropdownMenuRight}>
         <div className={styles.dropdownInner}>
-          <button
-            className={styles.dropdownItem}
-            onClick={() => switchLocale("en")}
-            disabled={isPending}
-            style={{ width: "100%", border: "none", background: locale === "en" ? "rgba(255, 255, 255, 0.05)" : "transparent", cursor: "pointer", fontFamily: "inherit" }}
-          >
-            <span className={styles.dropdownItemText} style={{ color: locale === "en" ? "var(--h-accent)" : "inherit", textAlign: "left" }}>
-              English (EN)
-            </span>
-          </button>
-          <button
-            className={styles.dropdownItem}
-            onClick={() => switchLocale("tr")}
-            disabled={isPending}
-            style={{ width: "100%", border: "none", background: locale === "tr" ? "rgba(255, 255, 255, 0.05)" : "transparent", cursor: "pointer", fontFamily: "inherit" }}
-          >
-            <span className={styles.dropdownItemText} style={{ color: locale === "tr" ? "var(--h-accent)" : "inherit", textAlign: "left" }}>
-              Türkçe (TR)
-            </span>
-          </button>
+          {locales.map((item) => (
+            <button
+              key={item.code}
+              className={styles.dropdownItem}
+              onClick={() => switchLocale(item.code)}
+              disabled={isPending}
+              style={{
+                width: "100%",
+                border: "none",
+                background: locale === item.code ? "rgba(255, 255, 255, 0.05)" : "transparent",
+                cursor: "pointer",
+                fontFamily: "inherit",
+              }}
+            >
+              <span
+                className={styles.dropdownItemText}
+                style={{ color: locale === item.code ? "var(--h-accent)" : "inherit", textAlign: "left" }}
+              >
+                {item.label} ({item.code.toUpperCase()})
+              </span>
+            </button>
+          ))}
         </div>
       </div>
     </div>

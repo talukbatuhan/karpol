@@ -2,6 +2,12 @@ import createMiddleware from 'next-intl/middleware';
 import { routing } from './i18n/navigation';
 import { NextRequest, NextResponse } from 'next/server';
 import { updateSession } from './lib/supabase-middleware';
+import { getRequestUserRole, hasUserMfa, isAdminMfaRequired } from './lib/auth/admin-guard';
+import {
+  clearAdminSessionCookie,
+  isAdminSessionIdleExpired,
+  touchAdminSessionCookie,
+} from './lib/security/admin-session';
 
 const handleI18nRouting = createMiddleware(routing);
 
@@ -10,8 +16,32 @@ export default async function middleware(request: NextRequest) {
 
   // Admin routes bypass i18n — English-only, auth-gated
   if (pathname.startsWith('/admin')) {
-    const supabaseResponse = await updateSession(request);
-    return supabaseResponse;
+    if (pathname === '/admin/login') {
+      return updateSession(request);
+    }
+
+    if (isAdminSessionIdleExpired(request)) {
+      const response = NextResponse.redirect(new URL('/admin/login', request.url));
+      clearAdminSessionCookie(response);
+      return response;
+    }
+
+    const { user, role } = await getRequestUserRole(request);
+    if (!user) {
+      const loginUrl = new URL('/admin/login', request.url);
+      return NextResponse.redirect(loginUrl);
+    }
+    if (role !== 'admin') {
+      return NextResponse.redirect(new URL('/', request.url));
+    }
+    if (isAdminMfaRequired() && !hasUserMfa(user)) {
+      const loginUrl = new URL('/admin/login', request.url);
+      loginUrl.searchParams.set('mfa', 'required');
+      return NextResponse.redirect(loginUrl);
+    }
+    const response = await updateSession(request);
+    touchAdminSessionCookie(response);
+    return response;
   }
 
   const response = handleI18nRouting(request);

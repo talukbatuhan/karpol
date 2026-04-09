@@ -10,7 +10,14 @@
     "factory & technology": "المصنع والتكنولوجيا",
     "technical knowledge": "المعرفة التقنية",
     "catalog": "الكتالوج",
-    "e-catalog": "الكتالوج الإلكتروني"
+    "e-catalog": "الكتالوج الإلكتروني",
+    "polyurethane components": "مكونات البولي يوريثان",
+    "vulkollan components": "مكونات فولكولان",
+    "rubber components": "مكونات المطاط",
+    "silicone components": "مكونات السيليكون",
+    "ptfe / teflon": "PTFE / تيفلون",
+    "aluminum cnc parts": "قطع ألمنيوم CNC",
+    "engineering plastics": "البلاستيك الهندسي"
   },
   "Hero": {
     "headline": "هندسة دقيقة. توصيل عالمي.",
@@ -255,6 +262,11 @@
   },
   "Catalog": {
     "title": "الكتالوج الإلكتروني",
+    "browseTitle": "اختيار الكتالوج",
+    "browseSubtitle": "اختر كتالوجًا لفتح عارض الصفحات.",
+    "openCatalog": "فتح الكتالوج",
+    "emptyTitle": "لا توجد كتالوجات",
+    "emptySub": "قم برفع كتالوج من لوحة الإدارة ليظهر هنا.",
     "toolbar": {
       "page": "صفحة",
       "zoom_in": "تكبير",
@@ -273,5 +285,20 @@
     "loading": "جارٍ تحميل الكتالوج…",
     "error": "تعذر تحميل الكتالوج. يرجى المحاولة لاحقًا.",
     "missing_image": "هذه الصفحة غير متوفرة."
+  },
+  "Footer": {
+    "description": "مكونات صناعية هندسية دقيقة للآلات الأكثر تطلبًا في الأسواق العالمية.",
+    "company": "الشركة",
+    "products": "المنتجات",
+    "contact": "تواصل معنا",
+    "about": "من نحن",
+    "contactLink": "اتصل بنا",
+    "catalogs": "الكتالوجات",
+    "knowledge": "المعرفة التقنية",
+    "viewAllProducts": "عرض كل المنتجات",
+    "requestQuote": "طلب عرض سعر",
+    "privacy": "سياسة الخصوصية",
+    "terms": "شروط الاستخدام",
+    "rights": "جميع الحقوق محفوظة."
   }
 }

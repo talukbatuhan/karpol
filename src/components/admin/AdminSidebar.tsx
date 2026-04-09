@@ -1,7 +1,8 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
+import { useState } from 'react'
 import {
   LayoutDashboard,
   Package,
@@ -12,6 +13,7 @@ import {
   Image,
   Factory,
   BookOpen,
+  ShieldAlert,
   LogOut,
 } from 'lucide-react'
 import styles from '@/app/admin/admin.module.css'
@@ -41,14 +43,33 @@ const navItems = [
       { label: 'Contacts', href: '/admin/contacts', icon: Mail },
     ],
   },
+  {
+    section: 'Security',
+    items: [
+      { label: 'Security Events', href: '/admin/security', icon: ShieldAlert },
+    ],
+  },
 ]
 
 export default function AdminSidebar() {
   const pathname = usePathname()
+  const router = useRouter()
+  const [loggingOut, setLoggingOut] = useState(false)
 
   const isActive = (href: string) => {
     if (href === '/admin') return pathname === '/admin'
     return pathname.startsWith(href)
+  }
+
+  const handleLogout = async () => {
+    setLoggingOut(true)
+    try {
+      await fetch('/api/admin/auth/logout', { method: 'POST' })
+    } finally {
+      setLoggingOut(false)
+      router.push('/admin/login')
+      router.refresh()
+    }
   }
 
   return (
@@ -79,6 +100,10 @@ export default function AdminSidebar() {
       </nav>
 
       <div className={styles.sidebarFooter}>
+        <button onClick={handleLogout} className={styles.navItem} disabled={loggingOut} type="button">
+          <LogOut className={styles.navItemIcon} />
+          {loggingOut ? 'Signing out...' : 'Sign Out'}
+        </button>
         <Link href="/" className={styles.navItem}>
           <LogOut className={styles.navItemIcon} />
           Back to Site

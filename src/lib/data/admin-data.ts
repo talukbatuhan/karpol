@@ -7,6 +7,7 @@ import type {
   ContactSubmission,
   Industry,
   MediaLibraryItem,
+  AdminActivityLog,
 } from '@/types/database'
 
 type DataResponse<T> = { data: T[]; error: string | null }
@@ -276,4 +277,84 @@ export async function deleteMedia(id: string) {
   const supabase = createAdminClient()
   const { error } = await supabase.from('media_library').delete().eq('id', id)
   return { error: error?.message ?? null }
+}
+
+type LogAdminActivityInput = {
+  userId?: string | null
+  action: AdminActivityLog['action']
+  entityType: AdminActivityLog['entity_type']
+  entityId?: string | null
+  details?: Record<string, unknown>
+}
+
+type SecurityEventInput = {
+  event: string
+  severity: 'low' | 'medium' | 'high' | 'critical'
+  requestPath: string
+  ip?: string | null
+  userId?: string | null
+  details?: Record<string, unknown>
+}
+
+export async function logAdminActivity({
+  userId,
+  action,
+  entityType,
+  entityId,
+  details,
+}: LogAdminActivityInput) {
+  const supabase = createAdminClient()
+  const { error } = await supabase.from('admin_activity_log').insert({
+    user_id: userId || undefined,
+    action,
+    entity_type: entityType,
+    entity_id: entityId || undefined,
+    details: details || undefined,
+  })
+
+  return { error: error?.message ?? null }
+}
+
+export async function logSecurityEvent({
+  event,
+  severity,
+  requestPath,
+  ip,
+  userId,
+  details,
+}: SecurityEventInput) {
+  return logAdminActivity({
+    userId,
+    action: 'status_change',
+    entityType: 'page_content',
+    entityId: requestPath,
+    details: {
+      type: 'security_event',
+      event,
+      severity,
+      ip,
+      ...details,
+    },
+  })
+}
+
+export async function getAdminSecurityEvents(limit = 100) {
+  const supabase = createAdminClient()
+  const safeLimit = Math.min(Math.max(limit, 1), 500)
+  const { data, error } = await supabase
+    .from('admin_activity_log')
+    .select('*')
+    .order('created_at', { ascending: false })
+    .limit(safeLimit)
+
+  if (error) {
+    return { data: [] as AdminActivityLog[], error: error.message }
+  }
+
+  const filtered = (data ?? []).filter((item) => {
+    const details = item.details as Record<string, unknown> | undefined
+    return details?.type === 'security_event'
+  }) as AdminActivityLog[]
+
+  return { data: filtered, error: null }
 }

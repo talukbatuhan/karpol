@@ -43,6 +43,12 @@ export const routing = defineRouting({
       de: '/katalog',
       ar: '/catalog'
     },
+    '/catalog/[catalogId]': {
+      en: '/catalog/[catalogId]',
+      tr: '/katalog/[catalogId]',
+      de: '/katalog/[catalogId]',
+      ar: '/catalog/[catalogId]'
+    },
     '/industries': {
       en: '/industries',
       tr: '/sektorler',

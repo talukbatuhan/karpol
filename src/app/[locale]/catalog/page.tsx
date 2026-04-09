@@ -1,14 +1,12 @@
 import { Metadata } from "next";
-import CatalogViewer from "@/components/catalog/CatalogViewer";
+import { Link } from "@/i18n/navigation";
 import { setRequestLocale } from "next-intl/server";
 import { getTranslations } from "next-intl/server";
-import { getCatalogManifest } from "@/lib/data/catalog-storage";
+import { getCatalogManifest, listCatalogIds } from "@/lib/data/catalog-storage";
+import styles from "./catalog.module.css";
 
 type CatalogPageProps = {
   params: Promise<{ locale: string }>;
-  // Next.js provides `searchParams` as a Promise in dynamic server contexts.
-  // We must `await` it before accessing properties.
-  searchParams?: Promise<{ catalogId?: string | string[] }>;
 };
 
 export async function generateMetadata({
@@ -24,44 +22,72 @@ export async function generateMetadata({
   };
 }
 
-export default async function CatalogPage({
-  params,
-  searchParams,
-}: CatalogPageProps) {
+export default async function CatalogPage({ params }: CatalogPageProps) {
   const { locale } = await params;
   setRequestLocale(locale);
-
-  const resolvedSearchParams = searchParams ? await searchParams : undefined;
-  const raw = resolvedSearchParams?.catalogId;
-  const catalogIdRaw = Array.isArray(raw) ? raw[0] : raw;
-
-  const catalogId =
-    catalogIdRaw ||
-    process.env.ECATALOG_DEFAULT_ID ||
-    "main";
+  const t = await getTranslations("Catalog");
 
   try {
-    const catalog = await getCatalogManifest(catalogId);
+    const ids = await listCatalogIds();
+    const defaultId = process.env.ECATALOG_DEFAULT_ID || "main";
+    const sortedIds = Array.from(new Set([defaultId, ...ids]));
+    const manifests = await Promise.all(sortedIds.map((id) => getCatalogManifest(id)));
 
     return (
-      <main style={{ paddingTop: 0 }}>
-        <CatalogViewer catalog={catalog} />
+      <main className={styles.page}>
+        <section className={styles.hero}>
+          <h1 className={styles.title}>{t("browseTitle")}</h1>
+          <p className={styles.subtitle}>{t("browseSubtitle")}</p>
+        </section>
+
+        {manifests.length === 0 ? (
+          <section className={styles.empty}>
+            <h2>{t("emptyTitle")}</h2>
+            <p>{t("emptySub")}</p>
+          </section>
+        ) : (
+          <section className={styles.grid}>
+            {manifests.map((catalog) => {
+              const cover = catalog.pages[0]?.thumbUrl || catalog.pages[0]?.url || null;
+              const title = catalog.title || catalog.catalogId.toUpperCase();
+              return (
+                <article key={catalog.catalogId} className={styles.card}>
+                  {cover ? (
+                    <img src={cover} alt={title} className={styles.cover} loading="lazy" />
+                  ) : (
+                    <div className={styles.coverFallback}>{title}</div>
+                  )}
+
+                  <div className={styles.cardBody}>
+                    <h3 className={styles.cardTitle}>{title}</h3>
+                    <p className={styles.cardMeta}>
+                      {catalog.totalPages} {t("toolbar.page")}
+                    </p>
+                    <Link
+                      href={{
+                        pathname: "/catalog/[catalogId]",
+                        params: { catalogId: catalog.catalogId },
+                      }}
+                      className={styles.cardBtn}
+                    >
+                      {t("openCatalog")}
+                    </Link>
+                  </div>
+                </article>
+              );
+            })}
+          </section>
+        )}
       </main>
     );
   } catch (err) {
-    const t = await getTranslations("Catalog");
     return (
-      <main style={{ paddingTop: 0 }}>
-        <div style={{ padding: "64px 16px" }}>
-          <h1 style={{ fontSize: 28, fontWeight: 900, marginBottom: 12 }}>
-            {t("title")}
-          </h1>
-          <p style={{ color: "#64748b", maxWidth: 720 }}>
-            {t("error")}
-          </p>
-        </div>
+      <main className={styles.page}>
+        <section className={styles.empty}>
+          <h2>{t("title")}</h2>
+          <p>{t("error")}</p>
+        </section>
       </main>
     );
   }
 }
-

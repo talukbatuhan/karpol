@@ -10,7 +10,14 @@
     "factory & technology": "Fabrika & Teknoloji",
     "technical knowledge": "Teknik Bilgi",
     "catalog": "Katalog",
-    "e-catalog": "E-Katalog"
+    "e-catalog": "E-Katalog",
+    "polyurethane components": "Poliuretan Bilesenler",
+    "vulkollan components": "Vulkollan Bilesenler",
+    "rubber components": "Kaucuk Bilesenler",
+    "silicone components": "Silikon Bilesenler",
+    "ptfe / teflon": "PTFE / Teflon",
+    "aluminum cnc parts": "Aluminyum CNC Parcalar",
+    "engineering plastics": "Muhendislik Plastikleri"
   },
   "Hero": {
     "headline": "Hassas Mühendislik. Küresel Çözümler.",
@@ -256,6 +263,11 @@
   ,
   "Catalog": {
     "title": "E-Katalog",
+    "browseTitle": "Katalog Secimi",
+    "browseSubtitle": "Goruntuleyiciyi acmak icin bir katalog secin.",
+    "openCatalog": "Katalogu Ac",
+    "emptyTitle": "Katalog bulunamadi",
+    "emptySub": "Bu alanda gormek icin admin panelden katalog yukleyin.",
     "toolbar": {
       "page": "Sayfa",
       "zoom_in": "Yakınlaştır",
@@ -274,5 +286,20 @@
     "loading": "Katalog yükleniyor…",
     "error": "Katalog yüklenemedi. Lütfen daha sonra tekrar deneyin.",
     "missing_image": "Bazı sayfalar görüntülenemiyor."
+  },
+  "Footer": {
+    "description": "Global pazarlar icin zorlu makinelere uygun hassas muhendislik endustriyel bilesenler.",
+    "company": "Kurumsal",
+    "products": "Urunler",
+    "contact": "Iletisim",
+    "about": "Hakkimizda",
+    "contactLink": "Iletisim",
+    "catalogs": "Kataloglar",
+    "knowledge": "Bilgi Merkezi",
+    "viewAllProducts": "Tum Urunler",
+    "requestQuote": "Teklif Iste",
+    "privacy": "Gizlilik Politikasi",
+    "terms": "Kullanim Sartlari",
+    "rights": "Tum haklari saklidir."
   }
 }

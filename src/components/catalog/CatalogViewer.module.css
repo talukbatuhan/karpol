@@ -126,6 +126,24 @@
   padding-inline: 8px;
 }
 
+.mobileViewer {
+  width: 100%;
+  max-width: min(560px, calc(100vw - 16px));
+  border-radius: 10px;
+  overflow: hidden;
+  background: #ffffff;
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.25);
+}
+
+.mobilePageImg {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 210 / 297;
+  object-fit: contain;
+  background: #fff;
+}
+
 /* PageFlip pages */
 .flipPage {
   width: 100%;
@@ -242,7 +260,7 @@
 
   .bookStage {
     margin-top: 12px;
-    min-height: 320px;
+    min-height: 380px;
   }
 
   .toolbar {
@@ -272,6 +290,11 @@
   .bookContainer {
     max-width: 100%;
     padding-inline: 2px;
+  }
+
+  .mobileViewer {
+    max-width: calc(100vw - 12px);
+    border-radius: 8px;
   }
 
   .pageStrip {

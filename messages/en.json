@@ -10,7 +10,14 @@
     "factory & technology": "Factory & Technology",
     "technical knowledge": "Technical Knowledge",
     "catalog": "Catalog",
-    "e-catalog": "E-Catalog"
+    "e-catalog": "E-Catalog",
+    "polyurethane components": "Polyurethane Components",
+    "vulkollan components": "Vulkollan Components",
+    "rubber components": "Rubber Components",
+    "silicone components": "Silicone Components",
+    "ptfe / teflon": "PTFE / Teflon",
+    "aluminum cnc parts": "Aluminum CNC Parts",
+    "engineering plastics": "Engineering Plastics"
   },
   "Hero": {
     "headline": "Precision Engineered. Globally Delivered.",
@@ -256,6 +263,11 @@
   ,
   "Catalog": {
     "title": "E-Catalog",
+    "browseTitle": "Select Catalog",
+    "browseSubtitle": "Choose a catalog to open the viewer.",
+    "openCatalog": "Open Catalog",
+    "emptyTitle": "No catalogs found",
+    "emptySub": "Upload a catalog from the admin panel to see it here.",
     "toolbar": {
       "page": "Page",
       "zoom_in": "Zoom In",
@@ -274,5 +286,20 @@
     "loading": "Loading catalog…",
     "error": "Unable to load the catalog. Please try again later.",
     "missing_image": "This page is missing or unavailable."
+  },
+  "Footer": {
+    "description": "Precision-engineered industrial components for demanding machinery across global markets.",
+    "company": "Company",
+    "products": "Products",
+    "contact": "Get in Touch",
+    "about": "About Us",
+    "contactLink": "Contact",
+    "catalogs": "Catalogs",
+    "knowledge": "Knowledge Base",
+    "viewAllProducts": "View All Products",
+    "requestQuote": "Request a Quote",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Use",
+    "rights": "All rights reserved."
   }
 }

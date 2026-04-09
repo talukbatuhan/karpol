@@ -1,8 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { createClient } from '@/lib/supabase-client'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import styles from '../admin.module.css'
 
 export default function AdminLoginPage() {
@@ -11,6 +10,8 @@ export default function AdminLoginPage() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const mfaRequiredHint = searchParams.get('mfa') === 'required'
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -18,21 +19,24 @@ export default function AdminLoginPage() {
     setLoading(true)
 
     try {
-      const supabase = createClient()
-      const { error: authError } = await supabase.auth.signInWithPassword({
-        email,
-        password,
+      const response = await fetch('/api/admin/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: email.trim(),
+          password,
+        }),
       })
-
-      if (authError) {
-        setError(authError.message)
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}))
+        setError(data.error || 'Invalid email or password')
         return
       }
 
       router.push('/admin')
       router.refresh()
     } catch {
-      setError('An unexpected error occurred')
+      setError('Login failed')
     } finally {
       setLoading(false)
     }
@@ -43,6 +47,9 @@ export default function AdminLoginPage() {
       <form onSubmit={handleLogin} className={styles.loginCard}>
         <h1 className={styles.loginTitle}>KARPOL CMS</h1>
         <p className={styles.loginSubtitle}>Sign in to manage your content</p>
+        {mfaRequiredHint && (
+          <p className={styles.loginError}>Your admin account must have MFA enabled before access is granted.</p>
+        )}
 
         {error && <p className={styles.loginError}>{error}</p>}
 

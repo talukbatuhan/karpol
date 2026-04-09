@@ -10,7 +10,14 @@
     "factory & technology": "Fabrik & Technologie",
     "technical knowledge": "Wissensdatenbank",
     "catalog": "Katalog",
-    "e-catalog": "E-Katalog"
+    "e-catalog": "E-Katalog",
+    "polyurethane components": "Polyurethan-Komponenten",
+    "vulkollan components": "Vulkollan-Komponenten",
+    "rubber components": "Gummi-Komponenten",
+    "silicone components": "Silikon-Komponenten",
+    "ptfe / teflon": "PTFE / Teflon",
+    "aluminum cnc parts": "Aluminium-CNC-Teile",
+    "engineering plastics": "Technische Kunststoffe"
   },
   "Hero": {
     "headline": "Präzision entwickelt. Global geliefert.",
@@ -255,6 +262,11 @@
   },
   "Catalog": {
     "title": "E-Katalog",
+    "browseTitle": "Katalogauswahl",
+    "browseSubtitle": "Wahlen Sie einen Katalog, um den Viewer zu offnen.",
+    "openCatalog": "Katalog offnen",
+    "emptyTitle": "Keine Kataloge gefunden",
+    "emptySub": "Laden Sie einen Katalog im Admin-Bereich hoch, damit er hier angezeigt wird.",
     "toolbar": {
       "page": "Seite",
       "zoom_in": "Vergrößern",
@@ -273,5 +285,20 @@
     "loading": "Katalog wird geladen…",
     "error": "Katalog konnte nicht geladen werden. Bitte versuchen Sie es später erneut.",
     "missing_image": "Diese Seite ist nicht verfügbar."
+  },
+  "Footer": {
+    "description": "Präzisionsgefertigte Industriekomponenten für anspruchsvolle Maschinen in globalen Märkten.",
+    "company": "Unternehmen",
+    "products": "Produkte",
+    "contact": "Kontakt",
+    "about": "Über uns",
+    "contactLink": "Kontakt",
+    "catalogs": "Kataloge",
+    "knowledge": "Wissensdatenbank",
+    "viewAllProducts": "Alle Produkte anzeigen",
+    "requestQuote": "Angebot anfordern",
+    "privacy": "Datenschutz",
+    "terms": "Nutzungsbedingungen",
+    "rights": "Alle Rechte vorbehalten."
   }
 }

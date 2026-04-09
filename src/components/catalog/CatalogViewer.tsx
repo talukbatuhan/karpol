@@ -23,6 +23,7 @@ export default function CatalogViewer({ catalog, initialPageIndex = 0 }: Props) 
   const [isMobile, setIsMobile] = useState(false);
   const [showThumbnails, setShowThumbnails] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const usePageFlip = !isMobile;
 
   // Detect mobile
   useEffect(() => {
@@ -41,6 +42,10 @@ export default function CatalogViewer({ catalog, initialPageIndex = 0 }: Props) 
 
   // Initialize PageFlip
   useEffect(() => {
+    if (!usePageFlip) {
+      setPageFlipLoaded(true);
+      return;
+    }
     if (!containerRef.current || pages.length === 0) return;
 
     let pf: any;
@@ -134,10 +139,22 @@ export default function CatalogViewer({ catalog, initialPageIndex = 0 }: Props) 
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isMobile, pages]);
+  }, [usePageFlip, isMobile, pages]);
 
-  const onPrev = useCallback(() => bookRef.current?.flipPrev("bottom"), []);
-  const onNext = useCallback(() => bookRef.current?.flipNext("bottom"), []);
+  const onPrev = useCallback(() => {
+    if (usePageFlip) {
+      bookRef.current?.flipPrev("bottom");
+    } else {
+      setCurrentPage((prev) => Math.max(0, prev - 1));
+    }
+  }, [usePageFlip]);
+  const onNext = useCallback(() => {
+    if (usePageFlip) {
+      bookRef.current?.flipNext("bottom");
+    } else {
+      setCurrentPage((prev) => Math.min(totalPages - 1, prev + 1));
+    }
+  }, [usePageFlip, totalPages]);
 
   const toggleFullscreen = useCallback(async () => {
     const el = containerRef.current?.parentElement;
@@ -214,7 +231,24 @@ export default function CatalogViewer({ catalog, initialPageIndex = 0 }: Props) 
             <p>Katalog yükleniyor…</p>
           </div>
         )}
-        <div ref={containerRef} className={styles.bookContainer} />
+        {usePageFlip ? (
+          <div ref={containerRef} className={styles.bookContainer} />
+        ) : (
+          <div className={styles.mobileViewer}>
+            {pages[currentPage]?.url ? (
+              <img
+                src={pages[currentPage].url || ""}
+                alt={`Sayfa ${pages[currentPage].pageNumber}`}
+                className={styles.mobilePageImg}
+                loading="eager"
+              />
+            ) : (
+              <div className={styles.flipPageMissing}>
+                <span>{pages[currentPage]?.pageNumber ?? currentPage + 1}</span>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Page strip */}
@@ -228,7 +262,10 @@ export default function CatalogViewer({ catalog, initialPageIndex = 0 }: Props) 
             <button
               key={idx}
               className={`${styles.stripBtn} ${idx === currentPage ? styles.stripBtnActive : ""}`}
-              onClick={() => { bookRef.current?.turnToPage(idx); setCurrentPage(idx); }}
+              onClick={() => {
+                if (usePageFlip) bookRef.current?.turnToPage(idx);
+                setCurrentPage(idx);
+              }}
               aria-label={`${p.pageNumber}. sayfaya git`}
             >
               {p.thumbUrl || p.url ? (

@@ -4,10 +4,12 @@ import NextLink from "next/link";
 import { siteConfig, productCategories } from "@/lib/config";
 import styles from "./Footer.module.css";
 import { ArrowRight, Mail, Phone, MapPin, Linkedin, Instagram } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 
-export default function Footer() {
+export default async function Footer() {
   const currentYear = new Date().getFullYear();
   const telHref = siteConfig.contact.phone.replace(/[^\d+]/g, "");
+  const t = await getTranslations("Footer");
 
   return (
     <footer className={styles.footer}>
@@ -26,7 +28,7 @@ export default function Footer() {
               className={styles.logo}
             />
           </Link>
-          <p className={styles.description}>{siteConfig.description}</p>
+          <p className={styles.description}>{t("description")}</p>
 
           {/* Social */}
           <div className={styles.socials}>
@@ -59,32 +61,25 @@ export default function Footer() {
 
         {/* ── Company Links ─────────────────────────── */}
         <div className={styles.col}>
-          <h4 className={styles.colTitle}>Company</h4>
+          <h4 className={styles.colTitle}>{t("company")}</h4>
           <nav className={styles.linkList}>
             {[
-              { href: "/about",     label: "About Us" },
-              { href: "/contact",   label: "Contact" },
-              { href: "/catalog",   label: "Catalogs", external: true },
-              { href: "/knowledge", label: "Knowledge Base" },
-            ].map(({ href, label, external }) => (
-              external ? (
-                <a key={href} href={href} className={styles.link}>
-                  <ArrowRight size={11} className={styles.linkArrow} />
-                  {label}
-                </a>
-              ) : (
-                <Link key={href} href={href as any} className={styles.link}>
-                  <ArrowRight size={11} className={styles.linkArrow} />
-                  {label}
-                </Link>
-              )
+              { href: "/about", label: t("about") },
+              { href: "/contact", label: t("contactLink") },
+              { href: "/catalog", label: t("catalogs") },
+              { href: "/knowledge", label: t("knowledge") },
+            ].map(({ href, label }) => (
+              <Link key={href} href={href as any} className={styles.link}>
+                <ArrowRight size={11} className={styles.linkArrow} />
+                {label}
+              </Link>
             ))}
           </nav>
         </div>
 
         {/* ── Products ─────────────────────────────── */}
         <div className={styles.col}>
-          <h4 className={styles.colTitle}>Products</h4>
+          <h4 className={styles.colTitle}>{t("products")}</h4>
           <nav className={styles.linkList}>
             {productCategories.slice(0, 5).map((cat) => (
               <Link
@@ -97,7 +92,7 @@ export default function Footer() {
               </Link>
             ))}
             <Link href="/products" className={`${styles.link} ${styles.linkAll}`}>
-              View All Products
+              {t("viewAllProducts")}
               <ArrowRight size={12} />
             </Link>
           </nav>
@@ -105,7 +100,7 @@ export default function Footer() {
 
         {/* ── Contact ──────────────────────────────── */}
         <div className={styles.col}>
-          <h4 className={styles.colTitle}>Get in Touch</h4>
+          <h4 className={styles.colTitle}>{t("contact")}</h4>
           <div className={styles.contactList}>
             <a href={`mailto:${siteConfig.contact.email}`} className={styles.contactItem}>
               <div className={styles.contactIcon}><Mail size={14} strokeWidth={1.75} /></div>
@@ -127,7 +122,7 @@ export default function Footer() {
           </div>
 
           <Link href="/contact" className={styles.quoteBtn}>
-            Request a Quote
+            {t("requestQuote")}
             <ArrowRight size={14} strokeWidth={2.5} />
           </Link>
         </div>
@@ -137,12 +132,12 @@ export default function Footer() {
       <div className={styles.bottomBar}>
         <div className={styles.bottomInner}>
           <p className={styles.copyright}>
-            © {currentYear} {siteConfig.name}. All rights reserved.
+            © {currentYear} {siteConfig.name}. {t("rights")}
           </p>
           <div className={styles.bottomLinks}>
-            <NextLink href="/privacy" className={styles.bottomLink}>Privacy Policy</NextLink>
+            <NextLink href="/privacy" className={styles.bottomLink}>{t("privacy")}</NextLink>
             <span className={styles.bottomDot} />
-            <NextLink href="/terms" className={styles.bottomLink}>Terms of Use</NextLink>
+            <NextLink href="/terms" className={styles.bottomLink}>{t("terms")}</NextLink>
           </div>
         </div>
       </div>
