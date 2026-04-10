@@ -3,7 +3,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import type { CatalogManifest, CatalogPageAsset } from "@/lib/data/catalog-storage";
+import type { CatalogManifest } from "@/lib/data/catalog-storage";
 import styles from "./CatalogViewer.module.css";
 
 type Props = {
@@ -18,15 +18,12 @@ export default function CatalogViewer({ catalog, initialPageIndex = 0 }: Props) 
 
   const bookRef = useRef<any>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const touchRef = useRef<{ startX: number; startY: number; startTime: number } | null>(null);
   const [pageFlipLoaded, setPageFlipLoaded] = useState(false);
   const [currentPage, setCurrentPage] = useState(initialPageIndex);
   const [isMobile, setIsMobile] = useState(false);
   const [showThumbnails, setShowThumbnails] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const usePageFlip = !isMobile;
 
-  // Detect mobile
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 768);
     check();
@@ -34,19 +31,13 @@ export default function CatalogViewer({ catalog, initialPageIndex = 0 }: Props) 
     return () => window.removeEventListener("resize", check);
   }, []);
 
-  // Fullscreen listener
   useEffect(() => {
     const handler = () => setIsFullscreen(Boolean(document.fullscreenElement));
     document.addEventListener("fullscreenchange", handler);
     return () => document.removeEventListener("fullscreenchange", handler);
   }, []);
 
-  // Initialize PageFlip
   useEffect(() => {
-    if (!usePageFlip) {
-      setPageFlipLoaded(true);
-      return;
-    }
     if (!containerRef.current || pages.length === 0) return;
 
     let pf: any;
@@ -59,14 +50,11 @@ export default function CatalogViewer({ catalog, initialPageIndex = 0 }: Props) 
         const el = containerRef.current;
         const containerWidth = el.clientWidth;
 
-        // During first paint / layout shifts, width can be 0.
-        // Retry on next frame until a valid width is available.
-        if (containerWidth < 240) {
+        if (containerWidth < 100) {
           rafId = window.requestAnimationFrame(init);
           return;
         }
 
-        // Remove old instance if any
         el.innerHTML = "";
 
         const isDouble = !isMobile;
@@ -74,19 +62,19 @@ export default function CatalogViewer({ catalog, initialPageIndex = 0 }: Props) 
           ? Math.min(containerWidth / 2, 480)
           : Math.min(containerWidth - 16, 560);
 
-        const w = Math.max(220, Math.floor(rawWidth));
-        const h = Math.max(311, Math.floor(w * (297 / 210))); // A4 portrait ratio
+        const w = Math.max(200, Math.floor(rawWidth));
+        const h = Math.max(283, Math.floor(w * (297 / 210)));
 
         pf = new PageFlip(el, {
           width: w,
           height: h,
           size: "fixed",
-          minWidth: isDouble ? 200 : 220,
-          minHeight: isDouble ? 283 : 311,
-          maxWidth: isDouble ? 480 : 520,
-          maxHeight: isDouble ? 679 : 736,
+          minWidth: isDouble ? 200 : 160,
+          minHeight: isDouble ? 283 : 226,
+          maxWidth: isDouble ? 480 : 560,
+          maxHeight: isDouble ? 679 : 792,
           drawShadow: true,
-          flippingTime: 700,
+          flippingTime: 600,
           usePortrait: !isDouble,
           startZIndex: 5,
           autoSize: true,
@@ -94,10 +82,9 @@ export default function CatalogViewer({ catalog, initialPageIndex = 0 }: Props) 
           mobileScrollSupport: false,
           clickEventForward: true,
           useMouseEvents: true,
-          swipeDistance: 30,
+          swipeDistance: 20,
         });
 
-        // Build page elements
         const pageEls: HTMLElement[] = pages.map((page, idx) => {
           const div = document.createElement("div");
           div.className = styles.flipPage;
@@ -134,53 +121,22 @@ export default function CatalogViewer({ catalog, initialPageIndex = 0 }: Props) 
 
     return () => {
       cancelled = true;
-      if (rafId !== null) {
-        window.cancelAnimationFrame(rafId);
-      }
+      if (rafId !== null) window.cancelAnimationFrame(rafId);
       if (pf) {
         try { pf.destroy?.(); } catch {}
       }
+      bookRef.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [usePageFlip, isMobile, pages]);
+  }, [isMobile, pages]);
 
   const onPrev = useCallback(() => {
-    if (usePageFlip) {
-      bookRef.current?.flipPrev("bottom");
-    } else {
-      setCurrentPage((prev) => Math.max(0, prev - 1));
-    }
-  }, [usePageFlip]);
-  const onNext = useCallback(() => {
-    if (usePageFlip) {
-      bookRef.current?.flipNext("bottom");
-    } else {
-      setCurrentPage((prev) => Math.min(totalPages - 1, prev + 1));
-    }
-  }, [usePageFlip, totalPages]);
-
-  // Touch swipe for mobile
-  const onTouchStart = useCallback((e: React.TouchEvent) => {
-    const touch = e.touches[0];
-    touchRef.current = { startX: touch.clientX, startY: touch.clientY, startTime: Date.now() };
+    bookRef.current?.flipPrev("bottom");
   }, []);
 
-  const onTouchEnd = useCallback(
-    (e: React.TouchEvent) => {
-      if (!touchRef.current) return;
-      const touch = e.changedTouches[0];
-      const dx = touch.clientX - touchRef.current.startX;
-      const dy = touch.clientY - touchRef.current.startY;
-      const elapsed = Date.now() - touchRef.current.startTime;
-      touchRef.current = null;
-
-      if (elapsed > 500 || Math.abs(dx) < 40 || Math.abs(dy) > Math.abs(dx)) return;
-
-      if (dx < 0) onNext();
-      else onPrev();
-    },
-    [onNext, onPrev],
-  );
+  const onNext = useCallback(() => {
+    bookRef.current?.flipNext("bottom");
+  }, []);
 
   const toggleFullscreen = useCallback(async () => {
     const el = containerRef.current?.parentElement;
@@ -191,7 +147,6 @@ export default function CatalogViewer({ catalog, initialPageIndex = 0 }: Props) 
     } catch {}
   }, []);
 
-  // Keyboard
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "ArrowLeft") onPrev();
@@ -257,29 +212,7 @@ export default function CatalogViewer({ catalog, initialPageIndex = 0 }: Props) 
             <p>Katalog yükleniyor…</p>
           </div>
         )}
-        {usePageFlip ? (
-          <div ref={containerRef} className={styles.bookContainer} />
-        ) : (
-          <div
-            className={styles.mobileViewer}
-            onTouchStart={onTouchStart}
-            onTouchEnd={onTouchEnd}
-          >
-            {pages[currentPage]?.url ? (
-              <img
-                src={pages[currentPage].url || ""}
-                alt={`Sayfa ${pages[currentPage].pageNumber}`}
-                className={styles.mobilePageImg}
-                loading="eager"
-                draggable={false}
-              />
-            ) : (
-              <div className={styles.flipPageMissing}>
-                <span>{pages[currentPage]?.pageNumber ?? currentPage + 1}</span>
-              </div>
-            )}
-          </div>
-        )}
+        <div ref={containerRef} className={styles.bookContainer} />
       </div>
 
       {/* Page strip */}
@@ -294,7 +227,7 @@ export default function CatalogViewer({ catalog, initialPageIndex = 0 }: Props) 
               key={idx}
               className={`${styles.stripBtn} ${idx === currentPage ? styles.stripBtnActive : ""}`}
               onClick={() => {
-                if (usePageFlip) bookRef.current?.turnToPage(idx);
+                bookRef.current?.turnToPage(idx);
                 setCurrentPage(idx);
               }}
               aria-label={`${p.pageNumber}. sayfaya git`}
