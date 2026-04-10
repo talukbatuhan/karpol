@@ -133,6 +133,9 @@
   overflow: hidden;
   background: #ffffff;
   box-shadow: 0 14px 30px rgba(0, 0, 0, 0.25);
+  touch-action: pan-y pinch-zoom;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .mobilePageImg {

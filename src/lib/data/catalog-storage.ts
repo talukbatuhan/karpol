@@ -108,6 +108,42 @@ export async function saveCatalogManifest(manifest: CatalogManifest): Promise<vo
   if (error) throw new Error(error.message);
 }
 
+export async function createEmptyCatalog(
+  catalogId: string,
+  title?: string,
+): Promise<CatalogManifest> {
+  const manifest: CatalogManifest = {
+    schemaVersion: 1,
+    catalogId,
+    title,
+    totalPages: 0,
+    pages: [],
+    updatedAt: new Date().toISOString(),
+  };
+  await saveCatalogManifest(manifest);
+  return manifest;
+}
+
+export async function deleteCatalog(catalogId: string): Promise<void> {
+  const supabase = createAdminClient();
+
+  const folders = [`${catalogId}/pages`, `${catalogId}/thumbs`];
+  for (const folder of folders) {
+    const { data: files } = await supabase.storage
+      .from(CATALOG_BUCKET)
+      .list(folder, { limit: 1000 });
+
+    if (files && files.length > 0) {
+      const paths = files.map((f) => `${folder}/${f.name}`);
+      await supabase.storage.from(CATALOG_BUCKET).remove(paths);
+    }
+  }
+
+  await supabase.storage
+    .from(CATALOG_BUCKET)
+    .remove([`${catalogId}/manifest.json`]);
+}
+
 export async function buildCatalogManifestFromStorage(
   catalogId: string,
   title?: string,

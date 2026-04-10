@@ -138,7 +138,7 @@ export default async function Home({ params }: HomePageProps) {
 
           <div className={styles.productsGrid}>
             {[
-              { href: "/products/polyurethane-components", category: "polyurethane-components", titleKey: "products.polyurethane.title", descKey: "products.polyurethane.desc", accent: "#c8a85a", num: "01" },
+              { href: "/products/polyurethane-components", category: "polyurethane-components", titleKey: "products.polyurethane.title", descKey: "products.polyurethane.desc", accent: "#E8611A", num: "01" },
               { href: "/products/vulkollan-components",    category: "vulkollan-components",    titleKey: "products.vulkollan.title",    descKey: "products.vulkollan.desc",    accent: "#e07b3c", num: "02" },
               { href: "/products/rubber-components",       category: "rubber-components",       titleKey: "products.rubber.title",       descKey: "products.rubber.desc",       accent: "#5b9bd5", num: "03" },
               { href: "/products/silicone-components",     category: "silicone-components",     titleKey: "products.silicone.title",     descKey: "products.silicone.desc",     accent: "#6ec6a0", num: "04" },

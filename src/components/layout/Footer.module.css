@@ -1,28 +1,26 @@
 /* ============================================================
    Footer.module.css — Karpol Footer
-   Matches: Industrial Luxury · Dark · Gold Accent System
+   Aesthetic: Industrial · Dark · Accent System
    ============================================================ */
 
 .footer {
-  --gold: #c8a85a;
-  --gold-dim: rgba(200, 168, 90, 0.10);
-  --gold-border: rgba(200, 168, 90, 0.20);
-  --dark-900: var(--bg-main);
-  --dark-800: var(--bg-secondary);
-  --dark-700: var(--bg-tertiary);
-  --border: var(--border-color);
-  --text: #f1f5f9;
-  --muted: #64748b;
-  --muted-hover: #94a3b8;
-  --radius: 7px;
-  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --f-accent: var(--color-accent);
+  --f-accent-dim: var(--gold-dim);
+  --f-accent-border: rgba(232, 97, 26, 0.20);
+  --f-accent-hover: var(--color-accent-hover);
+  --f-border: var(--border-color);
+  --f-text: var(--steel-100);
+  --f-muted: var(--steel-500);
+  --f-muted-hover: var(--steel-400);
+  --f-radius: var(--radius-md);
+  --f-ease: var(--ease-out);
 
   position: relative;
   background: var(--bg-secondary);
-  border-top: 1px solid var(--border);
+  border-top: 1px solid var(--f-border);
 }
 
-/* Gold line at top */
+/* Accent line at top */
 .accentBar {
   position: absolute;
   top: 0;
@@ -32,8 +30,8 @@
   background: linear-gradient(
     90deg,
     transparent 0%,
-    var(--gold) 30%,
-    var(--gold) 70%,
+    var(--f-accent) 30%,
+    var(--f-accent) 70%,
     transparent 100%
   );
   opacity: 0.5;
@@ -88,9 +86,9 @@
 }
 
 .description {
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
   line-height: 1.75;
-  color: var(--muted);
+  color: var(--f-muted);
   max-width: 300px;
   margin-bottom: 28px;
 }
@@ -109,17 +107,17 @@
   width: 36px;
   height: 36px;
   background: var(--bg-hover);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  color: var(--muted);
+  border: 1px solid var(--f-border);
+  border-radius: var(--f-radius);
+  color: var(--f-muted);
   text-decoration: none;
   transition: background 200ms, border-color 200ms, color 200ms;
 }
 
 .socialBtn:hover {
-  background: var(--gold-dim);
-  border-color: var(--gold-border);
-  color: var(--gold);
+  background: var(--f-accent-dim);
+  border-color: var(--f-accent-border);
+  color: var(--f-accent);
 }
 
 /* ISO badge */
@@ -131,11 +129,11 @@
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--muted);
+  color: var(--f-muted);
   padding: 6px 12px;
   background: rgba(255,255,255,0.03);
-  border: 1px solid var(--border);
-  border-radius: 100px;
+  border: 1px solid var(--f-border);
+  border-radius: var(--radius-full);
   width: fit-content;
 }
 
@@ -143,8 +141,8 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: var(--gold);
-  box-shadow: 0 0 6px var(--gold);
+  background: var(--f-accent);
+  box-shadow: 0 0 6px var(--f-accent);
   flex-shrink: 0;
 }
 
@@ -152,11 +150,11 @@
 .col {}
 
 .colTitle {
-  font-size: 0.7rem;
+  font-size: var(--text-xs);
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--gold);
+  color: var(--f-accent);
   margin-bottom: 20px;
 }
 
@@ -171,16 +169,16 @@
   align-items: center;
   gap: 7px;
   padding: 7px 8px;
-  font-size: 0.875rem;
-  color: var(--muted);
+  font-size: var(--text-sm);
+  color: var(--f-muted);
   text-decoration: none;
-  border-radius: 5px;
+  border-radius: var(--radius-sm);
   transition: color 180ms, background 180ms, padding-left 180ms;
   margin: 0 -8px;
 }
 
 .link:hover {
-  color: var(--text);
+  color: var(--f-text);
   background: rgba(255,255,255,0.04);
   padding-left: 14px;
 }
@@ -188,7 +186,7 @@
 .linkArrow {
   flex-shrink: 0;
   opacity: 0;
-  color: var(--gold);
+  color: var(--f-accent);
   transition: opacity 180ms;
 }
 
@@ -199,16 +197,16 @@
 /* "View All" link */
 .linkAll {
   margin-top: 6px;
-  color: var(--gold);
+  color: var(--f-accent);
   font-weight: 600;
-  font-size: 0.8rem;
+  font-size: var(--text-xs);
   letter-spacing: 0.03em;
   gap: 5px;
 }
 
 .linkAll:hover {
-  color: #d4b46a;
-  background: var(--gold-dim);
+  color: var(--f-accent-hover);
+  background: var(--f-accent-dim);
 }
 
 /* ── Contact Column ───────────────────────────────────────── */
@@ -224,27 +222,27 @@
   align-items: flex-start;
   gap: 12px;
   padding: 8px 0;
-  font-size: 0.875rem;
-  color: var(--muted);
+  font-size: var(--text-sm);
+  color: var(--f-muted);
   text-decoration: none;
   border-bottom: 1px solid rgba(255,255,255,0.04);
   transition: color 180ms;
 }
 
 a.contactItem:hover {
-  color: var(--text);
+  color: var(--f-text);
 }
 
 .contactIcon {
   width: 28px;
   height: 28px;
-  background: var(--gold-dim);
-  border: 1px solid var(--gold-border);
-  border-radius: 6px;
+  background: var(--f-accent-dim);
+  border: 1px solid var(--f-accent-border);
+  border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--gold);
+  color: var(--f-accent);
   flex-shrink: 0;
   margin-top: 1px;
 }
@@ -266,22 +264,22 @@ a.contactItem:hover {
   align-items: center;
   gap: 8px;
   padding: 11px 20px;
-  background: var(--gold);
-  color: var(--bg-main);
-  border-radius: var(--radius);
-  font-size: 0.8125rem;
+  background: var(--f-accent);
+  color: #ffffff;
+  border-radius: var(--f-radius);
+  font-size: var(--text-sm);
   font-weight: 700;
   letter-spacing: 0.04em;
   text-decoration: none;
   width: 100%;
   justify-content: center;
-  box-shadow: 0 2px 16px rgba(200, 168, 90, 0.2);
+  box-shadow: 0 2px 16px var(--gold-glow);
   transition: background 200ms, box-shadow 200ms, transform 200ms;
 }
 
 .quoteBtn:hover {
-  background: #d4b46a;
-  box-shadow: 0 4px 28px rgba(200, 168, 90, 0.38);
+  background: var(--f-accent-hover);
+  box-shadow: var(--shadow-hover);
   transform: translateY(-1px);
 }
 
@@ -295,7 +293,7 @@ a.contactItem:hover {
 
 /* ── Bottom Bar ───────────────────────────────────────────── */
 .bottomBar {
-  border-top: 1px solid var(--border);
+  border-top: 1px solid var(--f-border);
 }
 
 .bottomInner {
@@ -319,8 +317,8 @@ a.contactItem:hover {
 }
 
 .copyright {
-  font-size: 0.8rem;
-  color: var(--muted);
+  font-size: var(--text-xs);
+  color: var(--f-muted);
   letter-spacing: 0.02em;
 }
 
@@ -331,15 +329,15 @@ a.contactItem:hover {
 }
 
 .bottomLink {
-  font-size: 0.8rem;
-  color: var(--muted);
+  font-size: var(--text-xs);
+  color: var(--f-muted);
   text-decoration: none;
   letter-spacing: 0.02em;
   transition: color 180ms;
 }
 
 .bottomLink:hover {
-  color: var(--gold);
+  color: var(--f-accent);
 }
 
 .bottomDot {

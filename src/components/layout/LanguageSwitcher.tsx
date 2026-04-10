@@ -48,7 +48,7 @@ export default function LanguageSwitcher() {
         aria-expanded={isOpen}
       >
         <Globe size={18} strokeWidth={2} />
-        <span style={{ fontSize: '0.75rem', fontWeight: 600, marginLeft: 2, marginRight: 2 }}>
+        <span className={styles.langCode}>
           {locale.toUpperCase()}
         </span>
         <ChevronDown
@@ -63,20 +63,12 @@ export default function LanguageSwitcher() {
           {locales.map((item) => (
             <button
               key={item.code}
-              className={styles.dropdownItem}
+              className={`${styles.dropdownItem} ${styles.langDropdownItem} ${locale === item.code ? styles.langDropdownItemActive : ""}`}
               onClick={() => switchLocale(item.code)}
               disabled={isPending}
-              style={{
-                width: "100%",
-                border: "none",
-                background: locale === item.code ? "rgba(255, 255, 255, 0.05)" : "transparent",
-                cursor: "pointer",
-                fontFamily: "inherit",
-              }}
             >
               <span
-                className={styles.dropdownItemText}
-                style={{ color: locale === item.code ? "var(--h-accent)" : "inherit", textAlign: "left" }}
+                className={`${styles.dropdownItemText} ${styles.langDropdownItemTextDefault} ${locale === item.code ? styles.langDropdownItemTextActive : ""}`}
               >
                 {item.label} ({item.code.toUpperCase()})
               </span>

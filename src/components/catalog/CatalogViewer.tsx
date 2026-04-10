@@ -18,6 +18,7 @@ export default function CatalogViewer({ catalog, initialPageIndex = 0 }: Props) 
 
   const bookRef = useRef<any>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const touchRef = useRef<{ startX: number; startY: number; startTime: number } | null>(null);
   const [pageFlipLoaded, setPageFlipLoaded] = useState(false);
   const [currentPage, setCurrentPage] = useState(initialPageIndex);
   const [isMobile, setIsMobile] = useState(false);
@@ -127,6 +128,8 @@ export default function CatalogViewer({ catalog, initialPageIndex = 0 }: Props) 
       };
 
       init();
+    }).catch(() => {
+      setPageFlipLoaded(true);
     });
 
     return () => {
@@ -155,6 +158,29 @@ export default function CatalogViewer({ catalog, initialPageIndex = 0 }: Props) 
       setCurrentPage((prev) => Math.min(totalPages - 1, prev + 1));
     }
   }, [usePageFlip, totalPages]);
+
+  // Touch swipe for mobile
+  const onTouchStart = useCallback((e: React.TouchEvent) => {
+    const touch = e.touches[0];
+    touchRef.current = { startX: touch.clientX, startY: touch.clientY, startTime: Date.now() };
+  }, []);
+
+  const onTouchEnd = useCallback(
+    (e: React.TouchEvent) => {
+      if (!touchRef.current) return;
+      const touch = e.changedTouches[0];
+      const dx = touch.clientX - touchRef.current.startX;
+      const dy = touch.clientY - touchRef.current.startY;
+      const elapsed = Date.now() - touchRef.current.startTime;
+      touchRef.current = null;
+
+      if (elapsed > 500 || Math.abs(dx) < 40 || Math.abs(dy) > Math.abs(dx)) return;
+
+      if (dx < 0) onNext();
+      else onPrev();
+    },
+    [onNext, onPrev],
+  );
 
   const toggleFullscreen = useCallback(async () => {
     const el = containerRef.current?.parentElement;
@@ -234,13 +260,18 @@ export default function CatalogViewer({ catalog, initialPageIndex = 0 }: Props) 
         {usePageFlip ? (
           <div ref={containerRef} className={styles.bookContainer} />
         ) : (
-          <div className={styles.mobileViewer}>
+          <div
+            className={styles.mobileViewer}
+            onTouchStart={onTouchStart}
+            onTouchEnd={onTouchEnd}
+          >
             {pages[currentPage]?.url ? (
               <img
                 src={pages[currentPage].url || ""}
                 alt={`Sayfa ${pages[currentPage].pageNumber}`}
                 className={styles.mobilePageImg}
                 loading="eager"
+                draggable={false}
               />
             ) : (
               <div className={styles.flipPageMissing}>

@@ -7,7 +7,7 @@ import { navigation, siteConfig } from "@/lib/config";
 import styles from "./Header.module.css";
 import dynamic from "next/dynamic";
 import LanguageSwitcher from "./LanguageSwitcher";
-import { Menu, X, Search, ChevronDown, ArrowRight } from "lucide-react";
+import { Search, ChevronDown, ArrowRight } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 export default function Header() {

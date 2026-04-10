@@ -165,7 +165,7 @@ export default function AdvancedSearch({ isOpen, onClose }: AdvancedSearchProps)
                           <div className={styles.resultMeta}>Jump to category</div>
                         </div>
                         {index === activeIndex && (
-                          <span style={{ fontSize: "12px", color: "#94a3b8" }}>↵</span>
+                          <span className={styles.enterHint}>↵</span>
                         )}
                       </Link>
                     ))}
@@ -174,7 +174,7 @@ export default function AdvancedSearch({ isOpen, onClose }: AdvancedSearchProps)
 
               {results.some((r) => r.type === "Product") && (
                 <>
-                  <div className={styles.groupLabel} style={{ marginTop: "8px" }}>
+                  <div className={`${styles.groupLabel} ${styles.groupLabelSpaced}`}>
                     Products
                   </div>
                   {results
@@ -198,7 +198,7 @@ export default function AdvancedSearch({ isOpen, onClose }: AdvancedSearchProps)
                             )}
                           </div>
                           {globalIndex === activeIndex && (
-                            <span style={{ fontSize: "12px", color: "#94a3b8" }}>↵</span>
+                            <span className={styles.enterHint}>↵</span>
                           )}
                         </Link>
                       );
@@ -208,7 +208,7 @@ export default function AdvancedSearch({ isOpen, onClose }: AdvancedSearchProps)
 
               {results.some((r) => r.type === "Article") && (
                 <>
-                  <div className={styles.groupLabel} style={{ marginTop: "8px" }}>
+                  <div className={`${styles.groupLabel} ${styles.groupLabelSpaced}`}>
                     Articles
                   </div>
                   {results
@@ -232,7 +232,7 @@ export default function AdvancedSearch({ isOpen, onClose }: AdvancedSearchProps)
                             )}
                           </div>
                           {globalIndex === activeIndex && (
-                            <span style={{ fontSize: "12px", color: "#94a3b8" }}>↵</span>
+                            <span className={styles.enterHint}>↵</span>
                           )}
                         </Link>
                       );
@@ -247,17 +247,7 @@ export default function AdvancedSearch({ isOpen, onClose }: AdvancedSearchProps)
           )}
         </div>
         
-        <div
-          style={{
-            padding: "8px 16px",
-            background: "#f8fafc",
-            borderTop: "1px solid #e2e8f0",
-            fontSize: "11px",
-            color: "#94a3b8",
-            display: "flex",
-            justifyContent: "space-between",
-          }}
-        >
+        <div className={styles.tipBar}>
           <span>Tip: Use ↑ ↓ and ↵ to navigate</span>
           <span>KARPOL Engineering Search</span>
         </div>
