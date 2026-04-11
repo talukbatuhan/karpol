@@ -151,9 +151,9 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                           />
                         ) : (
-                          <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", color: "#94a3b8", flexDirection: "column", gap: "8px" }}>
-                            <span style={{ fontSize: "32px" }}>📷</span>
-                            <span style={{ fontSize: "12px", fontWeight: "600" }}>NO IMAGE</span>
+                          <div className={styles.imagePlaceholder}>
+                            <span className={styles.imagePlaceholderIcon} aria-hidden>📷</span>
+                            <span className={styles.imagePlaceholderLabel}>NO IMAGE</span>
                           </div>
                         )}
                       </div>
@@ -171,9 +171,9 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
                     </Link>
                   ))
                 ) : (
-                  <div style={{ gridColumn: "1 / -1", padding: "64px", textAlign: "center", background: "white", border: "1px solid #e2e8f0", borderRadius: "8px" }}>
-                    <h3 style={{ fontSize: "20px", fontWeight: "700", color: "#1e293b", marginBottom: "8px" }}>No products found</h3>
-                    <p style={{ color: "#64748b" }}>We are currently updating this category. Please check back soon.</p>
+                  <div className={styles.emptyState}>
+                    <h3 className={styles.emptyStateTitle}>No products found</h3>
+                    <p className={styles.emptyStateText}>We are currently updating this category. Please check back soon.</p>
                   </div>
                 )}
               </div>

@@ -4,21 +4,14 @@
    ============================================================ */
 
 .page {
-  --gold: #c8a85a;
-  --gold-dim: rgba(200, 168, 90, 0.10);
-  --gold-glow: rgba(200, 168, 90, 0.25);
-  --gold-border: rgba(200, 168, 90, 0.20);
-  --dark-900: var(--bg-main);
-  --dark-800: var(--bg-secondary);
-  --dark-700: var(--bg-tertiary);
-  --dark-600: var(--bg-hover);
-  --slate-400: #94a3b8;
-  --slate-300: #cbd5e1;
-  --white: #f8fafc;
-  --border: var(--border-color);
-  --radius: 8px;
-  --radius-lg: 14px;
-  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --accent: var(--color-accent);
+  --accent-dim: var(--gold-dim);
+  --accent-glow: var(--gold-glow);
+  --accent-hover: var(--color-accent-hover);
+  --accent-border: rgba(232, 97, 26, 0.2);
+  --r: var(--radius-md);
+  --r-lg: var(--radius-lg);
+  --ease: var(--ease-out);
   background: var(--bg-main);
   color: var(--text-main);
   min-height: 100vh;
@@ -43,7 +36,7 @@
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--gold);
+  color: var(--accent);
   margin-bottom: 16px;
 }
 
@@ -51,7 +44,7 @@
   display: block;
   width: 28px;
   height: 1.5px;
-  background: var(--gold);
+  background: var(--accent);
   flex-shrink: 0;
 }
 
@@ -84,20 +77,20 @@
   align-items: center;
   gap: 8px;
   padding: 13px 26px;
-  background: var(--gold);
-  color: var(--bg-main);
-  border-radius: var(--radius);
-  font-size: 0.875rem;
+  background: var(--accent);
+  color: #ffffff;
+  border-radius: var(--r);
+  font-size: var(--text-sm);
   font-weight: 700;
   letter-spacing: 0.04em;
   text-decoration: none;
-  box-shadow: 0 4px 24px var(--gold-glow);
+  box-shadow: 0 4px 24px var(--accent-glow);
   transition: background 200ms, box-shadow 200ms, transform 200ms;
 }
 
 .primaryBtn:hover {
-  background: #d4b46a;
-  box-shadow: 0 8px 40px rgba(200, 168, 90, 0.4);
+  background: var(--accent-hover);
+  box-shadow: 0 8px 40px var(--accent-glow);
   transform: translateY(-2px);
 }
 
@@ -112,8 +105,8 @@
   background: var(--bg-hover);
   color: var(--text-dim);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
-  font-size: 0.875rem;
+  border-radius: var(--r);
+  font-size: var(--text-sm);
   font-weight: 500;
   text-decoration: none;
   transition: background 200ms, color 200ms, border-color 200ms;
@@ -155,8 +148,8 @@
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(200, 168, 90, 0.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(200, 168, 90, 0.035) 1px, transparent 1px);
+    linear-gradient(rgba(232, 97, 26, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(232, 97, 26, 0.035) 1px, transparent 1px);
   background-size: 60px 60px;
   mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black 0%, transparent 100%);
 }
@@ -165,8 +158,8 @@
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse 60% 60% at 20% 40%, rgba(200, 168, 90, 0.07) 0%, transparent 60%),
-    radial-gradient(ellipse 50% 50% at 80% 70%, rgba(224, 123, 60, 0.05) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 60% at 20% 40%, rgba(232, 97, 26, 0.07) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 50% at 80% 70%, rgba(232, 97, 26, 0.05) 0%, transparent 60%),
     linear-gradient(180deg, var(--bg-main) 0%, var(--bg-secondary) 60%, var(--bg-main) 100%);
 }
 
@@ -175,7 +168,7 @@
   width: 700px;
   height: 700px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(200, 168, 90, 0.06) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(232, 97, 26, 0.06) 0%, transparent 70%);
   top: -200px;
   right: -200px;
   animation: orbFloat 14s ease-in-out infinite;
@@ -209,14 +202,14 @@
   align-items: center;
   gap: 7px;
   padding: 6px 14px;
-  background: var(--gold-dim);
-  border: 1px solid var(--gold-border);
+  background: var(--accent-dim);
+  border: 1px solid var(--accent-border);
   border-radius: 100px;
   font-size: 0.7rem;
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--gold);
+  color: var(--accent);
   margin-bottom: 28px;
   animation: fadeUp 0.5s var(--ease) both;
 }
@@ -263,7 +256,7 @@
   padding: 16px 20px;
   background: var(--bg-tertiary);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border-radius: var(--r);
   backdrop-filter: blur(8px);
   min-width: 180px;
   transition: background 200ms, border-color 200ms;
@@ -271,19 +264,19 @@
 
 .trustCard:hover {
   background: rgba(255, 255, 255, 0.055);
-  border-color: var(--gold-border);
+  border-color: var(--accent-border);
 }
 
 .trustIcon {
   width: 40px;
   height: 40px;
-  background: var(--gold-dim);
-  border: 1px solid var(--gold-border);
+  background: var(--accent-dim);
+  border: 1px solid var(--accent-border);
   border-radius: 9px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--gold);
+  color: var(--accent);
   flex-shrink: 0;
 }
 
@@ -312,7 +305,7 @@
 .scrollLine {
   width: 1px;
   height: 44px;
-  background: linear-gradient(to bottom, var(--gold), transparent);
+  background: linear-gradient(to bottom, var(--accent), transparent);
   margin: 0 auto;
   animation: scrollPulse 2s ease-in-out infinite;
 }
@@ -361,7 +354,7 @@
 .storyImageWrap {
   position: relative;
   height: 520px;
-  border-radius: var(--radius-lg);
+  border-radius: var(--r-lg);
   overflow: hidden;
   border: 1px solid var(--border);
 }
@@ -384,9 +377,9 @@
   inset: 0;
   background: linear-gradient(
     135deg,
-    rgba(200, 168, 90, 0.06) 0%,
+    rgba(232, 97, 26, 0.06) 0%,
     transparent 50%,
-    rgba(8, 10, 14, 0.3) 100%
+    rgba(15, 23, 41, 0.3) 100%
   );
   pointer-events: none;
 }
@@ -401,10 +394,10 @@
   gap: 12px;
   padding: 14px 18px;
   background: var(--bg-secondary);
-  border: 1px solid var(--gold-border);
-  border-radius: var(--radius);
+  border: 1px solid var(--accent-border);
+  border-radius: var(--r);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-  color: var(--gold);
+  color: var(--accent);
 }
 
 .storyBadge strong {
@@ -446,25 +439,25 @@
   padding: 14px 16px;
   background: var(--bg-tertiary);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border-radius: var(--r);
   transition: background 200ms, border-color 200ms;
 }
 
 .factItem:hover {
   background: rgba(255, 255, 255, 0.055);
-  border-color: var(--gold-border);
+  border-color: var(--accent-border);
 }
 
 .factIcon {
   width: 32px;
   height: 32px;
-  background: var(--gold-dim);
-  border: 1px solid var(--gold-border);
+  background: var(--accent-dim);
+  border: 1px solid var(--accent-border);
   border-radius: 7px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--gold);
+  color: var(--accent);
   flex-shrink: 0;
   margin-top: 2px;
 }
@@ -490,14 +483,14 @@
   align-items: flex-start;
   gap: 10px;
   padding: 14px 16px;
-  background: var(--gold-dim);
-  border: 1px solid var(--gold-border);
-  border-radius: var(--radius);
-  border-left: 3px solid var(--gold);
+  background: var(--accent-dim);
+  border: 1px solid var(--accent-border);
+  border-radius: var(--r);
+  border-left: 3px solid var(--accent);
 }
 
 .addressPin {
-  color: var(--gold);
+  color: var(--accent);
   flex-shrink: 0;
   margin-top: 3px;
 }
@@ -507,7 +500,7 @@
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--gold);
+  color: var(--accent);
   margin-bottom: 4px;
 }
 
@@ -566,7 +559,7 @@
   left: 10%;
   right: 10%;
   height: 1px;
-  background: linear-gradient(90deg, transparent, var(--gold-border), var(--gold-border), transparent);
+  background: linear-gradient(90deg, transparent, var(--accent-border), var(--accent-border), transparent);
 }
 
 @media (max-width: 900px) {
@@ -577,7 +570,7 @@
     right: auto;
     width: 1px;
     height: auto;
-    background: linear-gradient(180deg, transparent, var(--gold-border), var(--gold-border), transparent);
+    background: linear-gradient(180deg, transparent, var(--accent-border), var(--accent-border), transparent);
   }
 }
 
@@ -602,9 +595,9 @@
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: var(--gold);
+  background: var(--accent);
   border: 2px solid var(--bg-secondary);
-  box-shadow: 0 0 12px var(--gold-glow);
+  box-shadow: 0 0 12px var(--accent-glow);
   flex-shrink: 0;
   margin-bottom: 20px;
   position: relative;
@@ -637,7 +630,7 @@
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.12em;
-  color: var(--gold);
+  color: var(--accent);
   margin-bottom: 4px;
 }
 
@@ -677,7 +670,7 @@
   gap: 1px;
   background: var(--border);
   border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
+  border-radius: var(--r-lg);
   overflow: hidden;
 }
 
@@ -722,13 +715,13 @@
 .valueIcon {
   width: 42px;
   height: 42px;
-  background: var(--gold-dim);
-  border: 1px solid var(--gold-border);
+  background: var(--accent-dim);
+  border: 1px solid var(--accent-border);
   border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--gold);
+  color: var(--accent);
 }
 
 .valueTitle {
@@ -752,7 +745,7 @@
   left: 0;
   right: 0;
   height: 2px;
-  background: var(--gold);
+  background: var(--accent);
   transform: scaleX(0);
   transform-origin: left;
   transition: transform 250ms var(--ease);
@@ -770,7 +763,7 @@
 .ctaBg {
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, var(--bg-secondary) 0%, #111620 100%);
+  background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--color-secondary) 100%);
 }
 
 .ctaGlow {
@@ -780,7 +773,7 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: radial-gradient(ellipse, rgba(200, 168, 90, 0.07) 0%, transparent 70%);
+  background: radial-gradient(ellipse, rgba(232, 97, 26, 0.07) 0%, transparent 70%);
 }
 
 .ctaNoise {

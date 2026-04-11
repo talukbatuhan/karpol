@@ -44,6 +44,11 @@ export default async function middleware(request: NextRequest) {
     return response;
   }
 
+  // Vanity / fixed URLs without locale prefix (next-intl would otherwise redirect e.g. → /tr/...)
+  if (pathname === '/hasankara' || pathname.startsWith('/hasankara/')) {
+    return updateSession(request);
+  }
+
   const response = handleI18nRouting(request);
 
   if (response.status >= 300 && response.status < 400) {

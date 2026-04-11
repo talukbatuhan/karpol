@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { productCategories } from "@/lib/config";
@@ -62,10 +62,21 @@ type AdvancedSearchProps = {
 
 export default function AdvancedSearch({ isOpen, onClose }: AdvancedSearchProps) {
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState(SEARCH_INDEX);
   const [activeIndex, setActiveIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
+
+  const results = useMemo(() => {
+    if (!query) {
+      return SEARCH_INDEX.slice(0, 8);
+    }
+    const normalizedQuery = query.toLowerCase();
+    return SEARCH_INDEX.filter((item) => {
+      const titleMatch = item.title.toLowerCase().includes(normalizedQuery);
+      const metaMatch = item.meta?.toLowerCase().includes(normalizedQuery);
+      return titleMatch || metaMatch;
+    });
+  }, [query]);
 
   useEffect(() => {
     if (isOpen) {
@@ -79,28 +90,14 @@ export default function AdvancedSearch({ isOpen, onClose }: AdvancedSearchProps)
     };
   }, [isOpen]);
 
-  useEffect(() => {
-    if (!query) {
-      setResults(SEARCH_INDEX.slice(0, 8));
-      return;
-    }
-
-    const normalizedQuery = query.toLowerCase();
-    const filtered = SEARCH_INDEX.filter((item) => {
-      const titleMatch = item.title.toLowerCase().includes(normalizedQuery);
-      const metaMatch = item.meta?.toLowerCase().includes(normalizedQuery);
-      return titleMatch || metaMatch;
-    });
-    setResults(filtered);
-    setActiveIndex(0);
-  }, [query]);
-
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "ArrowDown") {
       e.preventDefault();
+      if (results.length === 0) return;
       setActiveIndex((prev) => (prev + 1) % results.length);
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
+      if (results.length === 0) return;
       setActiveIndex((prev) => (prev - 1 + results.length) % results.length);
     } else if (e.key === "Enter") {
       e.preventDefault();
@@ -136,7 +133,10 @@ export default function AdvancedSearch({ isOpen, onClose }: AdvancedSearchProps)
             className={styles.searchInput}
             placeholder="Search products, categories, or technical articles..."
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e) => {
+              setQuery(e.target.value);
+              setActiveIndex(0);
+            }}
             onKeyDown={handleKeyDown}
           />
           <button className={styles.closeButton} onClick={onClose}>ESC</button>
@@ -242,7 +242,7 @@ export default function AdvancedSearch({ isOpen, onClose }: AdvancedSearchProps)
             </>
           ) : (
             <div className={styles.emptyState}>
-              No results found for "{query}"
+              No results found for &quot;{query}&quot;
             </div>
           )}
         </div>

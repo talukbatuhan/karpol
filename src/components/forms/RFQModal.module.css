@@ -4,7 +4,7 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(15, 23, 42, 0.75); /* Slate 900 @ 75% */
+  background-color: color-mix(in srgb, var(--color-primary) 75%, transparent);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -14,20 +14,20 @@
 }
 
 .modal {
-  background: #ffffff;
+  background: var(--bg-secondary);
   width: 100%;
   max-width: 500px;
-  border-radius: 12px;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-modal);
   overflow: hidden;
   animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border-color);
 }
 
 .header {
-  background: #f8fafc;
+  background: var(--steel-50);
   padding: 20px 24px;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--border-color);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -36,13 +36,13 @@
 .title {
   font-size: 18px;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--color-primary);
   margin: 0;
 }
 
 .productContext {
   font-size: 13px;
-  color: #64748b;
+  color: var(--text-muted);
   margin-top: 4px;
   font-weight: 500;
 }
@@ -51,7 +51,7 @@
   background: none;
   border: none;
   font-size: 24px;
-  color: #94a3b8;
+  color: var(--steel-400);
   cursor: pointer;
   padding: 4px;
   line-height: 1;
@@ -59,7 +59,7 @@
 }
 
 .closeBtn:hover {
-  color: #0f172a;
+  color: var(--color-primary);
 }
 
 .body {
@@ -74,7 +74,7 @@
   display: block;
   font-size: 13px;
   font-weight: 600;
-  color: #475569;
+  color: var(--steel-600);
   margin-bottom: 6px;
 }
 
@@ -82,20 +82,20 @@
 .textarea {
   width: 100%;
   padding: 10px 12px;
-  border: 1px solid #cbd5e1;
-  border-radius: 6px;
+  border: 1px solid var(--steel-300);
+  border-radius: var(--radius-sm);
   font-size: 14px;
-  color: #0f172a;
+  color: var(--color-primary);
   transition: all 0.2s;
-  background: #f8fafc;
+  background: var(--steel-50);
 }
 
 .input:focus,
 .textarea:focus {
   outline: none;
-  border-color: #f97316;
-  box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.1);
-  background: white;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 2px var(--gold-dim);
+  background: var(--bg-secondary);
 }
 
 .textarea {
@@ -105,8 +105,8 @@
 
 .footer {
   padding: 20px 24px;
-  background: #f8fafc;
-  border-top: 1px solid #e2e8f0;
+  background: var(--steel-50);
+  border-top: 1px solid var(--border-color);
   display: flex;
   justify-content: flex-end;
   gap: 12px;
@@ -114,29 +114,29 @@
 
 .cancelBtn {
   padding: 10px 20px;
-  border: 1px solid #cbd5e1;
-  background: white;
-  color: #475569;
+  border: 1px solid var(--steel-300);
+  background: var(--bg-secondary);
+  color: var(--steel-600);
   font-weight: 600;
   font-size: 14px;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .cancelBtn:hover {
-  background: #f1f5f9;
-  color: #0f172a;
+  background: var(--steel-100);
+  color: var(--color-primary);
 }
 
 .submitBtn {
   padding: 10px 24px;
-  background: #f97316;
-  color: white;
-  border: 1px solid #ea580c;
+  background: var(--color-accent);
+  color: var(--color-white);
+  border: 1px solid var(--color-accent-hover);
   font-weight: 600;
   font-size: 14px;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
   transition: all 0.2s;
   display: flex;
@@ -145,7 +145,7 @@
 }
 
 .submitBtn:hover {
-  background: #ea580c;
+  background: var(--color-accent-hover);
 }
 
 .submitBtn:disabled {
@@ -161,7 +161,7 @@
 
 .successIcon {
   font-size: 48px;
-  color: #10b981;
+  color: var(--color-success);
   margin-bottom: 16px;
   display: block;
 }
@@ -169,24 +169,34 @@
 .successTitle {
   font-size: 20px;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--color-primary);
   margin-bottom: 8px;
 }
 
 .successText {
-  color: #64748b;
+  color: var(--text-muted);
   margin-bottom: 24px;
   line-height: 1.5;
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes slideUp {
-  from { transform: translateY(20px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 @media (max-width: 640px) {

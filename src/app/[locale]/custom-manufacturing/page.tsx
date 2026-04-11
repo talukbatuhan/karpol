@@ -56,6 +56,7 @@ const ADVANTAGES = [
 
 export default function CustomManufacturingPage() {
   const t = useTranslations("CustomManufacturing");
+  type Msg = Parameters<typeof t>[0];
 
   return (
     <main className={styles.page}>
@@ -161,8 +162,8 @@ export default function CustomManufacturingPage() {
                     <Icon size={22} strokeWidth={1.5} />
                   </div>
                 </div>
-                <h3 className={styles.capTitle}>{t(key as any)}</h3>
-                <p className={styles.capDesc}>{t(descKey as any)}</p>
+                <h3 className={styles.capTitle}>{t(key as Msg)}</h3>
+                <p className={styles.capDesc}>{t(descKey as Msg)}</p>
                 <div className={styles.capBar} />
               </div>
             ))}
@@ -195,8 +196,8 @@ export default function CustomManufacturingPage() {
                   <span>{i + 1}</span>
                 </div>
                 <div className={styles.stepCard}>
-                  <h4 className={styles.stepTitle}>{t(stepKey as any)}</h4>
-                  <p className={styles.stepDesc}>{t(`${stepKey}Desc` as any)}</p>
+                  <h4 className={styles.stepTitle}>{t(stepKey as Msg)}</h4>
+                  <p className={styles.stepDesc}>{t(`${stepKey}Desc` as Msg)}</p>
                 </div>
               </div>
             ))}

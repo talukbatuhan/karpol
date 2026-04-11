@@ -10,6 +10,8 @@ const csp = [
   "img-src 'self' data: blob: https:",
   "font-src 'self' data:",
   "connect-src 'self' https://*.supabase.co https://vitals.vercel-insights.com",
+  // ✅ Google Maps iframe'ine izin verir
+  "frame-src 'self' https://www.google.com https://maps.googleapis.com",
   "frame-ancestors 'self'",
   "base-uri 'self'",
   "form-action 'self'",

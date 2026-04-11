@@ -14,7 +14,6 @@ import {
   Linkedin,
   Instagram,
   Zap,
-  Globe,
 } from "lucide-react";
 
 /* ── Contact Info Data ───────────────────────────────────── */
@@ -22,8 +21,8 @@ const CONTACT_INFO = [
   {
     icon: Mail,
     label: "E-posta",
-    value: "info@karpol.com.tr",
-    href: "mailto:info@karpol.com.tr",
+    value: "info@karpol.com",
+    href: "mailto:info@karpol.com",
   },
   {
     icon: Phone,
@@ -34,8 +33,8 @@ const CONTACT_INFO = [
   {
     icon: MapPin,
     label: "Adres",
-    value: "Organize Sanayi Bölgesi, Denizli, Türkiye",
-    href: "https://maps.google.com/?q=Karpol+Poliüretan+Denizli",
+    value: "Karpol Poliüretan Ltd.Şti. Bozburun Mahallesi 7151 Sokak No:13/1 Merkezefendi / DENİZLİ",
+    href: "https://maps.app.goo.gl/QM9n9MpF1HHvUwuX8",
   },
   {
     icon: Clock,
@@ -51,14 +50,44 @@ function ContactForm() {
   const subject = searchParams.get("subject") || "";
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // ✅ Nodemailer API route'una istek atar
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
+    setError(null);
+
+    const form = e.currentTarget;
+    const data = {
+      name:    (form.elements.namedItem("name")    as HTMLInputElement).value,
+      email:   (form.elements.namedItem("email")   as HTMLInputElement).value,
+      phone:   (form.elements.namedItem("phone")   as HTMLInputElement).value,
+      company: (form.elements.namedItem("company") as HTMLInputElement).value,
+      subject: (form.elements.namedItem("subject") as HTMLInputElement).value,
+      message: (form.elements.namedItem("message") as HTMLTextAreaElement).value,
+    };
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      if (!res.ok) {
+        const json = await res.json().catch(() => ({}));
+        throw new Error(json.error || "Bir hata oluştu.");
+      }
+
       setSubmitted(true);
-    }, 1200);
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : "Mesaj gönderilemedi, lütfen tekrar deneyin.";
+      setError(message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (submitted) {
@@ -152,6 +181,11 @@ function ContactForm() {
         />
       </div>
 
+      {/* ✅ Hata mesajı */}
+      {error && (
+        <p className={styles.errorText}>{error}</p>
+      )}
+
       <button type="submit" className={styles.submitBtn} disabled={loading}>
         {loading ? (
           <span className={styles.btnLoading}>
@@ -174,7 +208,8 @@ function MapEmbed() {
   return (
     <div className={styles.mapWrap}>
       <iframe
-        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3151.235751464937!2d29.071552975844394!3d37.83136640889817!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14c71514b0e52a19%3A0x89fe5a9197d356c2!2sKarpol%20Poli%C3%BCretan%20-%20Denizli%20Poli%C3%BCretan%20-%20Vulkalon%20-%20Kau%C3%A7uk!5e0!3m2!1str!2str!4v1773314126432!5m2!1str!2str"
+        // ✅ &maptype=roadmap eklendi — harita 2D düz görünümde açılır
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3151.235751464937!2d29.071552975844394!3d37.83136640889817!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14c71514b0e52a19%3A0x89fe5a9197d356c2!2sKarpol%20Poli%C3%BCretan%20-%20Denizli%20Poli%C3%BCretan%20-%20Vulkalon%20-%20Kau%C3%A7uk!5e0!3m2!1str!2str!4v1773314126432!5m2!1str!2str&maptype=roadmap"
         width="100%"
         height="100%"
         style={{ border: 0, display: "block" }}
@@ -206,30 +241,12 @@ export default function ContactPage() {
             <span>İLETİŞİM</span>
           </div>
           <h1 className={styles.heroTitle}>
-            Teklif Alın &<br />
-            <span className={styles.heroTitleAccent}>İletişime Geçin</span>
+            Teklif Alın<br />
+            <span className={styles.heroTitleAccent}> İletişime Geçin</span>
           </h1>
           <p className={styles.heroSubtitle}>
-            Projeleriniz için özel çözümler sunuyoruz. Ekibimiz 48 saat içinde size dönüş yapar.
+            Projeleriniz için özel çözümler sunuyoruz.
           </p>
-
-          {/* Quick stats */}
-          <div className={styles.heroStats}>
-            <div className={styles.heroStat}>
-              <strong>48h</strong>
-              <span>Yanıt Süresi</span>
-            </div>
-            <div className={styles.heroStatDiv} />
-            <div className={styles.heroStat}>
-              <strong>50+</strong>
-              <span>Ülkeye Teslimat</span>
-            </div>
-            <div className={styles.heroStatDiv} />
-            <div className={styles.heroStat}>
-              <strong>ISO</strong>
-              <span>9001 Sertifikalı</span>
-            </div>
-          </div>
         </div>
       </section>
 
@@ -275,13 +292,9 @@ export default function ContactPage() {
                       <Linkedin size={16} strokeWidth={1.75} />
                       <span>LinkedIn</span>
                     </a>
-                    <a href="#" target="_blank" rel="noreferrer" className={styles.socialBtn} aria-label="Instagram">
+                    <a href="https://www.instagram.com/karpolpoliuretan/" target="_blank" rel="noreferrer" className={styles.socialBtn} aria-label="Instagram">
                       <Instagram size={16} strokeWidth={1.75} />
                       <span>Instagram</span>
-                    </a>
-                    <a href="#" target="_blank" rel="noreferrer" className={styles.socialBtn} aria-label="Website">
-                      <Globe size={16} strokeWidth={1.75} />
-                      <span>Web</span>
                     </a>
                   </div>
                 </div>
@@ -320,7 +333,7 @@ export default function ContactPage() {
             </div>
             <h2 className={styles.mapTitle}>Fabrikamızı Ziyaret Edin</h2>
             <p className={styles.mapDesc}>
-              Denizli Organize Sanayi Bölgesi'nde yer alan üretim tesisimiz, modern ekipman ve geniş kapasite ile hizmetinizdedir.
+              Denizli Organize Sanayi Bölgesi&apos;nde yer alan üretim tesisimiz, modern ekipman ve geniş kapasite ile hizmetinizdedir.
             </p>
           </div>
 

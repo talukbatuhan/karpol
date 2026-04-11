@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports -- Node migration script */
 const fs = require('fs');
 const path = require('path');
 

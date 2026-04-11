@@ -247,7 +247,7 @@ export default async function ProductDetailPage({
             />
 
             {/* SECTION 4: Applications */}
-            <div style={{ marginTop: "64px" }}>
+            <div className={styles.sectionBlockLg}>
               <h2 className={styles.sectionTitle}>{t("applications")}</h2>
               <div className={styles.applicationsGrid}>
                 {applications.map((app, i) => (
@@ -261,7 +261,7 @@ export default async function ProductDetailPage({
 
             {/* Machine Compatibility */}
             {compatibleMachines.length > 0 && (
-              <div style={{ marginTop: "48px" }}>
+              <div className={styles.sectionBlock}>
                 <h2 className={styles.sectionTitle}>{t("compatibility")}</h2>
                 <div className={styles.machineTagContainer}>
                   {compatibleMachines.map((machine, i) => (
@@ -273,7 +273,7 @@ export default async function ProductDetailPage({
 
             {/* Size Table if available */}
             {sizeTableRows.length > 0 && (
-              <div style={{ marginTop: "48px" }}>
+              <div className={styles.sectionBlock}>
                 <h2 className={styles.sectionTitle}>{t("sizes")}</h2>
                 <div className={styles.sizeTableContainer}>
                   <table className={styles.sizeTable}>
@@ -325,7 +325,7 @@ export default async function ProductDetailPage({
             </table>
 
             {/* SECTION 5: Engineering Advantages */}
-            <div style={{ marginTop: "48px" }}>
+            <div className={styles.sectionBlock}>
               <h2 className={styles.sectionTitle}>{t("advantages")}</h2>
               <div className={styles.advantagesList}>
                 {advantages.map((adv, i) => (
@@ -340,8 +340,8 @@ export default async function ProductDetailPage({
             {/* Engineering Resources (Downloads) */}
             {(drawingLinks.length > 0 || documentLinks.length > 0) && (
               <div className={styles.downloadsPanel}>
-                <h2 className={styles.sectionTitle} style={{ marginBottom: "16px", fontSize: "20px" }}>{t("downloads")}</h2>
-                <p style={{ color: "#64748b", fontSize: "14px", marginBottom: "16px" }}>
+                <h2 className={styles.sectionTitle}>{t("downloads")}</h2>
+                <p className={styles.downloadsHint}>
                   Login required for 3D CAD files.
                 </p>
                 <div className={styles.downloadGrid}>
@@ -374,7 +374,7 @@ export default async function ProductDetailPage({
                 {t("cta_text")}
               </p>
               <div className={styles.ctaButtons}>
-                <Link href={`/${locale}/contact`} className={styles.primaryBtn} style={{ background: "white", color: "#0f172a", border: "none" }}>
+                <Link href={`/${locale}/contact`} className={styles.ctaLightBtn}>
                   {t("cta_button")}
                 </Link>
               </div>
@@ -403,7 +403,7 @@ export default async function ProductDetailPage({
                         sizes="(max-width: 768px) 50vw, 25vw"
                       />
                     ) : (
-                      <div style={{ width: "100%", height: "100%", background: "#f1f5f9" }} />
+                      <div className={styles.relatedImagePlaceholder} />
                     )}
                   </div>
                   <div className={styles.relatedContent}>

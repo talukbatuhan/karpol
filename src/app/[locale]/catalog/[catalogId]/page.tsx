@@ -1,7 +1,10 @@
 import { Metadata } from "next";
 import CatalogViewer from "@/components/catalog/CatalogViewer";
 import { setRequestLocale, getTranslations } from "next-intl/server";
-import { getCatalogManifest } from "@/lib/data/catalog-storage";
+import {
+  getCatalogManifest,
+  type CatalogManifest,
+} from "@/lib/data/catalog-storage";
 
 type CatalogDetailPageProps = {
   params: Promise<{ locale: string; catalogId: string }>;
@@ -34,13 +37,9 @@ export default async function CatalogDetailPage({
   const { locale, catalogId } = await params;
   setRequestLocale(locale);
 
+  let catalog: CatalogManifest;
   try {
-    const catalog = await getCatalogManifest(catalogId);
-    return (
-      <main style={{ paddingTop: 0 }}>
-        <CatalogViewer catalog={catalog} />
-      </main>
-    );
+    catalog = await getCatalogManifest(catalogId);
   } catch {
     const t = await getTranslations("Catalog");
     return (
@@ -56,4 +55,10 @@ export default async function CatalogDetailPage({
       </main>
     );
   }
+
+  return (
+    <main style={{ paddingTop: 0 }}>
+      <CatalogViewer catalog={catalog} />
+    </main>
+  );
 }

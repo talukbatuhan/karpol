@@ -63,7 +63,7 @@ export default async function ProductsPage({ params }: ProductsPageProps) {
       </section>
 
       {/* Quick Stats Strip */}
-      <div className={styles.container} style={{ position: 'relative', zIndex: 20 }}>
+      <div className={`${styles.container} ${styles.statsStripWrap}`}>
         <div className={styles.featuresStrip}>
           <div className={styles.featureItem}>
             <span className={styles.featureLabel}>Material Range</span>
@@ -89,7 +89,7 @@ export default async function ProductsPage({ params }: ProductsPageProps) {
         <div className={styles.container}>
           <div className={styles.sectionHeader}>
             <h2 className={styles.sectionTitle}>Product Categories</h2>
-            <Link href="/contact" className={styles.link} style={{ fontSize: "14px" }}>
+            <Link href="/contact" className={`${styles.link} ${styles.sectionHeaderLink}`}>
               Request Full Catalog
             </Link>
           </div>

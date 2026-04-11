@@ -65,7 +65,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           </Link>
 
           <header className={styles.articleHeader}>
-            <span className="eyebrow" style={{ color: "#ea580c" }}>
+            <span className={`eyebrow ${styles.articleCategory}`}>
               {article.category}
             </span>
             <h1 className={styles.articleTitle}>{title}</h1>
@@ -94,38 +94,21 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           )}
 
           {article.tags && article.tags.length > 0 && (
-            <div style={{ marginTop: 32, display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+            <div className={styles.tagsRow}>
               {article.tags.map((tag, i) => (
-                <span key={i} style={{
-                  padding: '4px 12px',
-                  fontSize: 12,
-                  background: 'var(--bg-tertiary)',
-                  borderRadius: 4,
-                  color: 'var(--text-muted)',
-                }}>
+                <span key={i} className={styles.tag}>
                   #{tag}
                 </span>
               ))}
             </div>
           )}
 
-          <div style={{ marginTop: "64px", borderTop: "1px solid var(--border-color)", paddingTop: "32px" }}>
-            <h3 style={{ fontSize: "20px", fontWeight: "700", marginBottom: "16px" }}>Need specific advice?</h3>
-            <p style={{ color: "var(--text-muted)", marginBottom: "24px" }}>
+          <div className={styles.articleFooter}>
+            <h3 className={styles.ctaTitle}>Need specific advice?</h3>
+            <p className={styles.ctaText}>
               Our engineering team can help you select the perfect material for your project.
             </p>
-            <Link
-              href={`/${locale}/contact`}
-              style={{
-                display: "inline-block",
-                padding: "12px 24px",
-                background: "#1A1A2E",
-                color: "white",
-                borderRadius: "4px",
-                fontWeight: "600",
-                textDecoration: "none",
-              }}
-            >
+            <Link href={`/${locale}/contact`} className={styles.ctaButton}>
               Ask an Engineer
             </Link>
           </div>

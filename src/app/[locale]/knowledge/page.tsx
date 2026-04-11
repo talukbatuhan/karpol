@@ -46,8 +46,8 @@ export default async function KnowledgePage({ params }: { params: Promise<{ loca
               </Link>
             ))
           ) : (
-            <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '80px 20px' }}>
-              <p style={{ fontSize: 18, color: 'var(--text-muted)' }}>
+            <div className={styles.emptyState}>
+              <p className={styles.emptyStateText}>
                 No articles published yet. Check back soon for technical guides and industry insights.
               </p>
             </div>

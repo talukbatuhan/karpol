@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import type { ComponentProps } from "react";
 import { useState, useEffect, useRef } from "react";
 import { Link, usePathname } from "@/i18n/navigation";
 import { navigation, siteConfig } from "@/lib/config";
@@ -9,6 +10,8 @@ import dynamic from "next/dynamic";
 import LanguageSwitcher from "./LanguageSwitcher";
 import { Search, ChevronDown, ArrowRight } from "lucide-react";
 import { useTranslations } from "next-intl";
+
+type LinkHref = ComponentProps<typeof Link>["href"];
 
 export default function Header() {
   const AdvancedSearch = dynamic(
@@ -126,7 +129,7 @@ export default function Header() {
                         {item.children!.map((child, idx) => (
                           <Link
                             key={child.href}
-                            href={child.href as any}
+                            href={child.href as LinkHref}
                             className={styles.dropdownItem}
                             style={{ animationDelay: `${idx * 40}ms` }}
                             onClick={() => setActiveDropdown(null)}
@@ -144,7 +147,7 @@ export default function Header() {
               return (
                 <Link
                   key={item.href}
-                  href={item.href as any}
+                  href={item.href as LinkHref}
                   className={`${styles.navLink} ${isActive ? styles.active : ""}`}
                 >
                   <span>{tNav(labelKey)}</span>
@@ -202,7 +205,7 @@ export default function Header() {
                 style={{ animationDelay: `${idx * 60}ms` }}
               >
                 <Link
-                  href={item.href as any}
+                  href={item.href as LinkHref}
                   className={`${styles.mobileLink} ${pathname.startsWith(item.href) ? styles.mobileLinkActive : ""}`}
                 >
                   {tNav("key" in item && item.key ? item.key : item.label.toLowerCase())}
@@ -213,7 +216,7 @@ export default function Header() {
                     {item.children.map((child) => (
                       <Link
                         key={child.href}
-                        href={child.href as any}
+                        href={child.href as LinkHref}
                         className={styles.mobileSubLink}
                       >
                         <ArrowRight size={11} strokeWidth={2} />

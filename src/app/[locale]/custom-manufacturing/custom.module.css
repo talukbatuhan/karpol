@@ -4,19 +4,13 @@
    ============================================================ */
 
 .page {
-  --gold: #c8a85a;
-  --gold-dim: rgba(200, 168, 90, 0.10);
-  --gold-glow: rgba(200, 168, 90, 0.25);
-  --gold-border: rgba(200, 168, 90, 0.22);
+  --gold-border: color-mix(in srgb, var(--color-accent) 22%, transparent);
   --dark-900: var(--bg-main);
   --dark-800: var(--bg-secondary);
   --dark-700: var(--bg-tertiary);
   --dark-600: var(--bg-hover);
-  --slate-400: #94a3b8;
-  --slate-300: #cbd5e1;
-  --white: #f8fafc;
   --border: var(--border-color);
-  --radius: 8px;
+  --radius: var(--radius-md);
   --radius-lg: 14px;
   --ease: cubic-bezier(0.4, 0, 0.2, 1);
   background: var(--bg-main);
@@ -51,7 +45,7 @@
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--gold);
+  color: var(--color-accent);
   margin-bottom: 14px;
 }
 
@@ -59,7 +53,7 @@
   display: block;
   width: 28px;
   height: 1.5px;
-  background: var(--gold);
+  background: var(--color-accent);
   flex-shrink: 0;
 }
 
@@ -89,8 +83,8 @@
   align-items: center;
   gap: 8px;
   padding: 14px 28px;
-  background: var(--gold);
-  color: var(--bg-main);
+  background: var(--color-accent);
+  color: var(--color-white);
   border-radius: var(--radius);
   font-size: 0.875rem;
   font-weight: 700;
@@ -101,8 +95,8 @@
 }
 
 .primaryBtn:hover {
-  background: #d4b46a;
-  box-shadow: 0 8px 40px rgba(200, 168, 90, 0.4);
+  background: var(--color-accent-hover);
+  box-shadow: 0 8px 40px var(--gold-glow);
   transform: translateY(-2px);
 }
 
@@ -147,7 +141,7 @@
 
 .outlineBtn:hover {
   border-color: var(--gold-border);
-  color: var(--gold);
+  color: var(--color-accent);
   background: var(--gold-dim);
 }
 
@@ -182,8 +176,8 @@
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(200, 168, 90, 0.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(200, 168, 90, 0.035) 1px, transparent 1px);
+    linear-gradient(color-mix(in srgb, var(--color-accent) 4%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--color-accent) 4%, transparent) 1px, transparent 1px);
   background-size: 60px 60px;
   mask-image: radial-gradient(ellipse 90% 70% at 40% 50%, black 0%, transparent 100%);
 }
@@ -192,8 +186,16 @@
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse 65% 60% at 10% 50%, rgba(200, 168, 90, 0.08) 0%, transparent 65%),
-    radial-gradient(ellipse 45% 55% at 85% 25%, rgba(91, 155, 213, 0.05) 0%, transparent 65%),
+    radial-gradient(
+      ellipse 65% 60% at 10% 50%,
+      color-mix(in srgb, var(--color-accent) 10%, transparent) 0%,
+      transparent 65%
+    ),
+    radial-gradient(
+      ellipse 45% 55% at 85% 25%,
+      color-mix(in srgb, var(--color-info) 8%, transparent) 0%,
+      transparent 65%
+    ),
     linear-gradient(180deg, var(--bg-main) 0%, var(--bg-secondary) 50%, var(--bg-main) 100%);
 }
 
@@ -202,7 +204,11 @@
   width: 550px;
   height: 550px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(200, 168, 90, 0.07) 0%, transparent 70%);
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--color-accent) 9%, transparent) 0%,
+    transparent 70%
+  );
   top: -100px;
   left: -150px;
   animation: orbFloat1 13s ease-in-out infinite;
@@ -263,7 +269,7 @@
   font-size: 0.7rem;
   font-weight: 700;
   letter-spacing: 0.14em;
-  color: var(--gold);
+  color: var(--color-accent);
   margin-bottom: 26px;
   animation: fadeUp 0.5s var(--ease) both;
 }
@@ -357,7 +363,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--gold);
+  color: var(--color-accent);
   flex-shrink: 0;
 }
 
@@ -578,7 +584,7 @@
 .stepDot span {
   font-size: 0.875rem;
   font-weight: 800;
-  color: var(--gold);
+  color: var(--color-accent);
   letter-spacing: -0.02em;
 }
 
@@ -657,7 +663,7 @@
 }
 
 .advantageCheck {
-  color: var(--gold);
+  color: var(--color-accent);
   flex-shrink: 0;
 }
 
@@ -677,7 +683,7 @@
 .formBg {
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, #0b0e16 0%, #111620 100%);
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
 }
 
 .formGlow {
@@ -687,7 +693,7 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: radial-gradient(ellipse, rgba(200, 168, 90, 0.06) 0%, transparent 70%);
+  background: radial-gradient(ellipse, var(--gold-dim) 0%, transparent 70%);
   pointer-events: none;
 }
 

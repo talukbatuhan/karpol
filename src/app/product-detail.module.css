@@ -6,12 +6,12 @@
 
 .section {
   padding: 80px 0;
-  background: var(--color-bg);
+  background: var(--bg-main);
 }
 
 .header {
   border-bottom: 1px solid var(--color-border);
-  background: var(--color-surface);
+  background: var(--bg-secondary);
   padding: 64px 0;
   margin-bottom: 48px;
 }
@@ -67,7 +67,7 @@
   font-size: 13px;
   font-weight: 600;
   color: var(--color-primary);
-  background: #f1f5f9;
+  background: var(--steel-100);
   padding: 6px 12px;
   border-radius: var(--radius-sm);
   border: 1px solid var(--color-border);
@@ -75,8 +75,8 @@
 
 .metaMaterial {
   color: var(--color-accent);
-  background: #fff7ed;
-  border-color: #ffedd5;
+  background: var(--color-accent-light);
+  border-color: color-mix(in srgb, var(--color-accent) 22%, var(--bg-secondary));
 }
 
 /* Main Content Grid */
@@ -98,7 +98,7 @@
   width: 100%;
   border-collapse: collapse;
   margin-bottom: 48px;
-  background: var(--color-surface);
+  background: var(--bg-secondary);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
   overflow: hidden;
@@ -107,7 +107,7 @@
 .specsTable th {
   text-align: left;
   padding: 16px 24px;
-  background: #f8fafc;
+  background: var(--steel-50);
   color: var(--color-text-secondary);
   font-weight: 600;
   font-size: 14px;
@@ -162,14 +162,14 @@
 
 .advantageText {
   font-size: 16px;
-  color: var(--color-text);
+  color: var(--text-body);
   line-height: 1.5;
 }
 
 /* CTA Box */
 .ctaBox {
   background: var(--color-primary);
-  color: #ffffff;
+  color: var(--color-white);
   padding: 40px;
   border-radius: var(--radius-md);
   text-align: center;
@@ -182,7 +182,7 @@
 }
 
 .ctaText {
-  color: #cbd5e1;
+  color: var(--steel-300);
   margin-bottom: 24px;
   font-size: 16px;
   line-height: 1.6;
@@ -205,7 +205,7 @@
 
 .primaryBtn {
   background: var(--color-accent);
-  color: #ffffff;
+  color: var(--color-white);
 }
 
 .primaryBtn:hover {
@@ -214,12 +214,12 @@
 
 .secondaryBtn {
   background: transparent;
-  border: 1px solid rgba(255,255,255,0.3);
-  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: var(--color-white);
 }
 
 .secondaryBtn:hover {
-  border-color: #ffffff;
+  border-color: var(--color-white);
   background: rgba(255,255,255,0.05);
 }
 

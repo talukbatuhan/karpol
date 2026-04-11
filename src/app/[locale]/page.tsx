@@ -1,6 +1,5 @@
 import { Link } from "@/i18n/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { siteConfig, productCategories } from "@/lib/config";
 import styles from "./page.module.css";
 import {
   ShieldCheck,
@@ -22,8 +21,8 @@ export default async function Home({ params }: HomePageProps) {
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("Hero");
-  const tNav = await getTranslations("Navigation");
   const tHome = await getTranslations("Home");
+  type HomeMsg = Parameters<typeof tHome>[0];
 
   return (
     <div className={styles.page}>
@@ -153,8 +152,8 @@ export default async function Home({ params }: HomePageProps) {
               >
                 <span className={styles.productNum}>{num}</span>
                 <div className={styles.productCardBody}>
-                  <h3 className={styles.productCardTitle}>{tHome(titleKey as any)}</h3>
-                  <p className={styles.productCardDesc}>{tHome(descKey as any)}</p>
+                  <h3 className={styles.productCardTitle}>{tHome(titleKey as HomeMsg)}</h3>
+                  <p className={styles.productCardDesc}>{tHome(descKey as HomeMsg)}</p>
                 </div>
                 <div className={styles.productCardFooter}>
                   <span className={styles.productCardLink}>

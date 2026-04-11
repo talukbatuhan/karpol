@@ -3,6 +3,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
+import type { PageFlip } from "page-flip";
 import type { CatalogManifest } from "@/lib/data/catalog-storage";
 import styles from "./CatalogViewer.module.css";
 
@@ -16,7 +17,7 @@ export default function CatalogViewer({ catalog, initialPageIndex = 0 }: Props) 
   const pages = catalog.pages;
   const totalPages = catalog.totalPages;
 
-  const bookRef = useRef<any>(null);
+  const bookRef = useRef<PageFlip | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [pageFlipLoaded, setPageFlipLoaded] = useState(false);
   const [currentPage, setCurrentPage] = useState(initialPageIndex);
@@ -40,87 +41,122 @@ export default function CatalogViewer({ catalog, initialPageIndex = 0 }: Props) 
   useEffect(() => {
     if (!containerRef.current || pages.length === 0) return;
 
-    let pf: any;
+    /** Live viewport — React `isMobile` is still false on the first effect tick (state updates after). */
+    const layoutIsMobile = typeof window !== "undefined" && window.innerWidth < 768;
+
+    let pf: PageFlip | undefined;
     let cancelled = false;
     let rafId: number | null = null;
+    let resizeObserver: ResizeObserver | null = null;
 
-    import("page-flip").then(({ PageFlip }) => {
-      const init = () => {
-        if (cancelled || !containerRef.current) return;
-        const el = containerRef.current;
-        const containerWidth = el.clientWidth;
+    setPageFlipLoaded(false);
 
-        if (containerWidth < 100) {
-          rafId = window.requestAnimationFrame(init);
-          return;
-        }
+    import("page-flip")
+      .then(({ PageFlip }) => {
+        let rafIterations = 0;
+        const init = () => {
+          if (cancelled || !containerRef.current) {
+            return;
+          }
+          const el = containerRef.current;
+          let containerWidth = el.clientWidth;
 
-        el.innerHTML = "";
-
-        const isDouble = !isMobile;
-        const rawWidth = isDouble
-          ? Math.min(containerWidth / 2, 480)
-          : Math.min(containerWidth - 16, 560);
-
-        const w = Math.max(200, Math.floor(rawWidth));
-        const h = Math.max(283, Math.floor(w * (297 / 210)));
-
-        pf = new PageFlip(el, {
-          width: w,
-          height: h,
-          size: "fixed",
-          minWidth: isDouble ? 200 : 160,
-          minHeight: isDouble ? 283 : 226,
-          maxWidth: isDouble ? 480 : 560,
-          maxHeight: isDouble ? 679 : 792,
-          drawShadow: true,
-          flippingTime: 600,
-          usePortrait: !isDouble,
-          startZIndex: 5,
-          autoSize: true,
-          showCover: true,
-          mobileScrollSupport: false,
-          clickEventForward: true,
-          useMouseEvents: true,
-          swipeDistance: 20,
-        });
-
-        const pageEls: HTMLElement[] = pages.map((page, idx) => {
-          const div = document.createElement("div");
-          div.className = styles.flipPage;
-
-          if (page.url) {
-            const img = document.createElement("img");
-            img.src = page.url;
-            img.alt = `Sayfa ${page.pageNumber}`;
-            img.className = styles.flipPageImg;
-            img.loading = idx < 4 ? "eager" : "lazy";
-            div.appendChild(img);
-          } else {
-            div.innerHTML = `<div class="${styles.flipPageMissing}"><span>${page.pageNumber}</span></div>`;
+          if (containerWidth < 100) {
+            rafIterations += 1;
+            if (rafIterations === 1 && typeof ResizeObserver !== "undefined") {
+              resizeObserver = new ResizeObserver(() => {
+                if (cancelled || !containerRef.current) return;
+                if (containerRef.current.clientWidth >= 100) {
+                  resizeObserver?.disconnect();
+                  resizeObserver = null;
+                  init();
+                }
+              });
+              resizeObserver.observe(el);
+            }
+            if (rafIterations > 150) {
+              const fallback = Math.max(100, window.innerWidth - 24);
+              resizeObserver?.disconnect();
+              resizeObserver = null;
+              containerWidth = fallback;
+            } else if (containerWidth < 100) {
+              rafId = window.requestAnimationFrame(init);
+              return;
+            }
           }
 
-          return div;
-        });
+          el.innerHTML = "";
 
-        pf.loadFromHTML(pageEls);
+          const isDouble = !layoutIsMobile;
+          const rawWidth = isDouble
+            ? Math.min(containerWidth / 2, 480)
+            : Math.min(containerWidth - 16, 560);
 
-        pf.on("flip", (e: any) => {
-          setCurrentPage(e.data);
-        });
+          const w = Math.max(200, Math.floor(rawWidth));
+          const h = Math.max(283, Math.floor(w * (297 / 210)));
 
-        pf.turnToPage(initialPageIndex);
-        bookRef.current = pf;
+          try {
+            pf = new PageFlip(el, {
+              width: w,
+              height: h,
+              size: "fixed",
+              minWidth: isDouble ? 200 : 160,
+              minHeight: isDouble ? 283 : 226,
+              maxWidth: isDouble ? 480 : 560,
+              maxHeight: isDouble ? 679 : 792,
+              drawShadow: true,
+              flippingTime: 600,
+              usePortrait: !isDouble,
+              startZIndex: 5,
+              autoSize: true,
+              showCover: true,
+              mobileScrollSupport: false,
+              clickEventForward: true,
+              useMouseEvents: true,
+              swipeDistance: 20,
+            });
+
+            const pageEls: HTMLElement[] = pages.map((page, idx) => {
+              const div = document.createElement("div");
+              div.className = styles.flipPage;
+
+              if (page.url) {
+                const img = document.createElement("img");
+                img.src = page.url;
+                img.alt = `Sayfa ${page.pageNumber}`;
+                img.className = styles.flipPageImg;
+                img.loading = idx < 4 ? "eager" : "lazy";
+                div.appendChild(img);
+              } else {
+                div.innerHTML = `<div class="${styles.flipPageMissing}"><span>${page.pageNumber}</span></div>`;
+              }
+
+              return div;
+            });
+
+            pf.loadFromHTML(pageEls);
+
+            pf.on("flip", (e: { data: number }) => {
+              setCurrentPage(e.data);
+            });
+
+            pf.turnToPage(initialPageIndex);
+            bookRef.current = pf;
+            setPageFlipLoaded(true);
+          } catch {
+            setPageFlipLoaded(true);
+          }
+        };
+
+        init();
+      })
+      .catch(() => {
         setPageFlipLoaded(true);
-      };
-
-      init();
-    }).catch(() => {
-      setPageFlipLoaded(true);
-    });
+      });
 
     return () => {
       cancelled = true;
+      resizeObserver?.disconnect();
       if (rafId !== null) window.cancelAnimationFrame(rafId);
       if (pf) {
         try { pf.destroy?.(); } catch {}

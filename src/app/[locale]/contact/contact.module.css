@@ -4,23 +4,14 @@
    ============================================================ */
 
 .page {
-  --gold: #c8a85a;
-  --gold-dim: rgba(200, 168, 90, 0.10);
-  --gold-glow: rgba(200, 168, 90, 0.25);
-  --gold-border: rgba(200, 168, 90, 0.22);
-  --dark-900: var(--bg-main);
-  --dark-800: var(--bg-secondary);
-  --dark-700: var(--bg-tertiary);
-  --dark-600: var(--bg-hover);
-  --slate-500: #64748b;
-  --slate-400: #94a3b8;
-  --slate-300: #cbd5e1;
-  --white: #f8fafc;
-  --border: var(--border-color);
-  --border-hover: rgba(255, 255, 255, 0.13);
-  --radius: 8px;
-  --radius-lg: 14px;
-  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --accent: var(--color-accent);
+  --accent-dim: var(--gold-dim);
+  --accent-glow: var(--gold-glow);
+  --accent-hover: var(--color-accent-hover);
+  --accent-border: rgba(232, 97, 26, 0.22);
+  --r: var(--radius-md);
+  --r-lg: var(--radius-lg);
+  --ease: var(--ease-out);
   background: var(--bg-main);
   color: var(--text-main);
   min-height: 100vh;
@@ -45,7 +36,7 @@
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--gold);
+  color: var(--accent);
   margin-bottom: 14px;
 }
 
@@ -53,7 +44,7 @@
   display: block;
   width: 28px;
   height: 1.5px;
-  background: var(--gold);
+  background: var(--accent);
   flex-shrink: 0;
 }
 
@@ -82,8 +73,8 @@
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(200, 168, 90, 0.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(200, 168, 90, 0.035) 1px, transparent 1px);
+    linear-gradient(rgba(232, 97, 26, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(232, 97, 26, 0.035) 1px, transparent 1px);
   background-size: 60px 60px;
   mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black 0%, transparent 100%);
 }
@@ -92,8 +83,8 @@
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse 55% 55% at 25% 50%, rgba(200, 168, 90, 0.07) 0%, transparent 65%),
-    radial-gradient(ellipse 40% 50% at 80% 30%, rgba(224, 123, 60, 0.04) 0%, transparent 65%),
+    radial-gradient(ellipse 55% 55% at 25% 50%, rgba(232, 97, 26, 0.07) 0%, transparent 65%),
+    radial-gradient(ellipse 40% 50% at 80% 30%, rgba(232, 97, 26, 0.04) 0%, transparent 65%),
     linear-gradient(180deg, var(--bg-main) 0%, var(--bg-secondary) 60%, var(--bg-main) 100%);
 }
 
@@ -115,13 +106,13 @@
   align-items: center;
   gap: 7px;
   padding: 6px 14px;
-  background: var(--gold-dim);
-  border: 1px solid var(--gold-border);
+  background: var(--accent-dim);
+  border: 1px solid var(--accent-border);
   border-radius: 100px;
   font-size: 0.7rem;
   font-weight: 700;
   letter-spacing: 0.14em;
-  color: var(--gold);
+  color: var(--accent);
   margin-bottom: 24px;
   animation: fadeUp 0.5s var(--ease) both;
 }
@@ -137,7 +128,7 @@
 }
 
 .heroTitleAccent {
-  color: var(--gold);
+  color: var(--accent);
 }
 
 .heroSubtitle {
@@ -156,7 +147,7 @@
   gap: 28px;
   padding: 18px 32px;
   background: var(--bg-tertiary);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-color);
   border-radius: 100px;
   backdrop-filter: blur(12px);
   animation: fadeUp 0.5s 0.3s var(--ease) both;
@@ -175,7 +166,7 @@
   font-size: 1.125rem;
   font-weight: 800;
   letter-spacing: -0.03em;
-  color: var(--gold);
+  color: var(--accent);
 }
 
 .heroStat span {
@@ -189,7 +180,7 @@
 .heroStatDiv {
   width: 1px;
   height: 28px;
-  background: var(--border);
+  background: var(--border-color);
   flex-shrink: 0;
 }
 
@@ -227,9 +218,9 @@
 .infoPanelInner {
   padding: 32px;
   background: var(--bg-secondary);
-  border: 1px solid var(--border);
-  border-top: 2px solid var(--gold);
-  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-color);
+  border-top: 2px solid var(--accent);
+  border-radius: var(--r-lg);
 }
 
 .infoPanelTitle {
@@ -269,13 +260,13 @@
 .contactIconWrap {
   width: 36px;
   height: 36px;
-  background: var(--gold-dim);
-  border: 1px solid var(--gold-border);
+  background: var(--accent-dim);
+  border: 1px solid var(--accent-border);
   border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--gold);
+  color: var(--accent);
   flex-shrink: 0;
 }
 
@@ -290,7 +281,7 @@
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--slate-500);
+  color: var(--text-muted);
 }
 
 .contactValue {
@@ -303,12 +294,12 @@
 }
 
 a.contactValue:hover {
-  color: var(--gold);
+  color: var(--accent);
 }
 
 .infoDivider {
   height: 1px;
-  background: var(--border);
+  background: var(--border-color);
   margin: 24px 0;
 }
 
@@ -319,7 +310,7 @@ a.contactValue:hover {
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--slate-500);
+  color: var(--text-muted);
   margin-bottom: 12px;
 }
 
@@ -334,8 +325,8 @@ a.contactValue:hover {
   gap: 7px;
   padding: 8px 12px;
   background: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border: 1px solid var(--border-color);
+  border-radius: var(--r);
   font-size: 0.8rem;
   font-weight: 500;
   color: var(--text-muted);
@@ -344,9 +335,9 @@ a.contactValue:hover {
 }
 
 .socialBtn:hover {
-  background: var(--gold-dim);
-  border-color: var(--gold-border);
-  color: var(--gold);
+  background: var(--accent-dim);
+  border-color: var(--accent-border);
+  color: var(--accent);
 }
 
 /* Cert badge */
@@ -359,10 +350,10 @@ a.contactValue:hover {
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--slate-500);
+  color: var(--text-muted);
   padding: 7px 12px;
   background: rgba(255,255,255,0.03);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-color);
   border-radius: 100px;
 }
 
@@ -370,22 +361,22 @@ a.contactValue:hover {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: var(--gold);
-  box-shadow: 0 0 6px var(--gold-glow);
+  background: var(--accent);
+  box-shadow: 0 0 6px var(--accent-glow);
   flex-shrink: 0;
 }
 
 /* ── Form Panel ──────────────────────────────────────────── */
 .formPanel {
   background: var(--bg-secondary);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--r-lg);
   overflow: hidden;
 }
 
 .formPanelHead {
   padding: 32px 36px 24px;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .formPanelTitle {
@@ -444,8 +435,8 @@ a.contactValue:hover {
   width: 100%;
   padding: 12px 14px;
   background: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border: 1px solid var(--border-color);
+  border-radius: var(--r);
   color: var(--text-main);
   font-size: 0.9375rem;
   font-family: inherit;
@@ -461,9 +452,9 @@ a.contactValue:hover {
 
 .input:focus,
 .textarea:focus {
-  border-color: var(--gold-border);
-  background: rgba(200, 168, 90, 0.04);
-  box-shadow: 0 0 0 3px rgba(200, 168, 90, 0.08);
+  border-color: var(--accent-border);
+  background: rgba(232, 97, 26, 0.04);
+  box-shadow: 0 0 0 3px rgba(232, 97, 26, 0.08);
 }
 
 .textarea {
@@ -479,23 +470,23 @@ a.contactValue:hover {
   justify-content: center;
   gap: 9px;
   padding: 14px 28px;
-  background: var(--gold);
-  color: var(--bg-main);
+  background: var(--accent);
+  color: #ffffff;
   border: none;
-  border-radius: var(--radius);
+  border-radius: var(--r);
   font-size: 0.9rem;
   font-weight: 700;
   letter-spacing: 0.04em;
   cursor: pointer;
   width: 100%;
-  box-shadow: 0 4px 24px var(--gold-glow);
+  box-shadow: 0 4px 24px var(--accent-glow);
   transition: background 200ms, box-shadow 200ms, transform 200ms;
   margin-top: 4px;
 }
 
 .submitBtn:hover:not(:disabled) {
-  background: #d4b46a;
-  box-shadow: 0 8px 36px rgba(200, 168, 90, 0.4);
+  background: var(--accent-hover);
+  box-shadow: 0 8px 36px var(--accent-glow);
   transform: translateY(-2px);
 }
 
@@ -514,8 +505,8 @@ a.contactValue:hover {
   display: block;
   width: 16px;
   height: 16px;
-  border: 2px solid rgba(8, 10, 14, 0.25);
-  border-top-color: var(--bg-main);
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  border-top-color: #ffffff;
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
   flex-shrink: 0;
@@ -573,8 +564,8 @@ a.contactValue:hover {
   margin-top: 8px;
   padding: 10px 20px;
   background: none;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border: 1px solid var(--border-color);
+  border-radius: var(--r);
   color: var(--text-dim);
   font-size: 0.875rem;
   font-weight: 500;
@@ -583,9 +574,9 @@ a.contactValue:hover {
 }
 
 .resetBtn:hover {
-  border-color: var(--gold-border);
-  color: var(--gold);
-  background: var(--gold-dim);
+  border-color: var(--accent-border);
+  color: var(--accent);
+  background: var(--accent-dim);
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -615,8 +606,8 @@ a.contactValue:hover {
 }
 
 .mapCard {
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--r-lg);
   overflow: hidden;
   background: var(--bg-secondary);
 }
@@ -627,7 +618,7 @@ a.contactValue:hover {
   justify-content: space-between;
   gap: 16px;
   padding: 16px 24px;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--border-color);
   flex-wrap: wrap;
 }
 
@@ -640,7 +631,7 @@ a.contactValue:hover {
 }
 
 .mapAddressItem svg {
-  color: var(--gold);
+  color: var(--accent);
   flex-shrink: 0;
 }
 
@@ -649,21 +640,21 @@ a.contactValue:hover {
   align-items: center;
   gap: 6px;
   padding: 8px 16px;
-  background: var(--gold);
-  color: var(--bg-main);
-  border-radius: var(--radius);
+  background: var(--accent);
+  color: #ffffff;
+  border-radius: var(--r);
   font-size: 0.8rem;
   font-weight: 700;
   letter-spacing: 0.04em;
   text-decoration: none;
   transition: background 200ms, box-shadow 200ms;
   white-space: nowrap;
-  box-shadow: 0 2px 12px var(--gold-glow);
+  box-shadow: 0 2px 12px var(--accent-glow);
 }
 
 .mapDirectionsBtn:hover {
-  background: #d4b46a;
-  box-shadow: 0 4px 20px rgba(200, 168, 90, 0.4);
+  background: var(--accent-hover);
+  box-shadow: 0 4px 20px var(--accent-glow);
 }
 
 .mapDirectionsBtn svg {

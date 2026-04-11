@@ -12,7 +12,6 @@ import {
   Factory,
   ArrowRight,
   Award,
-  Users,
   Zap,
 } from "lucide-react";
 import styles from "./about.module.css";
@@ -43,6 +42,7 @@ export default async function AboutPage({ params }: AboutPageProps) {
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("About");
+  type AboutMsg = Parameters<typeof t>[0];
 
   return (
     <main className={styles.page}>
@@ -178,7 +178,7 @@ export default async function AboutPage({ params }: AboutPageProps) {
               <span className={styles.eyebrowLine} />
               Our Journey
             </div>
-            <h2 className={styles.sectionTitle} style={{ color: "#f1f5f9" }}>
+            <h2 className={styles.sectionTitle}>
               25 Years of Excellence
             </h2>
           </div>
@@ -223,8 +223,8 @@ export default async function AboutPage({ params }: AboutPageProps) {
                   <span className={styles.valueNum}>{num}</span>
                   <div className={styles.valueIcon}><Icon size={20} strokeWidth={1.5} /></div>
                 </div>
-                <h3 className={styles.valueTitle}>{t(titleKey as any)}</h3>
-                <p className={styles.valueText}>{t(textKey as any)}</p>
+                <h3 className={styles.valueTitle}>{t(titleKey as AboutMsg)}</h3>
+                <p className={styles.valueText}>{t(textKey as AboutMsg)}</p>
                 <div className={styles.valueBar} />
               </div>
             ))}
@@ -241,7 +241,7 @@ export default async function AboutPage({ params }: AboutPageProps) {
         <div className={styles.container}>
           <div className={styles.ctaInner}>
             <div className={styles.ctaLeft}>
-              <div className={styles.eyebrow} style={{ color: "#c8a85a" }}>
+              <div className={styles.eyebrow}>
                 <span className={styles.eyebrowLine} />
                 {t("cta.title")}
               </div>

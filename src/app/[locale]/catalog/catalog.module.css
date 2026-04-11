@@ -1,6 +1,10 @@
 .page {
   min-height: 100dvh;
-  background: radial-gradient(ellipse at 50% 0%, #16100a 0%, #090704 60%);
+  background: radial-gradient(
+    ellipse at 50% 0%,
+    var(--color-secondary) 0%,
+    var(--color-primary) 60%
+  );
   padding: 96px 20px 48px;
 }
 
@@ -14,12 +18,12 @@
   font-size: clamp(1.6rem, 3vw, 2.2rem);
   font-weight: 800;
   letter-spacing: -0.02em;
-  color: #f5efe1;
+  color: var(--steel-100);
 }
 
 .subtitle {
   margin: 0;
-  color: #bda987;
+  color: var(--steel-400);
   font-size: 0.98rem;
   line-height: 1.7;
   max-width: 760px;
@@ -35,8 +39,8 @@
 
 .card {
   border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(12, 10, 8, 0.82);
-  border-radius: 12px;
+  background: color-mix(in srgb, var(--color-primary) 88%, black);
+  border-radius: var(--radius-lg);
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -55,8 +59,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(200, 168, 90, 0.12);
-  color: #d7bf92;
+  background: var(--gold-dim);
+  color: var(--steel-300);
   font-weight: 700;
   letter-spacing: 0.05em;
 }
@@ -70,14 +74,14 @@
 
 .cardTitle {
   margin: 0;
-  color: #efe6d0;
+  color: var(--steel-100);
   font-size: 1rem;
   font-weight: 700;
 }
 
 .cardMeta {
   margin: 0;
-  color: #9f8a68;
+  color: var(--steel-500);
   font-size: 0.84rem;
 }
 
@@ -87,34 +91,35 @@
   align-items: center;
   justify-content: center;
   min-height: 38px;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   text-decoration: none;
-  color: #12100b;
-  background: #c8a85a;
+  color: var(--color-white);
+  background: var(--color-accent);
   font-size: 0.84rem;
   font-weight: 700;
+  transition: background 0.2s, transform 0.2s;
 }
 
 .cardBtn:hover {
-  background: #d4b46a;
+  background: var(--color-accent-hover);
 }
 
 .empty {
   max-width: 1120px;
   margin: 0 auto;
   border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   padding: 28px;
-  background: rgba(12, 10, 8, 0.82);
+  background: color-mix(in srgb, var(--color-primary) 88%, black);
 }
 
 .empty h2 {
   margin: 0 0 8px;
-  color: #f5efe1;
+  color: var(--steel-100);
 }
 
 .empty p {
   margin: 0;
-  color: #bda987;
+  color: var(--steel-400);
   line-height: 1.7;
 }

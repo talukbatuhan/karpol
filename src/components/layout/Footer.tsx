@@ -1,3 +1,4 @@
+import type { ComponentProps } from "react";
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
 import NextLink from "next/link";
@@ -5,6 +6,8 @@ import { siteConfig, productCategories } from "@/lib/config";
 import styles from "./Footer.module.css";
 import { ArrowRight, Mail, Phone, MapPin, Linkedin, Instagram } from "lucide-react";
 import { getTranslations } from "next-intl/server";
+
+type LinkHref = ComponentProps<typeof Link>["href"];
 
 export default async function Footer() {
   const currentYear = new Date().getFullYear();
@@ -69,7 +72,7 @@ export default async function Footer() {
               { href: "/catalog", label: t("catalogs") },
               { href: "/knowledge", label: t("knowledge") },
             ].map(({ href, label }) => (
-              <Link key={href} href={href as any} className={styles.link}>
+              <Link key={href} href={href as LinkHref} className={styles.link}>
                 <ArrowRight size={11} className={styles.linkArrow} />
                 {label}
               </Link>
