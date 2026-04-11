@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase-admin'
+import { sendContactNotificationEmail } from '@/lib/mail'
 import { contactSchema } from '@/lib/validations'
 
 export async function POST(request: NextRequest) {
@@ -32,8 +33,18 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    try {
+      await sendContactNotificationEmail({
+        ...parsed.data,
+        submissionId: String(data.id),
+      })
+    } catch (mailErr) {
+      console.error('[mail] Contact notification failed:', mailErr)
+    }
+
     return NextResponse.json({ success: true, id: data.id }, { status: 201 })
-  } catch {
+  } catch (err) {
+    console.error('Contact API error:', err)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

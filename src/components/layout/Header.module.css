@@ -123,6 +123,11 @@
   }
 }
 
+.desktopNav,
+.mobileNav {
+  font-family: var(--font-nav);
+}
+
 /* Nav Link */
 .navLink {
   position: relative;
@@ -131,8 +136,8 @@
   align-items: center;
   padding: 8px 10px;
   font-size: var(--text-xs);
-  font-weight: 500;
-  letter-spacing: 0.035em;
+  font-weight: 600;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--h-text-muted);
   text-decoration: none;
@@ -180,8 +185,8 @@
   padding: 8px 10px;
   font-family: inherit;
   font-size: var(--text-xs);
-  font-weight: 500;
-  letter-spacing: 0.035em;
+  font-weight: 600;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--h-text-muted);
   background: none;

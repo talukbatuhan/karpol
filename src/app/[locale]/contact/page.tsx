@@ -52,7 +52,7 @@ function ContactForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // ✅ Nodemailer API route'una istek atar
+  // POST /api/contact — Supabase kaydı + SMTP ile bildirim (sunucu tarafı)
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
