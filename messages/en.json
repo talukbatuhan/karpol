@@ -121,6 +121,23 @@
     "successMessage": "Thank you for your inquiry. Our engineering team will review your requirements and send a formal quote within 24 hours.",
     "close": "Close"
   },
+  "WhatsAppChat": {
+    "title": "WhatsApp Live Support",
+    "subtitle": "Your message is delivered straight to our line",
+    "aboutLabel": "Product",
+    "nameLabel": "Your name (optional)",
+    "namePlaceholder": "Full name",
+    "phoneLabel": "Phone (optional)",
+    "messageLabel": "Your message",
+    "messagePlaceholder": "Briefly describe your need: dimensions, quantity, hardness, lead time, etc.",
+    "send": "Send via WhatsApp",
+    "sending": "Opening WhatsApp…",
+    "cancel": "Cancel",
+    "close": "Close",
+    "openedTitle": "WhatsApp Opened",
+    "openedText": "WhatsApp Web/app has opened in a new tab. Just review your message and tap Send.",
+    "disclaimer": "When you click Send, WhatsApp Web or the mobile app opens in a new tab with your message pre-filled. All you need to do is press Send."
+  },
   "CustomManufacturing": {
     "heroTitle": "Custom Engineering & Manufacturing",
     "heroText": "From technical drawing to final product. We transform raw materials into high-precision industrial components.",

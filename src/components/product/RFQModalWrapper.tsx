@@ -2,14 +2,15 @@
 "use no memo";
 
 import { useState } from "react";
-import Link from "next/link";
 import { ArrowUpRight, MessageCircle } from "lucide-react";
 import RFQModal from "@/components/forms/RFQModal";
+import WhatsAppChatModal from "@/components/forms/WhatsAppChatModal";
 
 type RFQModalWrapperProps = {
   productName: string;
   sku?: string;
-  contactLink: string;
+  /** Korunmuştur (bazı sayfalar hâlâ iletişim sayfası linkine fallback verebilir). */
+  contactLink?: string;
   buttonText?: string;
   contactText?: string;
 };
@@ -17,32 +18,43 @@ type RFQModalWrapperProps = {
 export default function RFQModalWrapper({
   productName,
   sku,
-  contactLink,
   buttonText = "Teklif İste",
-  contactText = "Mühendise Danış",
+  contactText = "Canlı Destek Alın",
 }: RFQModalWrapperProps) {
-  const [open, setOpen] = useState(false);
+  const [rfqOpen, setRfqOpen] = useState(false);
+  const [waOpen, setWaOpen] = useState(false);
 
   return (
     <>
       <div className="pd-cta-row">
         <button
           type="button"
-          onClick={() => setOpen(true)}
+          onClick={() => setRfqOpen(true)}
           className="pd-btn-primary"
         >
           {buttonText}
           <ArrowUpRight size={14} strokeWidth={1.6} />
         </button>
-        <Link href={contactLink} className="pd-btn-secondary">
+        <button
+          type="button"
+          onClick={() => setWaOpen(true)}
+          className="pd-btn-secondary"
+        >
           <MessageCircle size={13} strokeWidth={1.6} />
           {contactText}
-        </Link>
+        </button>
       </div>
 
       <RFQModal
-        isOpen={open}
-        onClose={() => setOpen(false)}
+        isOpen={rfqOpen}
+        onClose={() => setRfqOpen(false)}
+        productName={productName}
+        sku={sku}
+      />
+
+      <WhatsAppChatModal
+        isOpen={waOpen}
+        onClose={() => setWaOpen(false)}
         productName={productName}
         sku={sku}
       />

@@ -9,7 +9,13 @@ export const siteConfig = {
   title: 'KARPOL — Precision Engineered Industrial Components',
   description: 'Global manufacturer of polyurethane, rubber, silicone, Viton, PTFE, and aluminum industrial components for marble processing, mining, construction, and automation industries.',
   url: process.env.NEXT_PUBLIC_SITE_URL || 'https://karpol.net',
-  whatsapp: process.env.NEXT_PUBLIC_WHATSAPP || '',
+  /**
+   * Sitedeki WhatsApp Click-to-Chat butonunun yönlendireceği numara.
+   * Sadece rakam (ülke kodu dahil) kabul eder; "+", boşluk ve tire
+   * `WhatsAppChatModal` tarafında temizlenir. ENV verilmemişse
+   * varsayılan olarak `contact.phone` kullanılır.
+   */
+  whatsapp: process.env.NEXT_PUBLIC_WHATSAPP || '+90 542 665 25 60',
   
   contact: {
     email: 'info@karpol.net',

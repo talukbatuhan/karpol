@@ -121,6 +121,23 @@
     "successMessage": "İlginiz için teşekkür ederiz. Mühendislik ekibimiz talebinizi inceleyip 24 saat içinde dönüş yapacaktır.",
     "close": "Kapat"
   },
+  "WhatsAppChat": {
+    "title": "WhatsApp Canlı Destek",
+    "subtitle": "Mesajınız doğrudan iş telefonumuza iletilir",
+    "aboutLabel": "Ürün",
+    "nameLabel": "Adınız (opsiyonel)",
+    "namePlaceholder": "Ad Soyad",
+    "phoneLabel": "Telefon (opsiyonel)",
+    "messageLabel": "Mesajınız",
+    "messagePlaceholder": "Talebinizi kısaca yazın: ölçü, miktar, sertlik, teslim süresi vb.",
+    "send": "WhatsApp ile Gönder",
+    "sending": "Yönlendiriliyor…",
+    "cancel": "Vazgeç",
+    "close": "Kapat",
+    "openedTitle": "WhatsApp Açıldı",
+    "openedText": "Yeni sekmede WhatsApp Web/uygulama açıldı. Mesajınızı kontrol edip Gönder düğmesine basmanız yeterli.",
+    "disclaimer": "Gönder düğmesine bastığınızda WhatsApp Web veya mobil uygulama yeni sekmede açılır. Mesaj önceden doldurulmuş şekilde gelir; tek yapmanız gereken Gönder'e basmak."
+  },
   "CustomManufacturing": {
     "heroTitle": "Özel Mühendislik & İmalat",
     "heroText": "Teknik çizimden son ürüne. Hammaddeleri yüksek hassasiyetli endüstriyel bileşenlere dönüştürüyoruz.",

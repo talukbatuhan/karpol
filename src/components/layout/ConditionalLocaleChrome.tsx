@@ -38,12 +38,10 @@ export function autoThemeFor(pathname: string): EffectiveTheme {
 
 export function ConditionalHeader() {
   const pathname = usePathname();
-  const { preference } = useThemePreference({
-    autoEffective: autoThemeFor(pathname),
-  });
-  // On the homepage, only render PremiumNav when the user explicitly
-  // forced light/dark mode; otherwise the cinematic hero owns its own nav.
-  if (pathname === "/" && preference === "auto") return null;
+  // Anasayfanın kendi cinematic navbar'ı var (PremiumHero içinde).
+  // Tema tercihi ne olursa olsun PremiumNav buraya basılmaz; iki nav
+  // üst üste binmesin diye anasayfada hiçbir koşulda render edilmiyor.
+  if (pathname === "/") return null;
   return <PremiumNav />;
 }
 
