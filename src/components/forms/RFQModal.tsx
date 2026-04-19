@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import styles from "./RFQModal.module.css";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 type RFQModalProps = {
   isOpen: boolean;
@@ -18,11 +18,12 @@ export default function RFQModal({
   sku,
 }: RFQModalProps) {
   const t = useTranslations("RFQModal");
+  const locale = useLocale();
   const modalRef = useRef<HTMLDivElement>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  // Close on Escape key
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -31,7 +32,14 @@ export default function RFQModal({
     return () => window.removeEventListener("keydown", handleEsc);
   }, [isOpen, onClose]);
 
-  // Click outside to close
+  useEffect(() => {
+    if (!isOpen) {
+      setIsSubmitting(false);
+      setIsSuccess(false);
+      setErrorMsg(null);
+    }
+  }, [isOpen]);
+
   const handleOverlayClick = (e: React.MouseEvent) => {
     if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
       onClose();
@@ -41,27 +49,63 @@ export default function RFQModal({
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setErrorMsg(null);
 
     const formData = new FormData(e.currentTarget);
+    const fullName = String(formData.get("fullName") || "").trim();
+    const company = String(formData.get("company") || "").trim();
+    const email = String(formData.get("email") || "").trim();
+    const phone = String(formData.get("phone") || "").trim();
+    const quantity = String(formData.get("quantity") || "").trim();
+    const notes = String(formData.get("notes") || "").trim();
+
+    const productLabel = sku ? `${productName} (${sku})` : productName;
+    const messageBody =
+      notes ||
+      `Bu ürün için teklif talebim var: ${productLabel}` +
+        (quantity ? ` — Adet: ${quantity}` : "");
+
     const payload = {
-      fullName: formData.get("fullName"),
-      company: formData.get("company"),
-      email: formData.get("email"),
-      phone: formData.get("phone"),
-      quantity: formData.get("quantity"),
-      notes: formData.get("notes"),
-      productName,
-      sku,
+      name: fullName,
+      email,
+      phone: phone || undefined,
+      company: company || undefined,
+      product_interest: productLabel,
+      quantity: quantity || undefined,
+      message: messageBody,
+      urgency: "standard" as const,
+      file_urls: [],
+      source_page:
+        typeof window !== "undefined" ? window.location.pathname : undefined,
+      locale,
     };
 
-    // Simulate API call
-    console.log("RFQ Payload:", payload);
-    
-    // Simulate network delay
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    try {
+      const res = await fetch("/api/rfq", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
 
-    setIsSubmitting(false);
-    setIsSuccess(true);
+      if (!res.ok) {
+        const data: { error?: string; details?: Record<string, string[]> } =
+          await res.json().catch(() => ({}));
+        const fieldErrors = data.details
+          ? Object.values(data.details).flat().filter(Boolean).join(" · ")
+          : null;
+        throw new Error(
+          fieldErrors || data.error || `Sunucu hatası (${res.status})`,
+        );
+      }
+
+      setIsSuccess(true);
+    } catch (err) {
+      const fallback =
+        "Talep gönderilemedi. Lütfen birkaç saniye sonra tekrar deneyin veya doğrudan iletişim sayfasını kullanın.";
+      setErrorMsg(err instanceof Error ? err.message : fallback);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (!isOpen) return null;
@@ -180,6 +224,24 @@ export default function RFQModal({
                   />
                 </div>
               </div>
+
+              {errorMsg && (
+                <div
+                  role="alert"
+                  style={{
+                    margin: "0 24px 12px",
+                    padding: "10px 14px",
+                    border: "1px solid rgba(220, 38, 38, 0.35)",
+                    background: "rgba(220, 38, 38, 0.10)",
+                    color: "#DC2626",
+                    borderRadius: 8,
+                    fontSize: 13,
+                    lineHeight: 1.5,
+                  }}
+                >
+                  {errorMsg}
+                </div>
+              )}
 
               <div className={styles.footer}>
                 <button
