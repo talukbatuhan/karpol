@@ -1,94 +1,68 @@
-import {createNavigation} from 'next-intl/navigation';
-import {defineRouting} from 'next-intl/routing';
+import { createNavigation } from "next-intl/navigation";
+import { defineRouting } from "next-intl/routing";
 
 export const routing = defineRouting({
-  locales: ['en', 'tr', 'de', 'ar'],
-  defaultLocale: 'en',
+  locales: ["en", "tr"],
+  defaultLocale: "en",
 
   pathnames: {
-    '/': '/',
-    '/about': {
-      en: '/about',
-      tr: '/hakkimizda',
-      de: '/ueber-uns',
-      ar: '/about'
+    "/": "/",
+    "/about": {
+      en: "/about",
+      tr: "/hakkimizda",
     },
-    '/contact': {
-      en: '/contact',
-      tr: '/iletisim',
-      de: '/kontakt',
-      ar: '/contact'
+    "/contact": {
+      en: "/contact",
+      tr: "/iletisim",
     },
-    '/products': {
-      en: '/products',
-      tr: '/urunler',
-      de: '/produkte',
-      ar: '/products'
+    "/products": {
+      en: "/products",
+      tr: "/urunler",
     },
-    '/custom-manufacturing': {
-      en: '/custom-manufacturing',
-      tr: '/ozel-uretim',
-      de: '/sonderfertigung',
-      ar: '/custom-manufacturing'
+    "/custom-manufacturing": {
+      en: "/custom-manufacturing",
+      tr: "/ozel-uretim",
     },
-    '/knowledge': {
-      en: '/knowledge',
-      tr: '/bilgi-merkezi',
-      de: '/wissensdatenbank',
-      ar: '/knowledge'
+    "/knowledge": {
+      en: "/knowledge",
+      tr: "/bilgi-merkezi",
     },
-    '/catalog': {
-      en: '/catalog',
-      tr: '/katalog',
-      de: '/katalog',
-      ar: '/catalog'
+    "/catalog": {
+      en: "/catalog",
+      tr: "/katalog",
     },
-    '/catalog/[catalogId]': {
-      en: '/catalog/[catalogId]',
-      tr: '/katalog/[catalogId]',
-      de: '/katalog/[catalogId]',
-      ar: '/catalog/[catalogId]'
+    "/catalog/[catalogId]": {
+      en: "/catalog/[catalogId]",
+      tr: "/katalog/[catalogId]",
     },
-    '/industries': {
-      en: '/industries',
-      tr: '/sektorler',
-      de: '/branchen',
-      ar: '/industries'
+    "/industries": {
+      en: "/industries",
+      tr: "/sektorler",
     },
-    '/industries/[slug]': {
-      en: '/industries/[slug]',
-      tr: '/sektorler/[slug]',
-      de: '/branchen/[slug]',
-      ar: '/industries/[slug]'
+    "/industries/[slug]": {
+      en: "/industries/[slug]",
+      tr: "/sektorler/[slug]",
     },
-    '/factory-technology': {
-      en: '/factory-technology',
-      tr: '/fabrika-teknoloji',
-      de: '/fabrik-technologie',
-      ar: '/factory-technology'
+    "/factory-technology": {
+      en: "/factory-technology",
+      tr: "/fabrika-teknoloji",
     },
-    '/products/[category]': {
-      en: '/products/[category]',
-      tr: '/urunler/[category]',
-      de: '/produkte/[category]',
-      ar: '/products/[category]'
+    "/products/[category]": {
+      en: "/products/[category]",
+      tr: "/urunler/[category]",
     },
-    '/products/[category]/[slug]': {
-      en: '/products/[category]/[slug]',
-      tr: '/urunler/[category]/[slug]',
-      de: '/produkte/[category]/[slug]',
-      ar: '/products/[category]/[slug]'
+    "/products/[category]/[slug]": {
+      en: "/products/[category]/[slug]",
+      tr: "/urunler/[category]/[slug]",
     },
-    '/knowledge/[slug]': {
-      en: '/knowledge/[slug]',
-      tr: '/bilgi-merkezi/[slug]',
-      de: '/wissensdatenbank/[slug]',
-      ar: '/knowledge/[slug]'
-    }
-  }
+    "/knowledge/[slug]": {
+      en: "/knowledge/[slug]",
+      tr: "/bilgi-merkezi/[slug]",
+    },
+  },
 });
 
 export type AppPathnames = keyof typeof routing.pathnames;
 
-export const {Link, redirect, usePathname, useRouter} =
+export const { Link, redirect, usePathname, useRouter } =
   createNavigation(routing);

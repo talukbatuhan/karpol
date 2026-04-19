@@ -1,6 +1,15 @@
 .header {
-  padding: 80px 0 40px;
-  background: var(--bg-tertiary);
+  padding: 96px 0 56px;
+  background: linear-gradient(180deg, var(--ivory-band-soft) 0%, var(--ivory-bg) 100%);
+  border-bottom: 1px solid var(--ivory-border);
+}
+
+.header :global(.section-title) {
+  color: var(--ivory-text-strong);
+}
+
+.header :global(.section-text) {
+  color: var(--ivory-text-body);
 }
 
 .headerDetail {
@@ -135,11 +144,12 @@
 
 .ctaPanel {
   margin-top: 64px;
-  padding: 48px;
-  background: var(--color-primary);
+  padding: 56px 48px;
+  background: linear-gradient(135deg, var(--ivory-text-strong) 0%, #1B2540 100%);
   border-radius: var(--radius-xl);
   text-align: center;
-  color: var(--color-white);
+  color: #FFFFFF;
+  box-shadow: 0 24px 60px rgba(15, 23, 41, 0.18);
 }
 
 .ctaHeading {

@@ -6,6 +6,7 @@ const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin", "latin-ext"],
   display: "swap",
+  weight: ["400", "500", "600", "700"],
 });
 
 const barlow = Barlow({

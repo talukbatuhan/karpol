@@ -1,12 +1,12 @@
-/* CatalogViewer.module.css */
+/* CatalogViewer.module.css — Ivory & Navy theme */
 
 .shell {
   width: 100%;
   min-height: 100dvh;
   background: radial-gradient(
     ellipse at 50% 0%,
-    var(--color-secondary) 0%,
-    var(--color-primary) 60%
+    var(--ivory-band-soft) 0%,
+    var(--ivory-band) 60%
   );
   display: flex;
   flex-direction: column;
@@ -21,10 +21,11 @@
   gap: 16px;
   padding: 12px 24px;
   margin: 20px 0 0;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid var(--ivory-border);
   border-radius: 999px;
   backdrop-filter: blur(10px);
+  box-shadow: 0 12px 32px rgba(15, 23, 41, 0.08);
   position: sticky;
   top: 10px;
   z-index: 30;
@@ -35,19 +36,20 @@
   height: 40px;
   border: none;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.08);
-  color: var(--steel-100);
+  background: rgba(15, 23, 41, 0.04);
+  color: var(--ivory-text-strong);
   font-size: 24px;
   line-height: 1;
   cursor: pointer;
-  transition: background 150ms, transform 150ms;
+  transition: background 150ms, transform 150ms, color 150ms;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .toolBtn:hover:not(:disabled) {
-  background: var(--gold-dim);
+  background: var(--ivory-accent-soft);
+  color: var(--ivory-accent-deep);
   transform: scale(1.08);
 }
 
@@ -65,18 +67,24 @@
   height: 40px;
   border: none;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.08);
-  color: var(--steel-100);
+  background: rgba(15, 23, 41, 0.04);
+  color: var(--ivory-text-strong);
   font-size: 12px;
   padding: 0 14px;
   cursor: pointer;
   font-weight: 600;
   letter-spacing: 0.02em;
+  transition: background 150ms, color 150ms;
+}
+
+.toolBtnText:hover {
+  background: var(--ivory-accent-soft);
+  color: var(--ivory-accent-deep);
 }
 
 .pageInfo {
   font-family: "Georgia", serif;
-  color: var(--steel-300);
+  color: var(--ivory-text-body);
   font-size: 15px;
   font-weight: 600;
   min-width: 80px;
@@ -103,7 +111,7 @@
   align-items: center;
   justify-content: center;
   gap: 16px;
-  color: var(--steel-500);
+  color: var(--ivory-text-muted);
   font-family: "Georgia", serif;
   font-size: 14px;
   z-index: 10;
@@ -112,8 +120,8 @@
 .spinner {
   width: 40px;
   height: 40px;
-  border: 3px solid var(--gold-dim);
-  border-top-color: var(--color-accent);
+  border: 3px solid var(--ivory-accent-soft);
+  border-top-color: var(--ivory-accent);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -136,8 +144,9 @@
 .flipPage {
   width: 100%;
   height: 100%;
-  background: var(--bg-secondary);
+  background: #FFFFFF;
   overflow: hidden;
+  box-shadow: 0 24px 60px rgba(15, 23, 41, 0.15);
 }
 
 .flipPageImg {
@@ -153,8 +162,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--steel-100);
-  color: var(--steel-600);
+  background: var(--ivory-band);
+  color: var(--ivory-text-muted);
   font-size: 24px;
   font-family: "Georgia", serif;
 }
@@ -174,7 +183,7 @@
   overflow-x: auto;
   padding: 8px 4px 12px;
   scrollbar-width: thin;
-  scrollbar-color: color-mix(in srgb, var(--color-accent) 35%, transparent) transparent;
+  scrollbar-color: color-mix(in srgb, var(--ivory-accent) 45%, transparent) transparent;
 }
 
 .stripBtn {
@@ -191,11 +200,11 @@
 
 .stripBtn:hover {
   transform: translateY(-2px);
-  border-color: color-mix(in srgb, var(--color-accent) 45%, transparent);
+  border-color: color-mix(in srgb, var(--ivory-accent) 55%, transparent);
 }
 
 .stripBtnActive {
-  border-color: var(--color-accent) !important;
+  border-color: var(--ivory-accent) !important;
 }
 
 .stripImg {
@@ -204,6 +213,7 @@
   object-fit: cover;
   display: block;
   border-radius: var(--radius-sm);
+  background: #FFFFFF;
 }
 
 .stripNum {
@@ -212,8 +222,8 @@
   justify-content: center;
   width: 100%;
   aspect-ratio: 210 / 297;
-  background: rgba(255, 255, 255, 0.06);
-  color: var(--steel-500);
+  background: rgba(15, 23, 41, 0.04);
+  color: var(--ivory-text-muted);
   font-size: 10px;
   border-radius: var(--radius-sm);
 }
@@ -231,12 +241,12 @@
 .emptyTitle {
   font-family: "Georgia", serif;
   font-weight: 700;
-  color: var(--steel-100);
+  color: var(--ivory-text-strong);
   font-size: 18px;
 }
 
 .emptySub {
-  color: var(--steel-600);
+  color: var(--ivory-text-muted);
   font-size: 13px;
 }
 

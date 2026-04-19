@@ -22,11 +22,11 @@ export default async function AdminDashboardPage() {
     <>
       <div className={styles.topBar}>
         <div className={styles.topBarLeft}>
-          <h1 className={styles.topBarTitle}>Dashboard</h1>
+          <h1 className={styles.topBarTitle}>Kontrol Paneli</h1>
         </div>
         <div className={styles.topBarRight}>
           <Link href="/admin/products/new" className={`${styles.btn} ${styles.btnPrimary}`}>
-            <Package size={16} /> New Product
+            <Package size={16} /> Yeni Ürün
           </Link>
         </div>
       </div>
@@ -34,73 +34,73 @@ export default async function AdminDashboardPage() {
       <div className={styles.pageContent}>
         <div className={styles.statsGrid}>
           <div className={styles.statCard}>
-            <div className={styles.statLabel}>Total Products</div>
+            <div className={styles.statLabel}>Toplam Ürün</div>
             <div className={styles.statValue}>{stats.totalProducts}</div>
           </div>
           <div className={styles.statCard}>
-            <div className={styles.statLabel}>Categories</div>
+            <div className={styles.statLabel}>Kategoriler</div>
             <div className={styles.statValue}>{stats.totalCategories}</div>
           </div>
           <div className={styles.statCard}>
-            <div className={styles.statLabel}>Articles</div>
+            <div className={styles.statLabel}>Makaleler</div>
             <div className={styles.statValue}>{stats.totalArticles}</div>
           </div>
           <div className={styles.statCard}>
-            <div className={styles.statLabel}>Pending RFQs</div>
+            <div className={styles.statLabel}>Bekleyen Teklif Talepleri</div>
             <div className={styles.statValue}>{stats.pendingRFQs}</div>
             {stats.pendingRFQs > 0 && (
               <div className={`${styles.statChange} ${styles.statPositive}`}>
-                Requires attention
+                Dikkat gerektiriyor
               </div>
             )}
           </div>
           <div className={styles.statCard}>
-            <div className={styles.statLabel}>New Contacts</div>
+            <div className={styles.statLabel}>Yeni İletişim Mesajları</div>
             <div className={styles.statValue}>{stats.newContacts}</div>
           </div>
         </div>
 
         <div className={styles.pageHeader}>
           <div>
-            <h2 className={styles.pageHeaderTitle}>Quick Actions</h2>
-            <p className={styles.pageHeaderDescription}>Jump to the most common tasks</p>
+            <h2 className={styles.pageHeaderTitle}>Hızlı İşlemler</h2>
+            <p className={styles.pageHeaderDescription}>En sık kullanılan görevlere hızlı erişim</p>
           </div>
         </div>
 
         <div className={styles.statsGrid}>
           <Link href="/admin/products" className={styles.statCard} style={{ textDecoration: 'none' }}>
             <Package size={24} style={{ color: '#e8611a', marginBottom: 12 }} />
-            <div className={styles.statLabel}>Manage Products</div>
+            <div className={styles.statLabel}>Ürünleri Yönet</div>
             <p style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 4 }}>
-              Add, edit, or remove products from the catalog
+              Katalogtaki ürünleri ekleyin, düzenleyin veya silin
             </p>
           </Link>
           <Link href="/admin/categories" className={styles.statCard} style={{ textDecoration: 'none' }}>
             <FolderTree size={24} style={{ color: '#3b82f6', marginBottom: 12 }} />
-            <div className={styles.statLabel}>Categories</div>
+            <div className={styles.statLabel}>Kategoriler</div>
             <p style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 4 }}>
-              Organize product categories and subcategories
+              Ürün kategorilerini ve alt kategorileri düzenleyin
             </p>
           </Link>
           <Link href="/admin/articles" className={styles.statCard} style={{ textDecoration: 'none' }}>
             <FileText size={24} style={{ color: '#8b5cf6', marginBottom: 12 }} />
-            <div className={styles.statLabel}>Knowledge Base</div>
+            <div className={styles.statLabel}>Bilgi Merkezi</div>
             <p style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 4 }}>
-              Write and publish technical articles
+              Teknik makaleler yazın ve yayınlayın
             </p>
           </Link>
           <Link href="/admin/rfq" className={styles.statCard} style={{ textDecoration: 'none' }}>
             <MessageSquare size={24} style={{ color: '#10b981', marginBottom: 12 }} />
-            <div className={styles.statLabel}>RFQ Pipeline</div>
+            <div className={styles.statLabel}>Teklif Talepleri</div>
             <p style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 4 }}>
-              Track and respond to quote requests
+              Teklif isteklerini takip edin ve yanıtlayın
             </p>
           </Link>
           <Link href="/admin/contacts" className={styles.statCard} style={{ textDecoration: 'none' }}>
             <Mail size={24} style={{ color: '#f59e0b', marginBottom: 12 }} />
-            <div className={styles.statLabel}>Contact Messages</div>
+            <div className={styles.statLabel}>İletişim Mesajları</div>
             <p style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 4 }}>
-              View and respond to contact form submissions
+              Form üzerinden gelen mesajları görüntüleyin ve yanıtlayın
             </p>
           </Link>
         </div>

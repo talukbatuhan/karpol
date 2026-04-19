@@ -16,11 +16,11 @@ export default async function AdminProductsPage() {
     <>
       <div className={styles.topBar}>
         <div className={styles.topBarLeft}>
-          <h1 className={styles.topBarTitle}>Products</h1>
+          <h1 className={styles.topBarTitle}>Ürünler</h1>
         </div>
         <div className={styles.topBarRight}>
           <Link href="/admin/products/new" className={`${styles.btn} ${styles.btnPrimary}`}>
-            <Plus size={16} /> Add Product
+            <Plus size={16} /> Ürün Ekle
           </Link>
         </div>
       </div>
@@ -29,10 +29,10 @@ export default async function AdminProductsPage() {
         {products.length === 0 ? (
           <div className={styles.emptyState}>
             <div className={styles.emptyStateIcon}>📦</div>
-            <div className={styles.emptyStateTitle}>No products yet</div>
-            <p>Add your first product to get started.</p>
+            <div className={styles.emptyStateTitle}>Henüz ürün yok</div>
+            <p>Başlamak için ilk ürününüzü ekleyin.</p>
             <Link href="/admin/products/new" className={`${styles.btn} ${styles.btnPrimary}`} style={{ marginTop: 16 }}>
-              <Plus size={16} /> Add Product
+              <Plus size={16} /> Ürün Ekle
             </Link>
           </div>
         ) : (
@@ -40,12 +40,12 @@ export default async function AdminProductsPage() {
             <table>
               <thead>
                 <tr>
-                  <th>Name</th>
+                  <th>Ürün Adı</th>
                   <th>SKU</th>
-                  <th>Category</th>
-                  <th>Material</th>
-                  <th>Status</th>
-                  <th>Sort</th>
+                  <th>Kategori</th>
+                  <th>Malzeme</th>
+                  <th>Durum</th>
+                  <th>Sıra</th>
                 </tr>
               </thead>
               <tbody>
@@ -55,15 +55,15 @@ export default async function AdminProductsPage() {
                     <tr key={product.id}>
                       <td>
                         <Link href={`/admin/products/${product.id}`} style={{ color: '#e8611a', fontWeight: 600 }}>
-                          {getLocalizedField(product.name, 'en')}
+                          {getLocalizedField(product.name, 'tr') || getLocalizedField(product.name, 'en')}
                         </Link>
                       </td>
                       <td style={{ fontFamily: 'var(--font-mono)', fontSize: 13 }}>{product.sku}</td>
-                      <td>{cat ? getLocalizedField(cat.name, 'en') : '—'}</td>
+                      <td>{cat ? getLocalizedField(cat.name, 'tr') || getLocalizedField(cat.name, 'en') : '—'}</td>
                       <td>{product.material || '—'}</td>
                       <td>
                         <span className={`${styles.badge} ${product.is_active ? styles.badgeActive : styles.badgeDraft}`}>
-                          {product.is_active ? 'Active' : 'Draft'}
+                          {product.is_active ? 'Aktif' : 'Taslak'}
                         </span>
                       </td>
                       <td>{product.sort_order}</td>

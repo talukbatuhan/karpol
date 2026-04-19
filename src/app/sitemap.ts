@@ -3,7 +3,7 @@ import { siteConfig } from "@/lib/config";
 import { getProductCategories, getPublishedArticles, getIndustries } from "@/lib/data/public-data";
 
 const baseUrl = siteConfig.url;
-const locales = ["en", "tr", "de", "ar"];
+const locales = ["en", "tr"];
 
 function generateAlternates(path: string) {
   const languages: Record<string, string> = {};

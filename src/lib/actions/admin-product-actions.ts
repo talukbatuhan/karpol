@@ -10,8 +10,8 @@ export async function saveProduct(formData: Record<string, unknown>) {
     revalidatePath('/admin/products')
     revalidatePath('/en/products')
     revalidatePath('/tr/products')
-    revalidatePath('/de/products')
-    revalidatePath('/ar/products')
+    revalidatePath('/[locale]/products/[category]', 'page')
+    revalidatePath('/[locale]/products/[category]/[slug]', 'page')
   }
 
   return result
@@ -24,6 +24,8 @@ export async function removeProduct(id: string) {
     revalidatePath('/admin/products')
     revalidatePath('/en/products')
     revalidatePath('/tr/products')
+    revalidatePath('/[locale]/products/[category]', 'page')
+    revalidatePath('/[locale]/products/[category]/[slug]', 'page')
   }
 
   return result

@@ -35,6 +35,7 @@ CREATE TABLE IF NOT EXISTS product_categories (
   updated_at TIMESTAMPTZ DEFAULT now()
 );
 
+DROP TRIGGER IF EXISTS update_product_categories_updated_at ON product_categories;
 CREATE TRIGGER update_product_categories_updated_at
   BEFORE UPDATE ON product_categories
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
@@ -45,7 +46,7 @@ CREATE TRIGGER update_product_categories_updated_at
 CREATE TABLE IF NOT EXISTS products (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   slug TEXT UNIQUE NOT NULL,
-  sku TEXT UNIQUE NOT NULL,
+  sku TEXT NOT NULL,
   name JSONB NOT NULL DEFAULT '{}',
   description JSONB NOT NULL DEFAULT '{}',
   short_description JSONB DEFAULT '{}',
@@ -76,6 +77,7 @@ CREATE TABLE IF NOT EXISTS products (
   updated_at TIMESTAMPTZ DEFAULT now()
 );
 
+DROP TRIGGER IF EXISTS update_products_updated_at ON products;
 CREATE TRIGGER update_products_updated_at
   BEFORE UPDATE ON products
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
@@ -100,6 +102,7 @@ CREATE TABLE IF NOT EXISTS industries (
   updated_at TIMESTAMPTZ DEFAULT now()
 );
 
+DROP TRIGGER IF EXISTS update_industries_updated_at ON industries;
 CREATE TRIGGER update_industries_updated_at
   BEFORE UPDATE ON industries
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
@@ -138,6 +141,7 @@ CREATE TABLE IF NOT EXISTS articles (
   updated_at TIMESTAMPTZ DEFAULT now()
 );
 
+DROP TRIGGER IF EXISTS update_articles_updated_at ON articles;
 CREATE TRIGGER update_articles_updated_at
   BEFORE UPDATE ON articles
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
@@ -232,6 +236,7 @@ CREATE TABLE IF NOT EXISTS page_content (
   UNIQUE(page_key, section_key)
 );
 
+DROP TRIGGER IF EXISTS update_page_content_updated_at ON page_content;
 CREATE TRIGGER update_page_content_updated_at
   BEFORE UPDATE ON page_content
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
@@ -296,68 +301,89 @@ ALTER TABLE page_content ENABLE ROW LEVEL SECURITY;
 ALTER TABLE admin_activity_log ENABLE ROW LEVEL SECURITY;
 
 -- Public can READ active content
+DROP POLICY IF EXISTS "Public can read active categories" ON product_categories;
 CREATE POLICY "Public can read active categories" ON product_categories
   FOR SELECT USING (is_active = true);
 
+DROP POLICY IF EXISTS "Public can read active products" ON products;
 CREATE POLICY "Public can read active products" ON products
   FOR SELECT USING (is_active = true);
 
+DROP POLICY IF EXISTS "Public can read industries" ON industries;
 CREATE POLICY "Public can read industries" ON industries
   FOR SELECT USING (true);
 
+DROP POLICY IF EXISTS "Public can read industry_products" ON industry_products;
 CREATE POLICY "Public can read industry_products" ON industry_products
   FOR SELECT USING (true);
 
+DROP POLICY IF EXISTS "Public can read published articles" ON articles;
 CREATE POLICY "Public can read published articles" ON articles
   FOR SELECT USING (is_published = true);
 
+DROP POLICY IF EXISTS "Public can read active page content" ON page_content;
 CREATE POLICY "Public can read active page content" ON page_content
   FOR SELECT USING (is_active = true);
 
+DROP POLICY IF EXISTS "Public can read media" ON media_library;
 CREATE POLICY "Public can read media" ON media_library
   FOR SELECT USING (true);
 
 -- Public can INSERT submissions
+DROP POLICY IF EXISTS "Public can submit RFQ" ON rfq_submissions;
 CREATE POLICY "Public can submit RFQ" ON rfq_submissions
   FOR INSERT WITH CHECK (true);
 
+DROP POLICY IF EXISTS "Public can submit contact" ON contact_submissions;
 CREATE POLICY "Public can submit contact" ON contact_submissions
   FOR INSERT WITH CHECK (true);
 
+DROP POLICY IF EXISTS "Public can log catalog downloads" ON catalog_downloads;
 CREATE POLICY "Public can log catalog downloads" ON catalog_downloads
   FOR INSERT WITH CHECK (true);
 
 -- Admin policies (service_role bypasses RLS, but for authenticated admins):
+DROP POLICY IF EXISTS "Admins full access categories" ON product_categories;
 CREATE POLICY "Admins full access categories" ON product_categories
   FOR ALL USING ((auth.jwt() -> 'app_metadata' ->> 'role') = 'admin');
 
+DROP POLICY IF EXISTS "Admins full access products" ON products;
 CREATE POLICY "Admins full access products" ON products
   FOR ALL USING ((auth.jwt() -> 'app_metadata' ->> 'role') = 'admin');
 
+DROP POLICY IF EXISTS "Admins full access industries" ON industries;
 CREATE POLICY "Admins full access industries" ON industries
   FOR ALL USING ((auth.jwt() -> 'app_metadata' ->> 'role') = 'admin');
 
+DROP POLICY IF EXISTS "Admins full access industry_products" ON industry_products;
 CREATE POLICY "Admins full access industry_products" ON industry_products
   FOR ALL USING ((auth.jwt() -> 'app_metadata' ->> 'role') = 'admin');
 
+DROP POLICY IF EXISTS "Admins full access articles" ON articles;
 CREATE POLICY "Admins full access articles" ON articles
   FOR ALL USING ((auth.jwt() -> 'app_metadata' ->> 'role') = 'admin');
 
+DROP POLICY IF EXISTS "Admins full access rfq" ON rfq_submissions;
 CREATE POLICY "Admins full access rfq" ON rfq_submissions
   FOR ALL USING ((auth.jwt() -> 'app_metadata' ->> 'role') = 'admin');
 
+DROP POLICY IF EXISTS "Admins full access contacts" ON contact_submissions;
 CREATE POLICY "Admins full access contacts" ON contact_submissions
   FOR ALL USING ((auth.jwt() -> 'app_metadata' ->> 'role') = 'admin');
 
+DROP POLICY IF EXISTS "Admins full access catalog_downloads" ON catalog_downloads;
 CREATE POLICY "Admins full access catalog_downloads" ON catalog_downloads
   FOR ALL USING ((auth.jwt() -> 'app_metadata' ->> 'role') = 'admin');
 
+DROP POLICY IF EXISTS "Admins full access media" ON media_library;
 CREATE POLICY "Admins full access media" ON media_library
   FOR ALL USING ((auth.jwt() -> 'app_metadata' ->> 'role') = 'admin');
 
+DROP POLICY IF EXISTS "Admins full access page_content" ON page_content;
 CREATE POLICY "Admins full access page_content" ON page_content
   FOR ALL USING ((auth.jwt() -> 'app_metadata' ->> 'role') = 'admin');
 
+DROP POLICY IF EXISTS "Admins full access activity_log" ON admin_activity_log;
 CREATE POLICY "Admins full access activity_log" ON admin_activity_log
   FOR ALL USING ((auth.jwt() -> 'app_metadata' ->> 'role') = 'admin');
 

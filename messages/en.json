@@ -3,8 +3,10 @@
     "home": "Home",
     "products": "Products",
     "services": "Services",
-    "about": "About Us",
+    "about": "About",
     "contact": "Contact",
+    "solutions": "Solutions",
+    "industries": "Industries",
     "search": "Search...",
     "custom manufacturing": "Custom Manufacturing",
     "factory & technology": "Factory & Technology",
@@ -52,12 +54,56 @@
     "advantages": "Engineering Advantages",
     "compatibility": "Machine Compatibility",
     "downloads": "Engineering Resources",
+    "drawings": "Technical Drawings",
+    "drawing": "Technical Drawing",
+    "datasheet": "Datasheet",
     "sizes": "Standard Sizes",
     "related": "Related Products",
+    "related_sub": "Explore other engineered solutions in the same category.",
+    "view_details": "View Details",
     "cta_title": "Need a Custom Solution?",
-    "cta_text": "We specialize in custom manufacturing for specific industrial requirements. Our engineering team is ready to assist.",
+    "cta_text": "We engineer and manufacture made-to-order parts for specific industrial requirements. Our team is ready to quote against your technical drawing.",
     "cta_button": "Get Custom Quote",
-    "contact_engineer": "Contact Engineer"
+    "cta_secondary": "Custom Manufacturing",
+    "contact_engineer": "Get Live Support",
+    "breadcrumb": {
+      "products": "Products"
+    },
+    "spec": {
+      "material": "Material",
+      "hardness": "Hardness",
+      "temperature": "Working Temperature",
+      "color": "Color",
+      "weight": "Weight",
+      "sku": "Product Code"
+    },
+    "size": {
+      "tip": "Type",
+      "wing": "Wing",
+      "width": "Width (mm)",
+      "id": "Inner Ø (mm)",
+      "od": "Outer Ø (mm)",
+      "searchPlaceholder": "Search model...",
+      "clearSearch": "Clear search",
+      "noResults": "No rows match your search.",
+      "prev": "Previous",
+      "next": "Next",
+      "pageInfo": "Page {page} / {total} · {rows} rows"
+    },
+    "doc": {
+      "open": "Open"
+    },
+    "eyebrow": {
+      "specs": "Technical Data",
+      "sizes": "Size Matrix",
+      "applications": "Use Cases",
+      "advantages": "Engineering Notes",
+      "compatibility": "Field Compatibility",
+      "drawings": "Technical Document",
+      "downloads": "Downloadable Resources",
+      "cta": "Next Step",
+      "related": "Complementary Products"
+    }
   },
   "RFQModal": {
     "title": "Request for Quote",
@@ -206,7 +252,20 @@
       "title": "15 Years of Engineering Excellence",
       "subtitle": "From our high-tech facility in Denizli to the world's most demanding industries, we engineer components that don't fail.",
       "primaryCta": "Request a Quote",
-      "secondaryCta": "Explore Products"
+      "secondaryCta": "Explore Products",
+      "scrollHint": "Scroll",
+      "imageAlt": "Monumental stone columns — industrial craftsmanship"
+    },
+    "timeline": {
+      "eyebrow": "Our Journey",
+      "title": "15+ Years of Excellence",
+      "milestones": [
+        { "year": "2010", "label": "Company Founded", "desc": "Established in Denizli, Turkey" },
+        { "year": "2014", "label": "Polyurethane Line", "desc": "Dedicated polymer casting workshop" },
+        { "year": "2018", "label": "Export Reach", "desc": "Components shipped to 20+ countries" },
+        { "year": "2022", "label": "CNC Expansion", "desc": "Advanced CNC machining capability added" },
+        { "year": "2025", "label": "Global Network", "desc": "Trusted supplier across marble & industry" }
+      ]
     },
     "trust": {
       "yearsTitle": "15+ Years Experience",
@@ -255,18 +314,44 @@
       }
     },
     "cta": {
+      "eyebrow": "Partner with us",
       "title": "Let’s Engineer Your Next Component",
       "text": "Share your drawing, application details, and target performance. Our team will recommend the right material and production method.",
       "primaryCta": "Contact Sales",
       "secondaryCta": "Browse Catalog"
     }
-  }
-  ,
+  },
+  "HomeHero": {
+    "eyebrow": "Marble Machinery Solutions",
+    "titleLine1": "Engineered",
+    "titleLine2": "for Stone.",
+    "subtitle": "High-performance spare parts, polyurethane components, slab factory tools, and heavy-duty transport solutions — built for the demands of the marble industry.",
+    "primaryCta": "Explore Products",
+    "secondaryCta": "Contact Us",
+    "stat1Number": "25+",
+    "stat1Label": "Years of Precision",
+    "stat2Number": "40+",
+    "stat2Label": "Countries Served",
+    "stat3Number": "5K+",
+    "stat3Label": "Components Supplied",
+    "scrollLabel": "Scroll",
+    "imageAlt": "Monumental stone architecture"
+  },
   "Catalog": {
     "title": "E-Catalog",
     "browseTitle": "Select Catalog",
     "browseSubtitle": "Choose a catalog to open the viewer.",
-    "openCatalog": "Open Catalog",
+    "pageEyebrow": "Product catalogs",
+    "pageTitleLine1": "Browse &",
+    "pageTitleLine2": "Explore.",
+    "pageSubtitle": "Open our interactive e-catalogs: flip through pages, zoom, and share links. Updated technical documentation in one place.",
+    "searchPlaceholder": "Search catalogs…",
+    "filterAll": "All",
+    "foundCount": "{count} catalogs found",
+    "noMatchTitle": "No matching catalogs",
+    "noMatchHint": "Try another search or pick a different filter.",
+    "cardBlurb": "Interactive viewer with thumbnails and full-screen reading.",
+    "openCatalog": "Open catalog",
     "emptyTitle": "No catalogs found",
     "emptySub": "Upload a catalog from the admin panel to see it here.",
     "toolbar": {
@@ -288,6 +373,34 @@
     "error": "Unable to load the catalog. Please try again later.",
     "missing_image": "This page is missing or unavailable."
   },
+  "ContactPage": {
+    "eyebrow": "CONTACT",
+    "scrollHint": "Scroll",
+    "heroTitle1": "Let's Build",
+    "heroTitle2": "Together.",
+    "heroSubtitle": "Whether you need spare parts, polyurethane components, slab factory tools, or heavy-duty stone transport solutions — our team is ready to support your operation.",
+    "getInTouch": "Get in Touch",
+    "intro": "Share drawings, quantities, or technical questions. We respond with clear engineering and commercial follow-up.",
+    "labelPhone": "Phone",
+    "labelEmail": "Email",
+    "labelAddress": "Address",
+    "labelHours": "Hours",
+    "hoursValue": "Mon–Fri · 08:00–18:00",
+    "fieldName": "Full name",
+    "fieldEmail": "Email",
+    "fieldCompany": "Company (optional)",
+    "fieldMessage": "Message",
+    "phName": "Your name",
+    "phEmail": "you@company.com",
+    "phCompany": "Company or project reference",
+    "phMessage": "Describe your requirement…",
+    "submit": "Send Message",
+    "sending": "Sending…",
+    "successTitle": "Message sent",
+    "successBody": "We will get back to you as soon as possible.",
+    "sendAnother": "Send another message",
+    "errorGeneric": "Something went wrong. Please try again."
+  },
   "Footer": {
     "description": "Precision-engineered industrial components for demanding machinery across global markets.",
     "company": "Company",
@@ -301,6 +414,162 @@
     "requestQuote": "Request a Quote",
     "privacy": "Privacy Policy",
     "terms": "Terms of Use",
-    "rights": "All rights reserved."
+    "rights": "All rights reserved.",
+    "footerContactEyebrow": "Contact us",
+    "footerHeadlineLine1": "Let's work",
+    "footerHeadlineLine2": "together.",
+    "footerTagline": "High-performance industrial components — from polyurethane and rubber to CNC-machined parts for demanding machinery worldwide.",
+    "footerHqLabel": "Headquarters",
+    "footerPhoneLabel": "Phone",
+    "footerEmailLabel": "Email",
+    "footerFormSuccessTitle": "Message received",
+    "footerFormSuccessText": "Thank you for reaching out. Our team will respond as soon as possible.",
+    "footerFormTitlePrefix": "Send a",
+    "footerFormTitleEm": "message",
+    "footerFormNameLabel": "Full name *",
+    "footerFormNamePlaceholder": "Your name",
+    "footerFormCompanyLabel": "Company",
+    "footerFormCompanyPlaceholder": "Company name",
+    "footerFormEmailLabel": "Email *",
+    "footerFormEmailPlaceholder": "you@company.com",
+    "footerFormMessageLabel": "Message *",
+    "footerFormMessagePlaceholder": "Describe your requirements, quantities, or questions…",
+    "footerFormRequiredNote": "* Required fields",
+    "footerFormSending": "Sending…",
+    "footerFormSubmit": "Send message",
+    "footerIndustriesColumn": "Explore",
+    "footerIndustryAll": "Industry solutions",
+    "footerIndustryFactory": "Factory & technology",
+    "footerIndustryCustom": "Custom manufacturing",
+    "footerIndustryProducts": "Product catalog"
+  },
+  "ProductsHub": {
+    "metadata": {
+      "title": "Industrial Components & Spare Parts",
+      "description": "Browse KARPOL's engineering catalog: polyurethane, Vulkollan, rubber, silicone, technical plastics and CNC-machined components for demanding industrial machinery."
+    },
+    "hero": {
+      "eyebrow": "Engineering Library",
+      "titleLine1": "Components",
+      "titleLine2": "built to last.",
+      "subtitle": "Eleven curated material families — from Vulkollan® rollers to precision chrome shafts — engineered for the world's most demanding production floors.",
+      "primaryCta": "Browse Categories",
+      "secondaryCta": "Request a Quote",
+      "scrollHint": "Scroll"
+    },
+    "strip": {
+      "materialsLabel": "Materials",
+      "materialsValue": "PU, Vulkollan®, Rubber, Silicone, PTFE",
+      "hardnessLabel": "Hardness Range",
+      "hardnessValue": "20 Shore A — 75 Shore D",
+      "methodsLabel": "Manufacturing",
+      "methodsValue": "Casting · CNC · Molding",
+      "qualityLabel": "Quality",
+      "qualityValue": "ISO 9001:2015 Certified"
+    },
+    "categories": {
+      "eyebrow": "Product Catalog",
+      "title": "Browse by material family",
+      "subtitle": "Every component in our library is engineered in-house and field-proven across marble, automotive, logistics and heavy industry."
+    },
+    "card": {
+      "browseCta": "Browse",
+      "productsCount": "{count, plural, =0 {no products yet} one {# product} other {# products}}"
+    },
+    "cta": {
+      "eyebrow": "Custom engineering",
+      "title": "Didn't find the exact part?",
+      "text": "Send us your technical drawing or sample. Our engineers will recommend the right material and production method — from one-off prototypes to full production runs.",
+      "primaryCta": "Contact Engineering",
+      "secondaryCta": "Custom Manufacturing"
+    },
+    "categoryNames": {
+      "polyurethane-components": "Polyurethane Components",
+      "vulkollan-components": "Vulkollan® Components",
+      "rubber-components": "Rubber Components",
+      "silicone-components": "Silicone Components",
+      "technical-plastics": "Technical Plastics",
+      "aluminum-machined-parts": "Aluminum Machined Parts",
+      "chrome-plated-components": "Chrome Plated Components",
+      "custom-engineered-parts": "Custom Engineered Parts",
+      "vacuum-handling-components": "Vacuum Handling Components",
+      "conveyor-transport-parts": "Conveyor & Transport Parts",
+      "marble-machine-spare-parts": "Marble Machine Spare Parts"
+    },
+    "categoryDescriptions": {
+      "polyurethane-components": "High-load bearing rollers, wheels and linings with exceptional abrasion resistance.",
+      "vulkollan-components": "Original licensed Bayer Vulkollan® elastomers for extreme dynamic loads and durability.",
+      "rubber-components": "Precision-molded O-rings, gaskets, bellows and vibration dampeners in NBR, EPDM and NR.",
+      "silicone-components": "High-temperature seals, rollers and tubing resistant to oil, steam and UV.",
+      "technical-plastics": "Machined gears, bushings and wear plates from POM, PA6, PE1000 and PTFE.",
+      "aluminum-machined-parts": "CNC-milled and turned aluminum housings, brackets and structural components.",
+      "chrome-plated-components": "Hard-chrome plated shafts and rollers for corrosion resistance and surface hardness.",
+      "custom-engineered-parts": "Bespoke manufacturing from technical drawings. Mold design and prototyping.",
+      "vacuum-handling-components": "Suction cups, vacuum pads and seals for stone, glass and composite handling systems.",
+      "conveyor-transport-parts": "Drive pulleys, idlers and conveyor elements for heavy-duty material transport.",
+      "marble-machine-spare-parts": "Direct replacement parts for Simec, Breton, Gaspari and other major stone machinery."
+    }
+  },
+  "ProductsCategory": {
+    "metadata": {
+      "titleSuffix": "KARPOL Industrial Products"
+    },
+    "breadcrumb": {
+      "all": "All products"
+    },
+    "header": {
+      "eyebrow": "Product category",
+      "metaProducts": "{count, plural, =0 {0 products} one {# product} other {# products}}",
+      "metaMaterials": "{count, plural, =0 {no material variants} one {# material} other {# materials}}"
+    },
+    "filters": {
+      "heading": "Filters",
+      "reset": "Reset all",
+      "material": "Material",
+      "hardness": "Hardness",
+      "search": "Search",
+      "searchPlaceholder": "SKU, name or keyword",
+      "toggleShow": "Show filters",
+      "toggleHide": "Hide filters",
+      "activeCount": "{count} active"
+    },
+    "results": {
+      "showing": "Showing {visible} of {total}",
+      "loadMore": "Load more",
+      "noImage": "No image",
+      "viewSpecs": "View specs",
+      "skuLabel": "SKU"
+    },
+    "empty": {
+      "title": "No products match your filters",
+      "text": "Try widening your search or resetting filters to see every product in this category.",
+      "reset": "Reset filters"
+    },
+    "error": {
+      "title": "Category not found",
+      "text": "This product category doesn't exist or is no longer active.",
+      "cta": "Back to all products"
+    }
+  },
+  "NotFound": {
+    "code": "404",
+    "eyebrow": "Page Not Found",
+    "title": "The page you're looking for doesn't exist",
+    "text": "This address may have moved, been removed, or been mistyped. Let us point you in the right direction.",
+    "primaryCta": "Back to Home",
+    "secondaryCta": "Browse Products",
+    "tertiaryCta": "Contact Us"
+  },
+  "Loading": {
+    "label": "Preparing",
+    "text": "Loading page"
+  },
+  "ErrorPage": {
+    "code": "500",
+    "eyebrow": "Unexpected Error",
+    "title": "Something went wrong",
+    "text": "We hit a snag processing your request. Please try again; if it persists, reach out to our team.",
+    "retry": "Try Again",
+    "home": "Back to Home"
   }
 }

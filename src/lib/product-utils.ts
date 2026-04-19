@@ -1,4 +1,11 @@
-import { Product, ProductSizeRow } from "@/types/database";
+import {
+  EMPTY_SIZE_TABLE,
+  Product,
+  ProductSizeRow,
+  SizeColumn,
+  SizeRow,
+  SizeTable,
+} from "@/types/database";
 
 export type GalleryItem = {
   title: string;
@@ -137,6 +144,10 @@ export function getSupabaseJsonGallery(product: Product | null): GalleryItem[] {
   return [];
 }
 
+/**
+ * @deprecated Yeni kod `normalizeSizeTable` kullanmalı. Bu fonksiyon eski sabit
+ * şemalı kullanım için tutuldu (legacy `ProductSizeRow[]` döndürür).
+ */
 export function normalizeSizeTableRows(input: unknown): ProductSizeRow[] {
   if (!Array.isArray(input)) {
     return [];
@@ -175,4 +186,117 @@ export function normalizeSizeTableRows(input: unknown): ProductSizeRow[] {
     );
 
   return rows;
+}
+
+/** Eski 5-kolonlu ölçü tablosu için varsayılan sütun şeması. */
+export const LEGACY_SIZE_COLUMNS: SizeColumn[] = [
+  { key: "size", label: { tr: "Ölçü", en: "Size" }, align: "left" },
+  { key: "wing", label: { tr: "Kanat", en: "Wing" }, align: "center" },
+  { key: "width", label: { tr: "Genişlik", en: "Width" }, unit: "mm", align: "right" },
+  { key: "innerDiameter", label: { tr: "İç Çap", en: "Inner Ø" }, unit: "mm", align: "right" },
+  { key: "outerDiameter", label: { tr: "Dış Çap", en: "Outer Ø" }, unit: "mm", align: "right" },
+];
+
+function isSizeColumn(value: unknown): value is SizeColumn {
+  if (!value || typeof value !== "object") return false;
+  const obj = value as Record<string, unknown>;
+  return typeof obj.key === "string" && obj.key.length > 0;
+}
+
+function sanitizeAutoFill(input: unknown): SizeColumn["autoFill"] {
+  if (!input || typeof input !== "object") return undefined;
+  const raw = input as Record<string, unknown>;
+  if (raw.enabled !== true) return undefined;
+  const prefix = typeof raw.prefix === "string" ? raw.prefix : "";
+  const paddingRaw = Number(raw.padding);
+  const startRaw = Number(raw.start);
+  return {
+    enabled: true,
+    prefix,
+    padding: Number.isFinite(paddingRaw)
+      ? Math.max(1, Math.min(6, Math.trunc(paddingRaw)))
+      : 2,
+    start: Number.isFinite(startRaw) ? Math.max(0, Math.trunc(startRaw)) : 1,
+  };
+}
+
+function sanitizeColumns(input: unknown): SizeColumn[] {
+  if (!Array.isArray(input)) return [];
+  const seen = new Set<string>();
+  const out: SizeColumn[] = [];
+  for (const raw of input) {
+    if (!isSizeColumn(raw)) continue;
+    const key = String(raw.key).trim();
+    if (!key || seen.has(key)) continue;
+    seen.add(key);
+    const label =
+      raw.label && typeof raw.label === "object"
+        ? (raw.label as SizeColumn["label"])
+        : { tr: key, en: key };
+    out.push({
+      key,
+      label,
+      unit: typeof raw.unit === "string" ? raw.unit : undefined,
+      align:
+        raw.align === "left" || raw.align === "center" || raw.align === "right"
+          ? raw.align
+          : undefined,
+      autoFill: sanitizeAutoFill((raw as { autoFill?: unknown }).autoFill),
+    });
+  }
+  return out;
+}
+
+function sanitizeRows(input: unknown, columns: SizeColumn[]): SizeRow[] {
+  if (!Array.isArray(input)) return [];
+  const allowedKeys = new Set(columns.map((c) => c.key));
+  return input
+    .map((raw) => {
+      if (!raw || typeof raw !== "object") return null;
+      const row = raw as Record<string, unknown>;
+      const out: SizeRow = {};
+      for (const key of allowedKeys) {
+        const v = row[key];
+        out[key] = typeof v === "string" ? v : v == null ? "" : String(v);
+      }
+      const hasAnyValue = Object.values(out).some((v) => v && v.trim().length > 0);
+      return hasAnyValue ? out : null;
+    })
+    .filter((r): r is SizeRow => r !== null);
+}
+
+/**
+ * Esnek ölçü tablosunu normalize eder. Üç giriş formatını da destekler:
+ *  - Yeni format: `{ columns: SizeColumn[], rows: SizeRow[] }`
+ *  - Eski format: `ProductSizeRow[]` → `LEGACY_SIZE_COLUMNS` ile haritalanır.
+ *  - Diğer/boş: `EMPTY_SIZE_TABLE` döndürür.
+ */
+export function normalizeSizeTable(input: unknown): SizeTable {
+  if (!input) return EMPTY_SIZE_TABLE;
+
+  if (Array.isArray(input)) {
+    if (input.length === 0) return EMPTY_SIZE_TABLE;
+    const legacyRows = normalizeSizeTableRows(input);
+    if (legacyRows.length === 0) return EMPTY_SIZE_TABLE;
+    return {
+      columns: LEGACY_SIZE_COLUMNS,
+      rows: legacyRows.map((r) => ({
+        size: r.size,
+        wing: r.wing ?? "-",
+        width: r.width,
+        innerDiameter: r.innerDiameter,
+        outerDiameter: r.outerDiameter,
+      })),
+    };
+  }
+
+  if (typeof input === "object") {
+    const obj = input as { columns?: unknown; rows?: unknown };
+    const columns = sanitizeColumns(obj.columns);
+    if (columns.length === 0) return EMPTY_SIZE_TABLE;
+    const rows = sanitizeRows(obj.rows, columns);
+    return { columns, rows };
+  }
+
+  return EMPTY_SIZE_TABLE;
 }

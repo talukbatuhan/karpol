@@ -20,33 +20,33 @@ import styles from '@/app/admin/admin.module.css'
 
 const navItems = [
   {
-    section: 'Overview',
+    section: 'Genel',
     items: [
-      { label: 'Dashboard', href: '/admin', icon: LayoutDashboard },
+      { label: 'Kontrol Paneli', href: '/admin', icon: LayoutDashboard },
     ],
   },
   {
-    section: 'Content',
+    section: 'İçerik',
     items: [
-      { label: 'Products', href: '/admin/products', icon: Package },
-      { label: 'Categories', href: '/admin/categories', icon: FolderTree },
-      { label: 'Industries', href: '/admin/industries', icon: Factory },
-      { label: 'Articles', href: '/admin/articles', icon: FileText },
-      { label: 'Media Library', href: '/admin/media', icon: Image },
-      { label: 'Catalogs', href: '/admin/catalogs', icon: BookOpen },
+      { label: 'Ürünler', href: '/admin/products', icon: Package },
+      { label: 'Kategoriler', href: '/admin/categories', icon: FolderTree },
+      { label: 'Sektörler', href: '/admin/industries', icon: Factory },
+      { label: 'Makaleler', href: '/admin/articles', icon: FileText },
+      { label: 'Medya Kütüphanesi', href: '/admin/media', icon: Image },
+      { label: 'Kataloglar', href: '/admin/catalogs', icon: BookOpen },
     ],
   },
   {
     section: 'CRM',
     items: [
-      { label: 'RFQ Pipeline', href: '/admin/rfq', icon: MessageSquare },
-      { label: 'Contacts', href: '/admin/contacts', icon: Mail },
+      { label: 'Teklif Talepleri', href: '/admin/rfq', icon: MessageSquare },
+      { label: 'İletişim Mesajları', href: '/admin/contacts', icon: Mail },
     ],
   },
   {
-    section: 'Security',
+    section: 'Güvenlik',
     items: [
-      { label: 'Security Events', href: '/admin/security', icon: ShieldAlert },
+      { label: 'Güvenlik Olayları', href: '/admin/security', icon: ShieldAlert },
     ],
   },
 ]
@@ -102,11 +102,11 @@ export default function AdminSidebar() {
       <div className={styles.sidebarFooter}>
         <button onClick={handleLogout} className={styles.navItem} disabled={loggingOut} type="button">
           <LogOut className={styles.navItemIcon} />
-          {loggingOut ? 'Signing out...' : 'Sign Out'}
+          {loggingOut ? 'Çıkış yapılıyor...' : 'Çıkış Yap'}
         </button>
         <Link href="/" className={styles.navItem}>
           <LogOut className={styles.navItemIcon} />
-          Back to Site
+          Siteye Dön
         </Link>
       </div>
     </aside>

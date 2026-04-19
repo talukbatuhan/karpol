@@ -20,7 +20,7 @@ export default function I18nFieldEditor({
   multiline = false,
   required = false,
 }: I18nFieldEditorProps) {
-  const [activeLocale, setActiveLocale] = useState<SupportedLocale>('en')
+  const [activeLocale, setActiveLocale] = useState<SupportedLocale>('tr')
 
   const handleChange = (locale: SupportedLocale, text: string) => {
     onChange({ ...value, [locale]: text })
@@ -56,9 +56,9 @@ export default function I18nFieldEditor({
           className={styles.formTextarea}
           value={value[activeLocale] || ''}
           onChange={(e) => handleChange(activeLocale, e.target.value)}
-          placeholder={`${label} in ${LOCALE_LABELS[activeLocale]}...`}
-          dir={activeLocale === 'ar' ? 'rtl' : 'ltr'}
-          required={required && activeLocale === 'en'}
+          placeholder={`${label} — ${LOCALE_LABELS[activeLocale]}...`}
+          dir="ltr"
+          required={required && activeLocale === 'tr'}
         />
       ) : (
         <input
@@ -66,9 +66,9 @@ export default function I18nFieldEditor({
           className={styles.formInput}
           value={value[activeLocale] || ''}
           onChange={(e) => handleChange(activeLocale, e.target.value)}
-          placeholder={`${label} in ${LOCALE_LABELS[activeLocale]}...`}
-          dir={activeLocale === 'ar' ? 'rtl' : 'ltr'}
-          required={required && activeLocale === 'en'}
+          placeholder={`${label} — ${LOCALE_LABELS[activeLocale]}...`}
+          dir="ltr"
+          required={required && activeLocale === 'tr'}
         />
       )}
     </div>

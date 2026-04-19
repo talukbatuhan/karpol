@@ -5,19 +5,21 @@
     "services": "Hizmetler",
     "about": "Hakkımızda",
     "contact": "İletişim",
-    "search": "Arama...",
+    "solutions": "Çözümler",
+    "industries": "Sektörler",
+    "search": "Ara...",
     "custom manufacturing": "Özel İmalat",
     "factory & technology": "Fabrika & Teknoloji",
     "technical knowledge": "Teknik Bilgi",
     "catalog": "Katalog",
     "e-catalog": "E-Katalog",
-    "polyurethane components": "Poliuretan Bilesenler",
-    "vulkollan components": "Vulkollan Bilesenler",
-    "rubber components": "Kaucuk Bilesenler",
-    "silicone components": "Silikon Bilesenler",
+    "polyurethane components": "Poliüretan Bileşenler",
+    "vulkollan components": "Vulkollan Bileşenler",
+    "rubber components": "Kauçuk Bileşenler",
+    "silicone components": "Silikon Bileşenler",
     "ptfe / teflon": "PTFE / Teflon",
-    "aluminum cnc parts": "Aluminyum CNC Parcalar",
-    "engineering plastics": "Muhendislik Plastikleri"
+    "aluminum cnc parts": "Alüminyum CNC Parçalar",
+    "engineering plastics": "Mühendislik Plastikleri"
   },
   "Hero": {
     "headline": "Hassas Mühendislik. Küresel Çözümler.",
@@ -52,12 +54,56 @@
     "advantages": "Mühendislik Avantajları",
     "compatibility": "Makine Uyumluluğu",
     "downloads": "Mühendislik Kaynakları",
+    "drawings": "Teknik Çizimler",
+    "drawing": "Teknik Çizim",
+    "datasheet": "Ürün Kataloğu",
     "sizes": "Standart Ölçüler",
     "related": "İlgili Ürünler",
+    "related_sub": "Aynı kategorideki diğer mühendislik çözümlerimizi inceleyin.",
+    "view_details": "İncele",
     "cta_title": "Özel Bir Çözüme mi İhtiyacınız Var?",
-    "cta_text": "Özel endüstriyel gereksinimleriniz için özel üretim yapıyoruz. Mühendislik ekibimiz yardıma hazır.",
+    "cta_text": "Özel endüstriyel gereksinimleriniz için tasarım ve üretim yapıyoruz. Mühendislik ekibimiz teknik çiziminize özel teklif hazırlamaya hazır.",
     "cta_button": "Özel Teklif Alın",
-    "contact_engineer": "Mühendise Danışın"
+    "cta_secondary": "Özel Üretim Hakkında",
+    "contact_engineer": "Canlı Destek Alın",
+    "breadcrumb": {
+      "products": "Ürünler"
+    },
+    "spec": {
+      "material": "Malzeme",
+      "hardness": "Sertlik",
+      "temperature": "Çalışma Sıcaklığı",
+      "color": "Renk",
+      "weight": "Ağırlık",
+      "sku": "Ürün Kodu"
+    },
+    "size": {
+      "tip": "Tip",
+      "wing": "Kanat",
+      "width": "Genişlik (mm)",
+      "id": "İç Çap (mm)",
+      "od": "Dış Çap (mm)",
+      "searchPlaceholder": "Model ara...",
+      "clearSearch": "Aramayı temizle",
+      "noResults": "Aramanızla eşleşen kayıt bulunamadı.",
+      "prev": "Önceki",
+      "next": "Sonraki",
+      "pageInfo": "Sayfa {page} / {total} · {rows} satır"
+    },
+    "doc": {
+      "open": "Aç"
+    },
+    "eyebrow": {
+      "specs": "Teknik Veriler",
+      "sizes": "Boyut Matrisi",
+      "applications": "Kullanım Alanları",
+      "advantages": "Mühendislik Notları",
+      "compatibility": "Sahada Uyumluluk",
+      "drawings": "Teknik Doküman",
+      "downloads": "İndirilebilir Kaynaklar",
+      "cta": "Sonraki Adım",
+      "related": "Tamamlayıcı Ürünler"
+    }
   },
   "RFQModal": {
     "title": "Hızlı Teklif Formu",
@@ -206,7 +252,20 @@
       "title": "15 Yıllık Mühendislik Mükemmelliği",
       "subtitle": "Denizli’deki ileri üretim tesisimizden dünyanın en zorlu endüstrilerine; arıza kabul etmeyen bileşenler tasarlıyor ve üretiyoruz.",
       "primaryCta": "Teklif İste",
-      "secondaryCta": "Ürünleri Keşfet"
+      "secondaryCta": "Ürünleri Keşfet",
+      "scrollHint": "Aşağı kaydır",
+      "imageAlt": "Anıtsal taş kolonlar — endüstriyel ustalık"
+    },
+    "timeline": {
+      "eyebrow": "Yolculuğumuz",
+      "title": "15+ Yıllık Mükemmellik",
+      "milestones": [
+        { "year": "2010", "label": "Kuruluş", "desc": "Denizli, Türkiye’de kuruldu" },
+        { "year": "2014", "label": "Poliüretan Hattı", "desc": "Özel polimer döküm atölyesi açıldı" },
+        { "year": "2018", "label": "İhracat Açılımı", "desc": "20+ ülkeye sevkiyat sağlandı" },
+        { "year": "2022", "label": "CNC Genişlemesi", "desc": "İleri CNC işleme kapasitesi eklendi" },
+        { "year": "2025", "label": "Global Ağ", "desc": "Mermer ve sanayide güvenilir tedarikçi" }
+      ]
     },
     "trust": {
       "yearsTitle": "15+ Yıl Deneyim",
@@ -255,20 +314,46 @@
       }
     },
     "cta": {
+      "eyebrow": "Bizimle çalışın",
       "title": "Bir Sonraki Parçanızı Birlikte Tasarlayalım",
       "text": "Çiziminizi, uygulama detaylarını ve hedef performansı paylaşın. Ekibimiz uygun malzeme ve üretim yöntemini önerir.",
       "primaryCta": "Satışa Ulaşın",
       "secondaryCta": "Kataloğu İnceleyin"
     }
-  }
-  ,
+  },
+  "HomeHero": {
+    "eyebrow": "Ürün Değil Çözüm Üretiyoruz, Tecrübemizi Satıyoruz",
+    "titleLine1": "Taş işlenir,",
+    "titleLine2": "kalite kalır.",
+    "subtitle": "Üretimin durmaması için gereken her detayı biz üretiyoruz. Doğal taş işleme makineleri için geliştirdiğimiz yedek parçalar, ağır koşullarda bile güvenilir performans sunar. Çünkü biz, sadece parça değil, süreklilik sağlıyoruz.",
+    "primaryCta": "Ürünleri keşfedin",
+    "secondaryCta": "İletişime geçin",
+    "stat1Number": "25+",
+    "stat1Label": "Yıllık hassasiyet",
+    "stat2Number": "40+",
+    "stat2Label": "Hizmet verilen ülke",
+    "stat3Number": "5.000+",
+    "stat3Label": "Teslim edilen bileşen",
+    "scrollLabel": "Aşağı kaydır",
+    "imageAlt": "Anıtsal taş mimari"
+  },
   "Catalog": {
     "title": "E-Katalog",
-    "browseTitle": "Katalog Secimi",
-    "browseSubtitle": "Goruntuleyiciyi acmak icin bir katalog secin.",
-    "openCatalog": "Katalogu Ac",
-    "emptyTitle": "Katalog bulunamadi",
-    "emptySub": "Bu alanda gormek icin admin panelden katalog yukleyin.",
+    "browseTitle": "Katalog seçimi",
+    "browseSubtitle": "Görüntüleyiciyi açmak için bir katalog seçin.",
+    "pageEyebrow": "Ürün katalogları",
+    "pageTitleLine1": "İnceleyin &",
+    "pageTitleLine2": "keşfedin.",
+    "pageSubtitle": "Etkileşimli e-kataloglarımızı açın: sayfa çevirin, yakınlaştırın ve bağlantı paylaşın.",
+    "searchPlaceholder": "Katalog ara…",
+    "filterAll": "Tümü",
+    "foundCount": "{count} katalog bulundu",
+    "noMatchTitle": "Eşleşen katalog yok",
+    "noMatchHint": "Başka bir arama deneyin veya farklı bir filtre seçin.",
+    "cardBlurb": "Küçük resimler ve tam ekran okuma ile görüntüleyici.",
+    "openCatalog": "Kataloğu aç",
+    "emptyTitle": "Katalog bulunamadı",
+    "emptySub": "Bu alanda görmek için yönetim panelinden katalog yükleyin.",
     "toolbar": {
       "page": "Sayfa",
       "zoom_in": "Yakınlaştır",
@@ -288,19 +373,203 @@
     "error": "Katalog yüklenemedi. Lütfen daha sonra tekrar deneyin.",
     "missing_image": "Bazı sayfalar görüntülenemiyor."
   },
+  "ContactPage": {
+    "eyebrow": "İLETİŞİM",
+    "scrollHint": "Kaydır",
+    "heroTitle1": "Birlikte",
+    "heroTitle2": "Üretelim.",
+    "heroSubtitle": "Yedek parça, poliüretan bileşenler, slab fabrika ekipmanları veya ağır taşıma çözümleri — ekibimiz operasyonunuza hazır.",
+    "getInTouch": "Bize Ulaşın",
+    "intro": "Çizim, miktar veya teknik sorularınızı paylaşın; mühendislik ve ticari dönüş sağlarız.",
+    "labelPhone": "Telefon",
+    "labelEmail": "E-posta",
+    "labelAddress": "Adres",
+    "labelHours": "Çalışma saatleri",
+    "hoursValue": "Pzt–Cum · 08:00–18:00",
+    "fieldName": "Ad Soyad",
+    "fieldEmail": "E-posta",
+    "fieldCompany": "Şirket (isteğe bağlı)",
+    "fieldMessage": "Mesaj",
+    "phName": "Adınız",
+    "phEmail": "siz@sirket.com",
+    "phCompany": "Şirket veya proje referansı",
+    "phMessage": "Talebinizi kısaca yazın…",
+    "submit": "Mesaj Gönder",
+    "sending": "Gönderiliyor…",
+    "successTitle": "Mesajınız iletildi",
+    "successBody": "En kısa sürede size dönüş yapacağız.",
+    "sendAnother": "Yeni mesaj gönder",
+    "errorGeneric": "Bir hata oluştu. Lütfen tekrar deneyin."
+  },
   "Footer": {
-    "description": "Global pazarlar icin zorlu makinelere uygun hassas muhendislik endustriyel bilesenler.",
+    "description": "Küresel pazarlarda zorlu makinelere uygun hassas mühendislik endüstriyel bileşenler.",
     "company": "Kurumsal",
-    "products": "Urunler",
-    "contact": "Iletisim",
-    "about": "Hakkimizda",
-    "contactLink": "Iletisim",
+    "products": "Ürünler",
+    "contact": "İletişim",
+    "about": "Hakkımızda",
+    "contactLink": "İletişim",
     "catalogs": "Kataloglar",
     "knowledge": "Bilgi Merkezi",
-    "viewAllProducts": "Tum Urunler",
-    "requestQuote": "Teklif Iste",
-    "privacy": "Gizlilik Politikasi",
-    "terms": "Kullanim Sartlari",
-    "rights": "Tum haklari saklidir."
+    "viewAllProducts": "Tüm ürünler",
+    "requestQuote": "Teklif iste",
+    "privacy": "Gizlilik politikası",
+    "terms": "Kullanım şartları",
+    "rights": "Tüm hakları saklıdır.",
+    "footerContactEyebrow": "İletişim",
+    "footerHeadlineLine1": "Birlikte",
+    "footerHeadlineLine2": "çalışalım.",
+    "footerTagline": "Zorlu makineler için yüksek performanslı endüstriyel bileşenler — poliüretan, kauçuk ve CNC işlenmiş parçalar.",
+    "footerHqLabel": "Merkez",
+    "footerPhoneLabel": "Telefon",
+    "footerEmailLabel": "E-posta",
+    "footerFormSuccessTitle": "Mesajınız alındı",
+    "footerFormSuccessText": "Teşekkürler. Ekibimiz en kısa sürede size dönecektir.",
+    "footerFormTitlePrefix": "Bir ",
+    "footerFormTitleEm": "mesaj gönderin",
+    "footerFormNameLabel": "Ad Soyad *",
+    "footerFormNamePlaceholder": "Adınız soyadınız",
+    "footerFormCompanyLabel": "Şirket",
+    "footerFormCompanyPlaceholder": "Şirket adı",
+    "footerFormEmailLabel": "E-posta *",
+    "footerFormEmailPlaceholder": "siz@sirket.com",
+    "footerFormMessageLabel": "Mesaj *",
+    "footerFormMessagePlaceholder": "Talebinizi, miktarları veya sorularınızı yazın…",
+    "footerFormRequiredNote": "* Zorunlu alanlar",
+    "footerFormSending": "Gönderiliyor…",
+    "footerFormSubmit": "Mesaj gönder",
+    "footerIndustriesColumn": "Keşfet",
+    "footerIndustryAll": "Sektör çözümleri",
+    "footerIndustryFactory": "Fabrika ve teknoloji",
+    "footerIndustryCustom": "Özel üretim",
+    "footerIndustryProducts": "Ürün kataloğu"
+  },
+  "ProductsHub": {
+    "metadata": {
+      "title": "Endüstriyel Bileşenler ve Yedek Parçalar",
+      "description": "KARPOL mühendislik kataloğunu keşfedin: poliüretan, Vulkollan, kauçuk, silikon, teknik plastik ve CNC işlenmiş bileşenler — zorlu endüstriyel makineler için üretildi."
+    },
+    "hero": {
+      "eyebrow": "Mühendislik Kütüphanesi",
+      "titleLine1": "Dayanıklılık için",
+      "titleLine2": "tasarlandı.",
+      "subtitle": "On bir özenle seçilmiş malzeme ailesi — Vulkollan® makaralardan hassas krom millere kadar — dünyanın en zorlu üretim hatları için geliştirildi.",
+      "primaryCta": "Kategorileri Gör",
+      "secondaryCta": "Teklif İste",
+      "scrollHint": "Kaydır"
+    },
+    "strip": {
+      "materialsLabel": "Malzemeler",
+      "materialsValue": "PU, Vulkollan®, Kauçuk, Silikon, PTFE",
+      "hardnessLabel": "Sertlik Aralığı",
+      "hardnessValue": "20 Shore A — 75 Shore D",
+      "methodsLabel": "Üretim",
+      "methodsValue": "Döküm · CNC · Kalıplama",
+      "qualityLabel": "Kalite",
+      "qualityValue": "ISO 9001:2015 Sertifikalı"
+    },
+    "categories": {
+      "eyebrow": "Ürün Kataloğu",
+      "title": "Malzeme ailesine göre keşfedin",
+      "subtitle": "Kütüphanemizdeki her bileşen kendi tesisimizde mühendisliği yapılır ve mermer, otomotiv, lojistik ile ağır sanayide sahada test edilmiştir."
+    },
+    "card": {
+      "browseCta": "İncele",
+      "productsCount": "{count, plural, =0 {henüz ürün yok} one {# ürün} other {# ürün}}"
+    },
+    "cta": {
+      "eyebrow": "Özel mühendislik",
+      "title": "Aradığınız parçayı bulamadınız mı?",
+      "text": "Teknik çiziminizi veya örneğinizi gönderin. Mühendislerimiz size en uygun malzeme ve üretim yöntemini önersin — prototipten seri üretime kadar.",
+      "primaryCta": "Mühendisliğe Ulaşın",
+      "secondaryCta": "Özel İmalat"
+    },
+    "categoryNames": {
+      "polyurethane-components": "Poliüretan Bileşenler",
+      "vulkollan-components": "Vulkollan® Bileşenler",
+      "rubber-components": "Kauçuk Bileşenler",
+      "silicone-components": "Silikon Bileşenler",
+      "technical-plastics": "Teknik Plastikler",
+      "aluminum-machined-parts": "Alüminyum İşlenmiş Parçalar",
+      "chrome-plated-components": "Krom Kaplamalı Bileşenler",
+      "custom-engineered-parts": "Özel Mühendislik Parçaları",
+      "vacuum-handling-components": "Vakum Tutma Bileşenleri",
+      "conveyor-transport-parts": "Konveyör ve Taşıma Parçaları",
+      "marble-machine-spare-parts": "Mermer Makine Yedek Parçaları"
+    },
+    "categoryDescriptions": {
+      "polyurethane-components": "Yüksek yük taşıma kapasiteli makara, tekerlek ve kaplamalar; olağanüstü aşınma direnci.",
+      "vulkollan-components": "Aşırı dinamik yükler için orijinal lisanslı Bayer Vulkollan® elastomerleri.",
+      "rubber-components": "Hassas kalıplanmış O-ringler, contalar, körükler ve titreşim damperleri (NBR, EPDM, NR).",
+      "silicone-components": "Yağ, buhar ve UV’ye dayanıklı yüksek sıcaklık contaları, silindirler ve hortumlar.",
+      "technical-plastics": "POM, PA6, PE1000 ve PTFE'den işlenmiş dişliler, burçlar ve aşınma plakaları.",
+      "aluminum-machined-parts": "CNC frezelenmiş ve tornalanmış alüminyum gövdeler, braketler ve yapısal parçalar.",
+      "chrome-plated-components": "Korozyon direnci ve yüzey sertliği için sert krom kaplı miller ve silindirler.",
+      "custom-engineered-parts": "Teknik çizimlerden özel üretim. Kalıp tasarımı ve prototip geliştirme.",
+      "vacuum-handling-components": "Taş, cam ve kompozit taşıma sistemleri için vantuzlar, vakum pedleri ve contalar.",
+      "conveyor-transport-parts": "Ağır hizmet malzeme taşıma için tahrik kasnakları, makaralar ve konveyör elemanları.",
+      "marble-machine-spare-parts": "Simec, Breton, Gaspari ve diğer büyük taş makineleri için birebir uyumlu yedek parçalar."
+    }
+  },
+  "ProductsCategory": {
+    "metadata": {
+      "titleSuffix": "KARPOL Endüstriyel Ürünler"
+    },
+    "breadcrumb": {
+      "all": "Tüm ürünler"
+    },
+    "header": {
+      "eyebrow": "Ürün kategorisi",
+      "metaProducts": "{count, plural, =0 {0 ürün} one {# ürün} other {# ürün}}",
+      "metaMaterials": "{count, plural, =0 {malzeme çeşidi yok} one {# malzeme} other {# malzeme}}"
+    },
+    "filters": {
+      "heading": "Filtreler",
+      "reset": "Tümünü sıfırla",
+      "material": "Malzeme",
+      "hardness": "Sertlik",
+      "search": "Ara",
+      "searchPlaceholder": "SKU, isim veya anahtar kelime",
+      "toggleShow": "Filtreleri göster",
+      "toggleHide": "Filtreleri gizle",
+      "activeCount": "{count} aktif"
+    },
+    "results": {
+      "showing": "{total} sonuçtan {visible} tanesi gösteriliyor",
+      "loadMore": "Daha fazla yükle",
+      "noImage": "Görsel yok",
+      "viewSpecs": "Teknik detay",
+      "skuLabel": "SKU"
+    },
+    "empty": {
+      "title": "Filtrelerinize uyan ürün yok",
+      "text": "Aramayı genişletmeyi deneyin veya filtreleri sıfırlayıp bu kategorideki tüm ürünleri görün.",
+      "reset": "Filtreleri sıfırla"
+    },
+    "error": {
+      "title": "Kategori bulunamadı",
+      "text": "Bu ürün kategorisi mevcut değil veya artık aktif değil.",
+      "cta": "Tüm ürünlere dön"
+    }
+  },
+  "NotFound": {
+    "code": "404",
+    "eyebrow": "Sayfa Bulunamadı",
+    "title": "Aradığınız sayfa mevcut değil",
+    "text": "Bu adres taşınmış, kaldırılmış ya da yanlış yazılmış olabilir. Sizi doğru yere yönlendirelim.",
+    "primaryCta": "Anasayfaya Dön",
+    "secondaryCta": "Ürünleri İncele",
+    "tertiaryCta": "İletişime Geç"
+  },
+  "Loading": {
+    "label": "Hazırlanıyor",
+    "text": "Sayfa yükleniyor"
+  },
+  "ErrorPage": {
+    "code": "500",
+    "eyebrow": "Beklenmeyen Hata",
+    "title": "Bir şeyler ters gitti",
+    "text": "Talebiniz işlenirken bir sorun oluştu. Lütfen tekrar deneyin; sorun devam ederse ekibimizle iletişime geçin.",
+    "retry": "Tekrar Dene",
+    "home": "Anasayfaya Dön"
   }
 }

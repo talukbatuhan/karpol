@@ -1,10 +1,17 @@
-import { Metadata } from "next";
-import Link from "next/link";
-import Image from "next/image";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getProductCategoryBySlug, getProductsByCategorySlug } from "@/lib/data/public-data";
-import { getLocalizedField } from "@/lib/i18n-helpers";
-import styles from "./category.module.css";
+import { getTranslations, setRequestLocale } from "next-intl/server";
+import {
+  getProductCategoryByLocalizedSlug,
+  getProductCategories,
+} from "@/lib/data/public-data";
+import { getLocalizedField, getLocalizedSlug } from "@/lib/i18n-helpers";
+import { productCategories } from "@/lib/config";
+import { createClient } from "@/lib/supabase-server";
+import type { Product } from "@/types/database";
+import PremiumProductCategory, {
+  type LocalizedProduct,
+} from "@/components/products/PremiumProductCategory";
 
 type CategoryPageProps = {
   params: Promise<{ category: string; locale: string }>;
@@ -14,183 +21,130 @@ export async function generateMetadata({
   params,
 }: CategoryPageProps): Promise<Metadata> {
   const { category, locale } = await params;
-  const { data: categoryData } = await getProductCategoryBySlug(category);
+  setRequestLocale(locale);
+  const t = await getTranslations("ProductsCategory");
+  const tHub = await getTranslations("ProductsHub");
 
-  if (!categoryData) {
-    return {
-      title: "Category Not Found | KARPOL",
-    };
+  const { data: categoryData } = await getProductCategoryByLocalizedSlug(
+    category,
+    locale,
+  );
+  const isKnownCanonical = productCategories.some((c) => c.slug === category);
+
+  const fallbackKey = categoryData?.slug ?? (isKnownCanonical ? category : null);
+
+  const name = categoryData
+    ? getLocalizedField(categoryData.name, locale)
+    : fallbackKey
+      ? tHub(`categoryNames.${fallbackKey}`)
+      : null;
+  const description = categoryData
+    ? getLocalizedField(categoryData.description, locale)
+    : fallbackKey
+      ? tHub(`categoryDescriptions.${fallbackKey}`)
+      : null;
+
+  if (!name) {
+    return { title: t("error.title") };
   }
 
-  const name = getLocalizedField(categoryData.name, locale);
-  const desc = getLocalizedField(categoryData.description, locale);
+  // Locale-aware alternates for hreflang + locale switcher
+  const buildLocaleHref = (target: string) => {
+    const catSlug = categoryData
+      ? getLocalizedSlug(categoryData.slugs, target, categoryData.slug)
+      : category;
+    const productsSegment = target === "tr" ? "urunler" : "products";
+    return `/${target}/${productsSegment}/${catSlug}`;
+  };
+
+  const trHref = buildLocaleHref("tr");
+  const enHref = buildLocaleHref("en");
 
   return {
-    title: `${name} | KARPOL Industrial Products`,
-    description: desc || `Explore our high-performance ${name} range.`,
+    title: `${name} | ${t("metadata.titleSuffix")}`,
+    description:
+      description ?? `Explore our high-performance ${name} range.`,
+    alternates: {
+      canonical: locale === "tr" ? trHref : enHref,
+      languages: {
+        tr: trHref,
+        en: enHref,
+        "x-default": enHref,
+      },
+    },
   };
 }
 
 export default async function CategoryPage({ params }: CategoryPageProps) {
   const { category, locale } = await params;
-  const { data: categoryData, error: categoryError } = await getProductCategoryBySlug(category);
-  const { data: products } = await getProductsByCategorySlug(category);
+  setRequestLocale(locale);
 
-  if (categoryError || !categoryData) {
+  const { data: categoryData } = await getProductCategoryByLocalizedSlug(
+    category,
+    locale,
+  );
+
+  const isKnownCanonical = productCategories.some((c) => c.slug === category);
+  if (!categoryData && !isKnownCanonical) {
     notFound();
   }
 
-  const categoryName = getLocalizedField(categoryData.name, locale);
-  const categoryDescription = getLocalizedField(categoryData.description, locale);
+  const tHub = await getTranslations("ProductsHub");
+
+  const canonicalKey = categoryData?.slug ?? category;
+
+  const categoryName = categoryData
+    ? getLocalizedField(categoryData.name, locale) ||
+      tHub(`categoryNames.${canonicalKey}`)
+    : tHub(`categoryNames.${canonicalKey}`);
+
+  const categoryDescription = categoryData
+    ? getLocalizedField(categoryData.description, locale) ||
+      tHub(`categoryDescriptions.${canonicalKey}`)
+    : tHub(`categoryDescriptions.${canonicalKey}`);
+
+  const localeCategorySlug = categoryData
+    ? getLocalizedSlug(categoryData.slugs, locale, categoryData.slug)
+    : category;
+
+  let products: LocalizedProduct[] = [];
+  if (categoryData) {
+    const supabase = await createClient();
+    const { data: productsRaw } = await supabase
+      .from("products")
+      .select("*")
+      .eq("category_id", categoryData.id)
+      .eq("is_active", true)
+      .order("sort_order", { ascending: true });
+
+    products = ((productsRaw ?? []) as Product[]).map((p) => ({
+      slug: getLocalizedSlug(p.slugs, locale, p.slug),
+      sku: p.sku,
+      name: getLocalizedField(p.name, locale),
+      description:
+        getLocalizedField(p.short_description, locale) ||
+        getLocalizedField(p.description, locale),
+      material: p.material,
+      hardness:
+        p.hardness && p.hardness_unit
+          ? `${p.hardness} ${p.hardness_unit}`
+          : p.hardness ?? undefined,
+      image: p.images && p.images.length > 0 ? p.images[0] : undefined,
+    }));
+  } else {
+    // Eski fallback: kategori DB'de yok ama config'te var → boş liste
+    const { data: allCats } = await getProductCategories();
+    if (allCats.length === 0) {
+      products = [];
+    }
+  }
 
   return (
-    <main>
-      {/* Header */}
-      <header className={styles.header}>
-        <div className={styles.container}>
-          <div className={styles.breadcrumb}>
-            <Link href="/products" className={styles.backLink}>
-              ← Back to All Categories
-            </Link>
-          </div>
-          <div className={styles.headerContent}>
-            <span className={styles.eyebrow}>Product Category</span>
-            <h1 className={styles.title}>{categoryName}</h1>
-            <p className={styles.description}>
-              {categoryDescription || "High-performance industrial components engineered for durability and precision. Browse our selection below."}
-            </p>
-          </div>
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <section className={styles.section}>
-        <div className={styles.container}>
-          <div className={styles.layout}>
-            {/* Sidebar Filters */}
-            <aside className={styles.filters}>
-              <div className={styles.filterHeader}>
-                <span className={styles.filterHeading}>Filters</span>
-                <button className={styles.resetBtn}>Reset</button>
-              </div>
-
-              <div className={styles.filterGroup}>
-                <h3 className={styles.filterTitle}>Material</h3>
-                <div className={styles.filterList}>
-                  <label className={styles.checkboxLabel}>
-                    <input type="checkbox" className={styles.checkbox} /> Polyurethane
-                  </label>
-                  <label className={styles.checkboxLabel}>
-                    <input type="checkbox" className={styles.checkbox} /> Vulkollan®
-                  </label>
-                  <label className={styles.checkboxLabel}>
-                    <input type="checkbox" className={styles.checkbox} /> Rubber (NBR)
-                  </label>
-                  <label className={styles.checkboxLabel}>
-                    <input type="checkbox" className={styles.checkbox} /> Silicone
-                  </label>
-                </div>
-              </div>
-
-              <div className={styles.filterGroup}>
-                <h3 className={styles.filterTitle}>Hardness</h3>
-                <div className={styles.filterList}>
-                  <label className={styles.checkboxLabel}>
-                    <input type="checkbox" className={styles.checkbox} /> 60-70 Shore A
-                  </label>
-                  <label className={styles.checkboxLabel}>
-                    <input type="checkbox" className={styles.checkbox} /> 80-90 Shore A
-                  </label>
-                  <label className={styles.checkboxLabel}>
-                    <input type="checkbox" className={styles.checkbox} /> 95+ Shore A
-                  </label>
-                  <label className={styles.checkboxLabel}>
-                    <input type="checkbox" className={styles.checkbox} /> 55-75 Shore D
-                  </label>
-                </div>
-              </div>
-
-              <div className={styles.filterGroup}>
-                <h3 className={styles.filterTitle}>Application</h3>
-                <div className={styles.filterList}>
-                  <label className={styles.checkboxLabel}>
-                    <input type="checkbox" className={styles.checkbox} /> Heavy Load
-                  </label>
-                  <label className={styles.checkboxLabel}>
-                    <input type="checkbox" className={styles.checkbox} /> High Speed
-                  </label>
-                  <label className={styles.checkboxLabel}>
-                    <input type="checkbox" className={styles.checkbox} /> High Temp
-                  </label>
-                </div>
-              </div>
-            </aside>
-
-            {/* Products Grid */}
-            <div className={styles.mainContent}>
-              <div className={styles.gridHeader}>
-                <span className={styles.resultCount}>Showing {products.length} Results</span>
-                {/* Sorting dropdown could go here */}
-              </div>
-
-              <div className={styles.grid}>
-                {products.length > 0 ? (
-                  products.map((product) => (
-                    <Link
-                      key={product.slug}
-                      href={`/products/${category}/${product.slug}`}
-                      className={styles.card}
-                    >
-                      <div className={styles.imageFrame}>
-                        {product.images && product.images[0] ? (
-                          <Image
-                            src={product.images[0]}
-                            alt={getLocalizedField(product.name, locale)}
-                            fill
-                            className={styles.image}
-                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                          />
-                        ) : (
-                          <div className={styles.imagePlaceholder}>
-                            <span className={styles.imagePlaceholderIcon} aria-hidden>📷</span>
-                            <span className={styles.imagePlaceholderLabel}>NO IMAGE</span>
-                          </div>
-                        )}
-                      </div>
-                      <div className={styles.content}>
-                        <h3 className={styles.productTitle}>{getLocalizedField(product.name, locale)}</h3>
-                        <p className={styles.productDesc}>
-                          {getLocalizedField(product.description, locale) || "Industrial grade component designed for maximum durability and precision."}
-                        </p>
-                        <div className={styles.meta}>
-                          {product.sku && <span className={styles.badge}>SKU: {product.sku}</span>}
-                          {product.material && <span className={styles.badge}>{product.material}</span>}
-                        </div>
-                        <div className={styles.viewBtn}>View Specs</div>
-                      </div>
-                    </Link>
-                  ))
-                ) : (
-                  <div className={styles.emptyState}>
-                    <h3 className={styles.emptyStateTitle}>No products found</h3>
-                    <p className={styles.emptyStateText}>We are currently updating this category. Please check back soon.</p>
-                  </div>
-                )}
-              </div>
-
-              {/* Pagination (Static for now) */}
-              {products.length > 0 && (
-                <div className={styles.pagination}>
-                  <button className={`${styles.pageBtn} ${styles.pageBtnActive}`}>1</button>
-                  <button className={styles.pageBtn}>2</button>
-                  <button className={styles.pageBtn}>3</button>
-                  <button className={styles.pageBtn}>→</button>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </section>
-    </main>
+    <PremiumProductCategory
+      categorySlug={localeCategorySlug}
+      categoryName={categoryName}
+      categoryDescription={categoryDescription}
+      products={products}
+    />
   );
 }

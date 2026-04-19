@@ -26,15 +26,15 @@ export default function SpecificationBuilder({ value, onChange }: SpecificationB
 
   return (
     <div className={styles.formGroup}>
-      <label className={styles.formLabel}>Technical Specifications</label>
+      <label className={styles.formLabel}>Teknik Özellikler Tablosu</label>
       <div className={styles.dataTable} style={{ marginBottom: 12 }}>
         <table>
           <thead>
             <tr>
-              <th>Property</th>
-              <th>Value</th>
-              <th>Unit</th>
-              <th>Test Method</th>
+              <th>Özellik</th>
+              <th>Değer</th>
+              <th>Birim</th>
+              <th>Test Metodu</th>
               <th style={{ width: 40 }}></th>
             </tr>
           </thead>
@@ -47,7 +47,7 @@ export default function SpecificationBuilder({ value, onChange }: SpecificationB
                     className={styles.formInput}
                     value={spec.label}
                     onChange={(e) => updateRow(index, 'label', e.target.value)}
-                    placeholder="e.g. Tensile Strength"
+                    placeholder="ör. Çekme Dayanımı"
                     style={{ padding: '6px 10px', fontSize: 13 }}
                   />
                 </td>
@@ -57,7 +57,7 @@ export default function SpecificationBuilder({ value, onChange }: SpecificationB
                     className={styles.formInput}
                     value={spec.value}
                     onChange={(e) => updateRow(index, 'value', e.target.value)}
-                    placeholder="e.g. 45"
+                    placeholder="ör. 45"
                     style={{ padding: '6px 10px', fontSize: 13 }}
                   />
                 </td>
@@ -67,7 +67,7 @@ export default function SpecificationBuilder({ value, onChange }: SpecificationB
                     className={styles.formInput}
                     value={spec.unit || ''}
                     onChange={(e) => updateRow(index, 'unit', e.target.value)}
-                    placeholder="e.g. MPa"
+                    placeholder="ör. MPa"
                     style={{ padding: '6px 10px', fontSize: 13 }}
                   />
                 </td>
@@ -77,7 +77,7 @@ export default function SpecificationBuilder({ value, onChange }: SpecificationB
                     className={styles.formInput}
                     value={spec.test_method || ''}
                     onChange={(e) => updateRow(index, 'test_method', e.target.value)}
-                    placeholder="e.g. DIN 53504"
+                    placeholder="ör. DIN 53504"
                     style={{ padding: '6px 10px', fontSize: 13 }}
                   />
                 </td>
@@ -97,7 +97,7 @@ export default function SpecificationBuilder({ value, onChange }: SpecificationB
         </table>
       </div>
       <button type="button" onClick={addRow} className={`${styles.btn} ${styles.btnSecondary} ${styles.btnSmall}`}>
-        <Plus size={14} /> Add Specification
+        <Plus size={14} /> Satır Ekle
       </button>
     </div>
   )

@@ -1,21 +1,26 @@
 import { Metadata } from "next";
-import Link from "next/link";
 import Script from "next/script";
-import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
-import styles from "./detail.module.css";
-import ProductVisualsWrapper from "@/components/product/ProductVisualsWrapper";
-import RFQModalWrapper from "@/components/product/RFQModalWrapper";
-import { getProductByCategoryAndSlug, getProductsByCategorySlug } from "@/lib/data/public-data";
+import ProductDetailView from "@/components/product/ProductDetailView";
+import {
+  getProductByLocalizedSlug,
+  getProductCategoryByLocalizedSlug,
+  getRelatedProductsByCategory,
+} from "@/lib/data/public-data";
 import { getRichProductContent } from "@/lib/product-content";
-import { getLocalizedField, getLocalizedArray } from "@/lib/i18n-helpers";
-import { 
-  uniqueByUrl, 
-  isImageUrl, 
-  getSupabaseJsonGallery, 
-  normalizeSizeTableRows 
+import {
+  getLocalizedField,
+  getLocalizedArray,
+  getLocalizedSlug,
+} from "@/lib/i18n-helpers";
+import {
+  uniqueByUrl,
+  isImageUrl,
+  getSupabaseJsonGallery,
+  normalizeSizeTable,
 } from "@/lib/product-utils";
+import { DEFAULT_PRODUCT_MODULES, EMPTY_SIZE_TABLE } from "@/types/database";
 
 type ProductDetailPageProps = {
   params: Promise<{ category: string; slug: string; locale: string }>;
@@ -26,20 +31,50 @@ export async function generateMetadata({
 }: ProductDetailPageProps): Promise<Metadata> {
   const { category, slug, locale } = await params;
   const richContent = getRichProductContent(category, slug);
-  const { data: product } = await getProductByCategoryAndSlug(category, slug);
+  const { data: product } = await getProductByLocalizedSlug(category, slug, locale);
+  const { data: categoryData } = await getProductCategoryByLocalizedSlug(
+    category,
+    locale,
+  );
 
-  const title = product ? getLocalizedField(product.name, locale || 'en') : (richContent?.name ?? slug);
-  const desc =
-    product ? getLocalizedField(product.description, locale || 'en') :
-    (richContent?.shortDescription ??
-    "KARPOL Industrial Engineering Solutions & High-Performance Components.");
+  const title = product
+    ? getLocalizedField(product.name, locale || "en")
+    : (richContent?.name ?? slug);
+  const desc = product
+    ? getLocalizedField(product.description, locale || "en")
+    : (richContent?.shortDescription ??
+        "KARPOL Industrial Engineering Solutions & High-Performance Components.");
 
   const ogImage =
     product?.images?.[0] ?? richContent?.imageGallery?.[0]?.url ?? null;
 
+  // Locale-aware alternate URLs: enables hreflang SEO + works as a source of
+  // truth for the navbar's locale switcher on dynamic product pages.
+  const buildLocaleHref = (target: string) => {
+    const catSlug = categoryData
+      ? getLocalizedSlug(categoryData.slugs, target, categoryData.slug)
+      : category;
+    const prodSlug = product
+      ? getLocalizedSlug(product.slugs, target, product.slug)
+      : slug;
+    const productsSegment = target === "tr" ? "urunler" : "products";
+    return `/${target}/${productsSegment}/${catSlug}/${prodSlug}`;
+  };
+
+  const trHref = buildLocaleHref("tr");
+  const enHref = buildLocaleHref("en");
+
   return {
     title: `${title} | KARPOL Engineering`,
     description: desc,
+    alternates: {
+      canonical: locale === "tr" ? trHref : enHref,
+      languages: {
+        tr: trHref,
+        en: enHref,
+        "x-default": enHref,
+      },
+    },
     openGraph: {
       title: `${title} | KARPOL`,
       description: desc,
@@ -54,377 +89,226 @@ export default async function ProductDetailPage({
 }: ProductDetailPageProps) {
   const { category, slug, locale } = await params;
   const t = await getTranslations("ProductDetail");
-  
-  // Data Fetching
+
   const richContent = getRichProductContent(category, slug);
-  const { data: product, error } = await getProductByCategoryAndSlug(category, slug);
-  
-  if (!product && !richContent) {
-    if (error) console.error("Product fetch error:", error);
-    notFound();
-  }
+  const { data: product } = await getProductByLocalizedSlug(category, slug, locale);
+  const { data: categoryData } = await getProductCategoryByLocalizedSlug(
+    category,
+    locale,
+  );
 
-  // Derived Data
-  const pageTitle = product ? getLocalizedField(product.name, locale) : (richContent?.name ?? slug.replace(/-/g, " "));
-  const pageDescription = product ? getLocalizedField(product.description, locale) : (richContent?.shortDescription ?? "High-performance industrial component engineered for precision and durability.");
-  const material = product?.material ?? richContent?.specs.find((item) => item.label === "Malzeme" || item.label === "Material")?.value;
-  const hardness = product?.hardness ?? richContent?.specs.find((item) => item.label === "Sertlik" || item.label === "Hardness")?.value;
-  const hardnessUnit = product?.hardness_unit ?? "Shore A";
-  
-  // Gallery Logic
+  if (!product && !richContent) notFound();
+
+  const modules = { ...DEFAULT_PRODUCT_MODULES, ...(product?.modules ?? {}) };
+
+  const productTitle = product
+    ? getLocalizedField(product.name, locale)
+    : (richContent?.name ?? slug.replace(/-/g, " "));
+  const shortDesc = product
+    ? getLocalizedField(product.short_description, locale) ||
+      getLocalizedField(product.description, locale)
+    : (richContent?.shortDescription ?? "");
+  const longDesc = product
+    ? getLocalizedField(product.description, locale)
+    : (richContent?.intro ?? "");
+
+  const categoryName = categoryData
+    ? getLocalizedField(categoryData.name, locale)
+    : category.replace(/-/g, " ");
+  const localeCategorySlug = categoryData
+    ? getLocalizedSlug(categoryData.slugs, locale, categoryData.slug)
+    : category;
+
+  // Gallery
   const supabaseJsonGallery = getSupabaseJsonGallery(product);
-  const rawGallery =
-    supabaseJsonGallery.length > 0
-      ? supabaseJsonGallery
-      : product?.images?.length
-        ? uniqueByUrl(
-            product.images.map((url, index) => ({
-              title: `Product View ${index + 1}`,
-              url,
-            })),
-          )
-        : (richContent?.imageGallery ?? []);
+  const gallery =
+    product?.gallery && product.gallery.length > 0
+      ? product.gallery
+          .filter((g) => g && g.url && isImageUrl(g.url))
+          .map((g) => ({
+            url: g.url,
+            title: getLocalizedField(g.alt, locale) || productTitle,
+            type: g.type,
+          }))
+      : supabaseJsonGallery.length > 0
+        ? supabaseJsonGallery.map((g) => ({ url: g.url, title: g.title }))
+        : product?.images && product.images.length > 0
+          ? uniqueByUrl(
+              product.images.map((url, i) => ({
+                title: `${productTitle} ${i + 1}`,
+                url,
+              })),
+            ).filter((g) => isImageUrl(g.url))
+          : (richContent?.imageGallery ?? []).filter((g) => isImageUrl(g.url));
 
-  const galleryImages = rawGallery.filter((asset) => isImageUrl(asset.url));
-  const model3dUrl = product?.model_3d_url ?? richContent?.modelEmbedUrl;
+  // 3D Model
+  const has3DModule =
+    modules.model_3d &&
+    !!(product?.model_3d?.glb_url || product?.model_3d?.stp_url);
+  const model3dEmbed =
+    product?.model_3d_url ?? richContent?.modelEmbedUrl ?? null;
+  const model3dSource =
+    has3DModule && product?.model_3d?.glb_url
+      ? {
+          glbUrl: product.model_3d.glb_url,
+          posterUrl: product.model_3d.preview_image_url ?? null,
+        }
+      : model3dEmbed
+        ? { embedUrl: model3dEmbed }
+        : null;
 
-  // Documents
-  const drawingLinks = uniqueByUrl([
-    ...(product?.technical_drawing_url
-      ? [{ title: "Technical Drawing", url: product.technical_drawing_url }]
-      : []),
-    ...(richContent?.technicalDrawings ?? []),
-  ]);
-  
-  const documentLinks = uniqueByUrl([
-    ...(product?.datasheet_url
-      ? [{ title: "Technical Datasheet", url: product.datasheet_url }]
-      : []),
-    ...(richContent?.documents ?? []),
-  ]);
+  // Specs
+  const specsFromProduct = modules.specifications
+    ? (product?.specifications ?? [])
+    : [];
+  const fallbackSpecs = [
+    {
+      label: t("spec.material"),
+      value: product?.material ?? richContent?.specs.find((s) => /malzeme|material/i.test(s.label))?.value ?? "",
+    },
+    {
+      label: t("spec.hardness"),
+      value:
+        product?.hardness && product?.hardness_unit
+          ? `${product.hardness} ${product.hardness_unit}`
+          : richContent?.specs.find((s) => /sertlik|hardness/i.test(s.label))?.value ?? "",
+    },
+    {
+      label: t("spec.temperature"),
+      value:
+        product?.temperature_min != null && product?.temperature_max != null
+          ? `${product.temperature_min}°C / +${product.temperature_max}°C`
+          : richContent?.specs.find((s) => /sıcaklık|temp/i.test(s.label))?.value ?? "",
+    },
+    { label: t("spec.color"), value: product?.color ?? "" },
+    { label: t("spec.weight"), value: product?.weight ?? "" },
+    { label: t("spec.sku"), value: product?.sku ?? "" },
+  ].filter((s) => s.value);
 
-  // Applications & Advantages
-  const applications = product?.applications
-    ? getLocalizedArray(product.applications, locale)
-    : (richContent?.applications ?? [
-        "Marble Polishing Machines",
-        "Industrial Conveyor Systems",
-        "Heavy Duty Transport",
-        "Precision Cutting Lines"
-      ]);
-      
-  const advantages = richContent?.highlights ?? [
-    "High abrasion resistance for extended service life",
-    "Precision engineered for perfect machine fit",
-    "Custom hardness options available on request",
-    "Resistant to industrial oils and chemicals"
-  ];
+  const specifications =
+    specsFromProduct.length > 0
+      ? specsFromProduct
+      : fallbackSpecs.length > 0
+        ? fallbackSpecs
+        : (richContent?.specs ?? []);
+
+  // Size table — esnek sütunlar (yeni format) + eski formattan otomatik dönüşüm
+  const sizeTableSource = modules.size_table
+    ? (product?.size_table as unknown) ??
+      (richContent?.sizeTable as unknown) ??
+      null
+    : null;
+  const sizeTable = sizeTableSource
+    ? normalizeSizeTable(sizeTableSource)
+    : EMPTY_SIZE_TABLE;
+
+  // Applications
+  const applications = modules.applications
+    ? product?.applications
+      ? getLocalizedArray(product.applications, locale)
+      : (richContent?.applications ?? [])
+    : [];
 
   // Compatible Machines
   const compatibleMachines = product?.compatible_machines?.length
     ? product.compatible_machines
     : (richContent?.compatibleMachines ?? []);
 
-  // Specs Construction
-  const specs = [
-    { label: "Material", value: material || "Custom Compound" },
-    { label: "Hardness", value: hardness ? `${hardness} ${hardnessUnit}` : "Various Available" },
-    { label: "Working Temp", value: product?.temperature_min && product?.temperature_max ? `${product.temperature_min}°C to ${product.temperature_max}°C` : "-30°C to +80°C" },
-    { label: "Load Capacity", value: "Heavy Duty Industrial" },
-    { label: "Dimensions", value: "See Size Table" },
-  ];
+  // Technical Drawings
+  const technicalDrawings = modules.technical_drawing
+    ? product?.technical_drawings && product.technical_drawings.length > 0
+      ? product.technical_drawings.map((d) => ({
+          url: d.url,
+          title: getLocalizedField(d.caption, locale) || t("drawing"),
+        }))
+      : product?.technical_drawing_url
+        ? [{ url: product.technical_drawing_url, title: t("drawing") }]
+        : (richContent?.technicalDrawings ?? [])
+    : [];
 
-  // Size Table
-  const sizeTableSource = product?.size_table && product.size_table.length > 0
-      ? product.size_table
-      : (richContent?.sizeTable ?? []);
-  const sizeTableRows = normalizeSizeTableRows(sizeTableSource);
+  // Datasheets
+  const datasheets = modules.datasheet
+    ? product?.datasheets && product.datasheets.length > 0
+      ? product.datasheets.map((d) => ({
+          url: d.url,
+          title: getLocalizedField(d.label, locale) || t("datasheet"),
+        }))
+      : product?.datasheet_url
+        ? [{ url: product.datasheet_url, title: t("datasheet") }]
+        : (richContent?.documents ?? [])
+    : [];
 
-  // Related Products
-  const { data: categoryProducts } = await getProductsByCategorySlug(category);
-  
-  // Create a copy to avoid mutating read-only array
-  let relatedProducts = [...(categoryProducts || [])]
-    .filter((p) => p.slug !== slug);
+  // Highlights
+  const highlights = richContent?.highlights ?? [];
 
-  // Smart Internal Linking: Boost products with same machine compatibility
-  if (compatibleMachines.length > 0) {
-    relatedProducts.sort((a, b) => {
-      // Safely access compatible_machines, defaulting to empty array
-      const aMachines = a.compatible_machines || [];
-      const bMachines = b.compatible_machines || [];
-      
-      const aMatches = aMachines.filter(m => compatibleMachines.includes(m)).length;
-      const bMatches = bMachines.filter(m => compatibleMachines.includes(m)).length;
-      return bMatches - aMatches; // Higher matches first
-    });
+  // Related (locale-aware slugs)
+  const related: { id: string; name: string; slug: string; image?: string }[] = [];
+  if (product) {
+    const { data: rel } = await getRelatedProductsByCategory(
+      product.category_id,
+      product.slug,
+      4,
+    );
+    for (const p of rel) {
+      related.push({
+        id: p.id,
+        name: getLocalizedField(p.name, locale),
+        slug: getLocalizedSlug(p.slugs, locale, p.slug),
+        image: p.images?.[0],
+      });
+    }
   }
 
-  relatedProducts = relatedProducts.slice(0, 4);
-
-  // JSON-LD Schema Construction
   const schemaData = {
     "@context": "https://schema.org",
     "@type": "Product",
-    name: pageTitle,
-    description: pageDescription,
+    name: productTitle,
+    description: shortDesc || longDesc,
     sku: product?.sku ?? slug,
-    image: galleryImages.map((img) => img.url),
+    image: gallery.map((img) => img.url),
     brand: { "@type": "Brand", name: "KARPOL" },
-    manufacturer: { 
-      "@type": "Organization", 
-      "name": "KARPOL Industrial Components",
-      "url": "https://karpol.net"
+    manufacturer: {
+      "@type": "Organization",
+      name: "KARPOL Industrial Components",
+      url: "https://karpol.net",
     },
-    category: category,
-    material: material,
+    category: categoryName,
+    material: product?.material,
     color: product?.color,
-    additionalProperty: [
-      {
-        "@type": "PropertyValue",
-        "name": "Hardness",
-        "value": hardness ? `${hardness} ${hardnessUnit}` : undefined
-      },
-      {
-        "@type": "PropertyValue",
-        "name": "3D Model Available",
-        "value": !!model3dUrl
-      }
-    ].filter(p => p.value !== undefined),
-    isSimilarTo: compatibleMachines.map(machine => ({
-      "@type": "Product",
-      "name": `Spare part for ${machine}`,
-      "description": `Compatible industrial component for ${machine} marble processing machinery.`
-    })),
-    offers: {
-      "@type": "Offer",
-      "availability": "https://schema.org/InStock",
-      "price": "0",
-      "priceCurrency": "USD",
-      "url": `https://karpol.net/${locale}/products/${category}/${slug}`
-    }
   };
 
   return (
-    <main className={styles.main}>
-      {/* SECTION 1: Header */}
-      <header className={styles.header}>
-        <div className={styles.container}>
-          <div className={styles.breadcrumb}>
-            <Link href={`/${locale}/products`} className={styles.breadcrumbLink}>Products</Link>
-            <span>/</span>
-            <Link href={`/${locale}/products/${category}`} className={styles.breadcrumbLink}>{category}</Link>
-            <span>/</span>
-            <span className={styles.breadcrumbCurrent}>{slug}</span>
-          </div>
-          
-          <div className={styles.titleWrapper}>
-            <div>
-              {material && <span className={styles.categoryBadge}>{material}</span>}
-              <h1 className={styles.productTitle}>{pageTitle}</h1>
-              <p className={styles.shortDesc}>{pageDescription}</p>
-            </div>
-            
-            <RFQModalWrapper 
-              productName={pageTitle}
-              sku={product?.sku}
-              contactLink={`/${locale}/contact`}
-              buttonText={t("cta_button")} // Passing translated button text
-            />
-          </div>
-        </div>
-      </header>
-
-      <div className={styles.container}>
-        <div className={styles.contentGrid}>
-          {/* Left Column: Visuals & Applications */}
-          <div>
-            {/* SECTION 2: Visuals */}
-            <ProductVisualsWrapper 
-              images={galleryImages} 
-              productName={pageTitle}
-              model3dUrl={model3dUrl}
-            />
-
-            {/* SECTION 4: Applications */}
-            <div className={styles.sectionBlockLg}>
-              <h2 className={styles.sectionTitle}>{t("applications")}</h2>
-              <div className={styles.applicationsGrid}>
-                {applications.map((app, i) => (
-                  <div key={i} className={styles.appCard}>
-                    <span className={styles.appIcon}>⚙️</span>
-                    <span className={styles.appText}>{app}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Machine Compatibility */}
-            {compatibleMachines.length > 0 && (
-              <div className={styles.sectionBlock}>
-                <h2 className={styles.sectionTitle}>{t("compatibility")}</h2>
-                <div className={styles.machineTagContainer}>
-                  {compatibleMachines.map((machine, i) => (
-                    <span key={i} className={styles.machineTag}>{machine}</span>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Size Table if available */}
-            {sizeTableRows.length > 0 && (
-              <div className={styles.sectionBlock}>
-                <h2 className={styles.sectionTitle}>{t("sizes")}</h2>
-                <div className={styles.sizeTableContainer}>
-                  <table className={styles.sizeTable}>
-                    <thead>
-                      <tr>
-                        <th>Model/Size</th>
-                        <th>Wing</th>
-                        <th>Width (mm)</th>
-                        <th>ID (mm)</th>
-                        <th>OD (mm)</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {sizeTableRows.map((row, i) => (
-                        <tr key={i}>
-                          <td>{row.size}</td>
-                          <td>{row.wing}</td>
-                          <td>{row.width}</td>
-                          <td>{row.innerDiameter}</td>
-                          <td>{row.outerDiameter}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Right Column: Specs & Advantages */}
-          <div>
-            {/* SECTION 3: Technical Specs */}
-            <h2 className={styles.sectionTitle}>{t("specs")}</h2>
-            <table className={styles.specsTable}>
-              <tbody>
-                {specs.map((spec, i) => (
-                  <tr key={i}>
-                    <th>{spec.label}</th>
-                    <td>{spec.value}</td>
-                  </tr>
-                ))}
-                {product?.sku && (
-                  <tr>
-                    <th>Product Code (SKU)</th>
-                    <td>{product.sku}</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-
-            {/* SECTION 5: Engineering Advantages */}
-            <div className={styles.sectionBlock}>
-              <h2 className={styles.sectionTitle}>{t("advantages")}</h2>
-              <div className={styles.advantagesList}>
-                {advantages.map((adv, i) => (
-                  <div key={i} className={styles.advantageItem}>
-                    <span className={styles.checkIcon}>✓</span>
-                    <p className={styles.advantageText}>{adv}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Engineering Resources (Downloads) */}
-            {(drawingLinks.length > 0 || documentLinks.length > 0) && (
-              <div className={styles.downloadsPanel}>
-                <h2 className={styles.sectionTitle}>{t("downloads")}</h2>
-                <p className={styles.downloadsHint}>
-                  Login required for 3D CAD files.
-                </p>
-                <div className={styles.downloadGrid}>
-                  {drawingLinks.map((d, i) => (
-                    <a key={i} href={d.url} target="_blank" rel="noopener noreferrer" className={styles.downloadLink}>
-                      <div className={styles.downloadMeta}>
-                        <span className={styles.downloadIcon}>📐</span>
-                        <span>{d.title}</span>
-                      </div>
-                      <span className={styles.downloadAction}>PDF</span>
-                    </a>
-                  ))}
-                  {documentLinks.map((d, i) => (
-                    <a key={i} href={d.url} target="_blank" rel="noopener noreferrer" className={styles.downloadLink}>
-                      <div className={styles.downloadMeta}>
-                        <span className={styles.downloadIcon}>📊</span>
-                        <span>{d.title}</span>
-                      </div>
-                      <span className={styles.downloadAction}>Download</span>
-                    </a>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* SECTION 7: CTA Box */}
-            <div className={styles.ctaSection}>
-              <h3 className={styles.ctaTitle}>{t("cta_title")}</h3>
-              <p className={styles.ctaText}>
-                {t("cta_text")}
-              </p>
-              <div className={styles.ctaButtons}>
-                <Link href={`/${locale}/contact`} className={styles.ctaLightBtn}>
-                  {t("cta_button")}
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* SECTION 6: Related Products */}
-        {relatedProducts.length > 0 && (
-          <div className={styles.relatedSection}>
-            <h2 className={styles.sectionTitle}>{t("related")}</h2>
-            <div className={styles.relatedGrid}>
-              {relatedProducts.map((p) => (
-                <Link
-                  key={p.id}
-                  href={`/${locale}/products/${category}/${p.slug}`}
-                  className={styles.relatedCard}
-                >
-                  <div className={styles.relatedImageWrapper}>
-                    {p.images?.[0] ? (
-                      <Image
-                        src={p.images[0]}
-                        alt={getLocalizedField(p.name, locale)}
-                        fill
-                        className={styles.relatedImage}
-                        sizes="(max-width: 768px) 50vw, 25vw"
-                      />
-                    ) : (
-                      <div className={styles.relatedImagePlaceholder} />
-                    )}
-                  </div>
-                  <div className={styles.relatedContent}>
-                    <h4 className={styles.relatedTitle}>{getLocalizedField(p.name, locale)}</h4>
-                    <span className={styles.relatedMeta}>View Details →</span>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Structured Data */}
+    <>
+      <ProductDetailView
+        locale={locale}
+        productTitle={productTitle}
+        shortDesc={shortDesc}
+        longDesc={longDesc}
+        sku={product?.sku}
+        category={{ name: categoryName, slug: localeCategorySlug }}
+        meta={{
+          material: product?.material,
+          hardness: product?.hardness,
+          hardnessUnit: product?.hardness_unit,
+          color: product?.color,
+        }}
+        modules={modules}
+        gallery={gallery}
+        model3d={model3dSource}
+        specifications={specifications}
+        sizeTable={sizeTable}
+        applications={applications}
+        highlights={highlights}
+        compatibleMachines={compatibleMachines}
+        technicalDrawings={technicalDrawings}
+        datasheets={datasheets}
+        related={related}
+      />
       <Script
         id="product-schema"
         type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(schemaData),
-        }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}
       />
-    </main>
+    </>
   );
 }

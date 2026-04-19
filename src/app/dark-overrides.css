@@ -1,0 +1,626 @@
+/* =========================================================================
+   Dark Theme Overrides
+   -------------------------------------------------------------------------
+   Activated when the user picks "Dark" via the navbar theme toggle.
+   The toggle sets `data-user-theme="dark"` on <html>.
+
+   The public pages (PremiumAbout, PremiumContact, PremiumProductsHub,
+   PremiumProductCategory, AksanCatalog, ProductDetailView, …) all ship
+   with hardcoded ivory inline-styles. The selectors below have specificity
+   (0,1,1) and are guaranteed to win against the in-component (0,1,0)
+   class rules in their <style> blocks.
+
+   Color tokens (kept consistent with the dark navbar/footer):
+     --dk-bg:        #080B12   page background
+     --dk-bg-2:      #0D1220   section / band
+     --dk-bg-3:      #131A2B   surface / card
+     --dk-bg-4:      #1C2438   hover / elevated
+     --dk-border:    rgba(255,255,255,0.08)
+     --dk-border-2:  rgba(255,255,255,0.14)
+     --dk-text:      #F1F5F9
+     --dk-text-2:    #CBD5E1
+     --dk-text-3:    #94A3B8
+     --dk-text-4:    rgba(203, 213, 225, 0.62)
+     --dk-gold:      #C8A85A
+     --dk-gold-deep: #B09347
+   ========================================================================= */
+
+html[data-user-theme="dark"] {
+  --dk-bg: #080B12;
+  --dk-bg-2: #0D1220;
+  --dk-bg-3: #131A2B;
+  --dk-bg-4: #1C2438;
+  --dk-border: rgba(255, 255, 255, 0.08);
+  --dk-border-2: rgba(255, 255, 255, 0.14);
+  --dk-text: #F1F5F9;
+  --dk-text-2: #CBD5E1;
+  --dk-text-3: #94A3B8;
+  --dk-text-4: rgba(203, 213, 225, 0.62);
+  --dk-gold: #C8A85A;
+  --dk-gold-deep: #B09347;
+
+  /* ── Semantic theme tokens (CSS modules) ──────────────────────
+     CSS Module dosyaları semantic token'lar üzerinden çalışır;
+     burada onları flip ettiğimiz an breadcrumbs / industries /
+     knowledge / custom-manufacturing gibi modül-bazlı sayfalar
+     herhangi bir özel selector'a ihtiyaç duymadan dark'a dönüşür.
+     ───────────────────────────────────────────────────────────── */
+  --bg-main: var(--dk-bg);
+  --bg-secondary: var(--dk-bg-3);
+  --bg-tertiary: var(--dk-bg-2);
+  --bg-hover: var(--dk-bg-4);
+
+  --border-color: var(--dk-border);
+  --border-hover: var(--dk-border-2);
+
+  --text-main: var(--dk-text);
+  --text-body: var(--dk-text-2);
+  --text-muted: var(--dk-text-3);
+  --text-dim: var(--dk-text-3);
+  --text-caption: var(--dk-text-3);
+
+  --color-text-primary: var(--dk-text);
+  --color-text-secondary: var(--dk-text-2);
+  --color-text-tertiary: var(--dk-text-3);
+  --color-border: var(--dk-border);
+  --color-border-light: var(--dk-border);
+  --color-white: var(--dk-bg-3);
+  --color-neutral-light: var(--dk-bg-2);
+  --color-primary: var(--dk-text);
+  --color-secondary: var(--dk-text-2);
+  --color-accent-light: rgba(200, 168, 90, 0.14);
+
+  /* Ivory paleti dark karşılıklarıyla eşleştirilir; bazı bileşenler
+     hâlâ inline `--ivory-*` referansı tutuyor. */
+  --ivory-bg: var(--dk-bg);
+  --ivory-band: var(--dk-bg-2);
+  --ivory-band-soft: var(--dk-bg-2);
+  --ivory-surface: var(--dk-bg-3);
+  --ivory-surface-soft: var(--dk-bg-3);
+  --ivory-text-strong: var(--dk-text);
+  --ivory-text-body: var(--dk-text-2);
+  --ivory-text-muted: var(--dk-text-3);
+  --ivory-text-dim: var(--dk-text-3);
+  --ivory-border: var(--dk-border);
+  --ivory-border-strong: var(--dk-border-2);
+  --ivory-accent: var(--dk-gold);
+  --ivory-accent-deep: var(--dk-gold-deep);
+  --ivory-accent-soft: rgba(200, 168, 90, 0.16);
+
+  /* Steel skala: doğrudan font rengi olarak kullanılan koyu tonları
+     light versiyona çeviriyoruz; arka plan olarak kullanılmıyorlar. */
+  --steel-700: var(--dk-text-2);
+  --steel-800: var(--dk-text);
+  --steel-900: var(--dk-text);
+
+  /* Navy renkli gölgeleri yumuşak siyaha çek */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.45);
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.32);
+  --shadow-hover: 0 8px 32px rgba(0, 0, 0, 0.42);
+  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.32);
+  --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.45);
+  --shadow-modal: 0 24px 60px rgba(0, 0, 0, 0.55);
+  --shadow-nav: 0 2px 16px rgba(0, 0, 0, 0.28);
+
+  background: var(--dk-bg);
+  color: var(--dk-text);
+  color-scheme: dark;
+}
+
+html[data-user-theme="dark"] body {
+  background: var(--dk-bg);
+  color: var(--dk-text);
+}
+
+/* =========================================================================
+   Page roots
+   ========================================================================= */
+html[data-user-theme="dark"] .pa-root,
+html[data-user-theme="dark"] .pc-root,
+html[data-user-theme="dark"] .pp-root,
+html[data-user-theme="dark"] .ck-root,
+html[data-user-theme="dark"] .pd-root {
+  background: var(--dk-bg) !important;
+  color: var(--dk-text) !important;
+}
+
+/* =========================================================================
+   Generic surfaces & bands (ivory backgrounds → dark)
+   These selectors target inline-styled sections that use ivory tones.
+   ========================================================================= */
+html[data-user-theme="dark"] .pa-section,
+html[data-user-theme="dark"] .pp-section,
+html[data-user-theme="dark"] .pp-cat-main,
+html[data-user-theme="dark"] .ck-main,
+html[data-user-theme="dark"] .pd-section,
+html[data-user-theme="dark"] .pd-section-alt,
+html[data-user-theme="dark"] .pd-related-section {
+  background: var(--dk-bg) !important;
+}
+
+html[data-user-theme="dark"] .pa-story-section,
+html[data-user-theme="dark"] .pa-timeline-section,
+html[data-user-theme="dark"] .pa-values-section,
+html[data-user-theme="dark"] .pp-cat-header,
+html[data-user-theme="dark"] .pd-hero,
+html[data-user-theme="dark"] .pd-hero-section {
+  background: linear-gradient(180deg, var(--dk-bg-2), var(--dk-bg)) !important;
+  border-color: var(--dk-border) !important;
+}
+
+html[data-user-theme="dark"] .pa-cta-section,
+html[data-user-theme="dark"] .pp-cta,
+html[data-user-theme="dark"] .pd-cta-section {
+  background: linear-gradient(135deg, var(--dk-bg-2), var(--dk-bg-3)) !important;
+  color: var(--dk-text) !important;
+  border-color: var(--dk-border-2) !important;
+}
+
+/* =========================================================================
+   Cards
+   ========================================================================= */
+html[data-user-theme="dark"] .pa-fact-item,
+html[data-user-theme="dark"] .pa-value-card,
+html[data-user-theme="dark"] .pa-milestone,
+html[data-user-theme="dark"] .pa-milestone-card,
+html[data-user-theme="dark"] .pp-card,
+html[data-user-theme="dark"] .pp-card-foot,
+html[data-user-theme="dark"] .pp-prod-card,
+html[data-user-theme="dark"] .pp-img-frame,
+html[data-user-theme="dark"] .pp-empty,
+html[data-user-theme="dark"] .pp-filters,
+html[data-user-theme="dark"] .pp-filters-panel,
+html[data-user-theme="dark"] .pp-search-input,
+html[data-user-theme="dark"] .pp-check-label,
+html[data-user-theme="dark"] .pp-load-more,
+html[data-user-theme="dark"] .ck-card,
+html[data-user-theme="dark"] .ck-card-body,
+html[data-user-theme="dark"] .ck-empty,
+html[data-user-theme="dark"] .ck-search,
+html[data-user-theme="dark"] .ck-cat-btn,
+html[data-user-theme="dark"] .pd-spec-card,
+html[data-user-theme="dark"] .pd-spec-grid > *,
+html[data-user-theme="dark"] .pd-app-card,
+html[data-user-theme="dark"] .pd-highlight-card,
+html[data-user-theme="dark"] .pd-doc-card,
+html[data-user-theme="dark"] .pd-meta-pill,
+html[data-user-theme="dark"] .pd-vis,
+html[data-user-theme="dark"] .pd-vis-empty,
+html[data-user-theme="dark"] .pd-vis-stage,
+html[data-user-theme="dark"] .pd-vis-thumb,
+html[data-user-theme="dark"] .pd-vis-tab,
+html[data-user-theme="dark"] .pd-3d-stage,
+html[data-user-theme="dark"] .pd-3d-frame {
+  background: var(--dk-bg-3) !important;
+  border-color: var(--dk-border) !important;
+  color: var(--dk-text-2) !important;
+}
+
+html[data-user-theme="dark"] .pp-prod-card:hover,
+html[data-user-theme="dark"] .pp-card:hover,
+html[data-user-theme="dark"] .pa-value-card:hover,
+html[data-user-theme="dark"] .ck-card:hover,
+html[data-user-theme="dark"] .pd-spec-card:hover,
+html[data-user-theme="dark"] .pd-app-card:hover,
+html[data-user-theme="dark"] .pd-highlight-card:hover,
+html[data-user-theme="dark"] .pd-doc-card:hover {
+  background: var(--dk-bg-4) !important;
+  border-color: rgba(200, 168, 90, 0.35) !important;
+}
+
+/* =========================================================================
+   Sticky filter bars / toolbars
+   ========================================================================= */
+html[data-user-theme="dark"] .ck-filter-bar,
+html[data-user-theme="dark"] .ck-filter-inner,
+html[data-user-theme="dark"] .pp-filter-bar,
+html[data-user-theme="dark"] .pp-filters-bar {
+  background: rgba(13, 18, 32, 0.85) !important;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-color: var(--dk-border) !important;
+}
+
+/* =========================================================================
+   Headings, body text, muted text
+   ========================================================================= */
+html[data-user-theme="dark"] .pa-heading,
+html[data-user-theme="dark"] .pa-story-title,
+html[data-user-theme="dark"] .pa-section-title,
+html[data-user-theme="dark"] .pa-fact-value,
+html[data-user-theme="dark"] .pa-stat-value,
+html[data-user-theme="dark"] .pa-milestone-year,
+html[data-user-theme="dark"] .pa-value-title,
+html[data-user-theme="dark"] .pc-heading,
+html[data-user-theme="dark"] .pc-heading em,
+html[data-user-theme="dark"] .pp-section-title,
+html[data-user-theme="dark"] .pp-card-title,
+html[data-user-theme="dark"] .pp-prod-title,
+html[data-user-theme="dark"] .pp-cat-title,
+html[data-user-theme="dark"] .ck-page-heading,
+html[data-user-theme="dark"] .ck-card-title,
+html[data-user-theme="dark"] .pd-title,
+html[data-user-theme="dark"] .pd-section-title,
+html[data-user-theme="dark"] .pd-related-title,
+html[data-user-theme="dark"] .pd-spec-label,
+html[data-user-theme="dark"] .pd-spec-value,
+html[data-user-theme="dark"] .pd-app-title,
+html[data-user-theme="dark"] .pd-doc-title {
+  color: var(--dk-text) !important;
+}
+
+html[data-user-theme="dark"] .pa-story-text,
+html[data-user-theme="dark"] .pa-section-sub,
+html[data-user-theme="dark"] .pa-fact-label,
+html[data-user-theme="dark"] .pa-stat-label,
+html[data-user-theme="dark"] .pa-milestone-text,
+html[data-user-theme="dark"] .pa-value-text,
+html[data-user-theme="dark"] .pc-sub,
+html[data-user-theme="dark"] .pp-section-sub,
+html[data-user-theme="dark"] .pp-card-text,
+html[data-user-theme="dark"] .pp-prod-desc,
+html[data-user-theme="dark"] .pp-cat-desc,
+html[data-user-theme="dark"] .ck-hero-desc,
+html[data-user-theme="dark"] .ck-card-desc,
+html[data-user-theme="dark"] .pd-lead,
+html[data-user-theme="dark"] .pd-section-text,
+html[data-user-theme="dark"] .pd-section-sub,
+html[data-user-theme="dark"] .pd-app-text,
+html[data-user-theme="dark"] .pd-highlight-text,
+html[data-user-theme="dark"] .pd-doc-text {
+  color: var(--dk-text-2) !important;
+}
+
+/* Ürün detay — büyük italic özet (Cormorant Garamond 22-30px) */
+html[data-user-theme="dark"] .pd-overview-text {
+  color: var(--dk-text) !important;
+}
+
+/* =========================================================================
+   Ürün detay — Spec grid (Cormorant başlıklı kart-tablo)
+   ========================================================================= */
+html[data-user-theme="dark"] .pd-spec-grid {
+  background: linear-gradient(180deg, var(--dk-bg-3), var(--dk-bg-2)) !important;
+  border-color: var(--dk-border-2) !important;
+}
+html[data-user-theme="dark"] .pd-spec-cell {
+  border-right-color: rgba(200, 168, 90, 0.14) !important;
+  border-bottom-color: rgba(200, 168, 90, 0.14) !important;
+  background: transparent !important;
+}
+html[data-user-theme="dark"] .pd-spec-label {
+  color: var(--dk-gold) !important;
+}
+html[data-user-theme="dark"] .pd-spec-value {
+  color: var(--dk-text) !important;
+}
+html[data-user-theme="dark"] .pd-spec-unit {
+  color: var(--dk-gold) !important;
+}
+html[data-user-theme="dark"] .pd-spec-test {
+  color: var(--dk-text-3) !important;
+}
+
+/* =========================================================================
+   Ürün detay — Ölçü tablosu (.pd-size-*)
+   Sticky header beyaz arka planlı kalmıştı; tüm tablo dark'a alınıyor.
+   ========================================================================= */
+html[data-user-theme="dark"] .pd-size-wrap {
+  background: var(--dk-bg-3) !important;
+  border-color: var(--dk-border-2) !important;
+}
+
+html[data-user-theme="dark"] .pd-size-scroll {
+  scrollbar-color: rgba(200, 168, 90, 0.45) transparent;
+}
+html[data-user-theme="dark"] .pd-size-scroll::-webkit-scrollbar-thumb {
+  background: rgba(200, 168, 90, 0.42) !important;
+}
+
+html[data-user-theme="dark"] .pd-size-table th {
+  background: rgba(13, 18, 32, 0.96) !important;
+  color: var(--dk-gold) !important;
+  border-bottom-color: rgba(200, 168, 90, 0.32) !important;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.45) !important;
+}
+html[data-user-theme="dark"] .pd-size-table td {
+  color: var(--dk-text) !important;
+  border-bottom-color: rgba(255, 255, 255, 0.06) !important;
+}
+html[data-user-theme="dark"] .pd-size-table tbody tr:hover {
+  background: rgba(200, 168, 90, 0.10) !important;
+}
+html[data-user-theme="dark"] .pd-size-cell-primary {
+  color: var(--dk-gold) !important;
+}
+html[data-user-theme="dark"] .pd-size-empty {
+  color: var(--dk-text-3) !important;
+}
+
+/* Search input içinde — pill */
+html[data-user-theme="dark"] .pd-size-search {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border-color: var(--dk-border-2) !important;
+  color: var(--dk-gold) !important;
+}
+html[data-user-theme="dark"] .pd-size-search:focus-within {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border-color: rgba(200, 168, 90, 0.55) !important;
+}
+html[data-user-theme="dark"] .pd-size-search input {
+  color: var(--dk-text) !important;
+  background: transparent !important;
+}
+html[data-user-theme="dark"] .pd-size-search input::placeholder {
+  color: var(--dk-text-3) !important;
+}
+
+html[data-user-theme="dark"] .pa-breadcrumb,
+html[data-user-theme="dark"] .pp-breadcrumb,
+html[data-user-theme="dark"] .pp-cat-meta,
+html[data-user-theme="dark"] .pd-crumbs,
+html[data-user-theme="dark"] .pd-crumb-current,
+html[data-user-theme="dark"] .ck-meta {
+  color: var(--dk-text-3) !important;
+}
+
+/* Eyebrow / accent labels — keep gold */
+html[data-user-theme="dark"] .pa-eyebrow,
+html[data-user-theme="dark"] .pa-eyebrow-text,
+html[data-user-theme="dark"] .pc-eyebrow,
+html[data-user-theme="dark"] .pc-eyebrow-text,
+html[data-user-theme="dark"] .pp-eyebrow,
+html[data-user-theme="dark"] .ck-eyebrow,
+html[data-user-theme="dark"] .ck-eyebrow-text,
+html[data-user-theme="dark"] .pd-eyebrow {
+  color: var(--dk-gold) !important;
+}
+
+/* =========================================================================
+   Buttons (CTA gold; secondary outlined)
+   ========================================================================= */
+html[data-user-theme="dark"] .pa-btn-primary,
+html[data-user-theme="dark"] .pp-btn-primary,
+html[data-user-theme="dark"] .pd-cta-btn-primary,
+html[data-user-theme="dark"] .pd-btn-primary {
+  background: var(--dk-gold) !important;
+  color: #0F1729 !important;
+  border-color: var(--dk-gold) !important;
+}
+
+html[data-user-theme="dark"] .pa-btn-primary:hover,
+html[data-user-theme="dark"] .pp-btn-primary:hover,
+html[data-user-theme="dark"] .pd-cta-btn-primary:hover,
+html[data-user-theme="dark"] .pd-btn-primary:hover {
+  background: var(--dk-gold-deep) !important;
+  border-color: var(--dk-gold-deep) !important;
+}
+
+html[data-user-theme="dark"] .pa-btn-secondary,
+html[data-user-theme="dark"] .pp-btn-secondary,
+html[data-user-theme="dark"] .pd-cta-btn-secondary,
+html[data-user-theme="dark"] .pd-btn-secondary {
+  background: rgba(255, 255, 255, 0.04) !important;
+  color: var(--dk-text) !important;
+  border-color: var(--dk-border-2) !important;
+}
+
+html[data-user-theme="dark"] .pa-btn-secondary:hover,
+html[data-user-theme="dark"] .pp-btn-secondary:hover,
+html[data-user-theme="dark"] .pd-cta-btn-secondary:hover,
+html[data-user-theme="dark"] .pd-btn-secondary:hover {
+  background: rgba(200, 168, 90, 0.12) !important;
+  border-color: rgba(200, 168, 90, 0.55) !important;
+  color: var(--dk-gold) !important;
+}
+
+/* Catalog download / view buttons */
+html[data-user-theme="dark"] .ck-view-btn {
+  background: var(--dk-gold) !important;
+  color: #0F1729 !important;
+  border-color: var(--dk-gold) !important;
+}
+html[data-user-theme="dark"] .ck-view-btn:hover {
+  background: var(--dk-gold-deep) !important;
+  border-color: var(--dk-gold-deep) !important;
+}
+html[data-user-theme="dark"] .ck-dl-btn {
+  background: rgba(255, 255, 255, 0.04) !important;
+  color: var(--dk-text) !important;
+  border-color: var(--dk-border-2) !important;
+}
+html[data-user-theme="dark"] .ck-dl-btn:hover {
+  background: rgba(200, 168, 90, 0.12) !important;
+  border-color: rgba(200, 168, 90, 0.55) !important;
+  color: var(--dk-gold) !important;
+}
+
+/* Active filter chip (catalog) */
+html[data-user-theme="dark"] .ck-cat-btn.active,
+html[data-user-theme="dark"] .ck-cat-btn[aria-pressed="true"] {
+  background: var(--dk-gold) !important;
+  color: #0F1729 !important;
+  border-color: var(--dk-gold) !important;
+}
+
+/* Visuals toolbar zoom */
+html[data-user-theme="dark"] .pd-vis-zoom {
+  background: rgba(255, 255, 255, 0.06) !important;
+  color: var(--dk-text) !important;
+  border-color: rgba(200, 168, 90, 0.45) !important;
+}
+html[data-user-theme="dark"] .pd-vis-zoom:hover {
+  background: rgba(200, 168, 90, 0.16) !important;
+  color: var(--dk-gold) !important;
+}
+
+html[data-user-theme="dark"] .pd-vis-tab.is-active,
+html[data-user-theme="dark"] .pd-vis-tab[aria-selected="true"] {
+  background: rgba(200, 168, 90, 0.16) !important;
+  color: var(--dk-gold) !important;
+  border-color: rgba(200, 168, 90, 0.45) !important;
+}
+
+html[data-user-theme="dark"] .pd-3d-loading {
+  color: var(--dk-gold) !important;
+}
+
+/* =========================================================================
+   Hero overlays (PremiumAbout, PremiumContact)
+   The ivory hero overlays are very light cream gradients — invert to dark.
+   The hero IMAGE itself is left untouched; only overlays change.
+   ========================================================================= */
+html[data-user-theme="dark"] .pa-ov-top,
+html[data-user-theme="dark"] .pc-ov-top {
+  background: linear-gradient(
+    180deg,
+    rgba(8, 11, 18, 0.55) 0%,
+    rgba(8, 11, 18, 0.85) 70%,
+    var(--dk-bg) 100%
+  ) !important;
+}
+
+html[data-user-theme="dark"] .pa-ov-side,
+html[data-user-theme="dark"] .pc-ov-side {
+  background: linear-gradient(
+    90deg,
+    rgba(8, 11, 18, 0.85) 0%,
+    rgba(8, 11, 18, 0.45) 50%,
+    transparent 100%
+  ) !important;
+}
+
+html[data-user-theme="dark"] .pa-ov-glow,
+html[data-user-theme="dark"] .pc-ov-glow {
+  background: radial-gradient(
+    600px circle at 30% 60%,
+    rgba(200, 168, 90, 0.18),
+    transparent 70%
+  ) !important;
+}
+
+/* PremiumProductsHub hero (already dark-ish on home; reinforce on dark) */
+html[data-user-theme="dark"] .pp-hero,
+html[data-user-theme="dark"] .pp-hero-bg {
+  background: linear-gradient(180deg, var(--dk-bg-2), var(--dk-bg)) !important;
+}
+html[data-user-theme="dark"] .pp-hero-glow {
+  background: radial-gradient(
+    520px circle at 50% 0%,
+    rgba(200, 168, 90, 0.22),
+    transparent 70%
+  ) !important;
+}
+html[data-user-theme="dark"] .pp-hero-grid {
+  opacity: 0.18;
+}
+
+/* Strip (rolling list of key strengths under hub hero) */
+html[data-user-theme="dark"] .pp-strip-wrap,
+html[data-user-theme="dark"] .pp-strip-inner,
+html[data-user-theme="dark"] .pp-strip-item {
+  background: var(--dk-bg-2) !important;
+  border-color: var(--dk-border) !important;
+  color: var(--dk-text-2) !important;
+}
+
+/* =========================================================================
+   Inputs (filter, search)
+   ========================================================================= */
+html[data-user-theme="dark"] .pp-search-input,
+html[data-user-theme="dark"] .ck-search input,
+html[data-user-theme="dark"] .ck-search-input {
+  background: rgba(255, 255, 255, 0.04) !important;
+  color: var(--dk-text) !important;
+  border-color: var(--dk-border-2) !important;
+}
+html[data-user-theme="dark"] .pp-search-input::placeholder,
+html[data-user-theme="dark"] .ck-search input::placeholder {
+  color: var(--dk-text-3) !important;
+}
+html[data-user-theme="dark"] .pp-search-input:focus,
+html[data-user-theme="dark"] .ck-search input:focus {
+  border-color: rgba(200, 168, 90, 0.55) !important;
+  outline: none;
+}
+
+/* =========================================================================
+   Material/hardness pills on product cards
+   ========================================================================= */
+html[data-user-theme="dark"] .pp-prod-card .pp-pill,
+html[data-user-theme="dark"] .pp-prod-card span[class*="pill"] {
+  background: rgba(200, 168, 90, 0.12) !important;
+  color: var(--dk-gold) !important;
+}
+
+/* =========================================================================
+   Borders – generic catch-all for hairline borders that used ivory navy
+   These rules use attribute selectors to limit scope to the affected pages.
+   ========================================================================= */
+html[data-user-theme="dark"] [class^="pa-"]:where(hr, .pa-divider),
+html[data-user-theme="dark"] [class^="pp-"]:where(hr, .pp-divider),
+html[data-user-theme="dark"] [class^="pd-"]:where(hr, .pd-divider),
+html[data-user-theme="dark"] [class^="ck-"]:where(hr, .ck-divider) {
+  border-color: var(--dk-border) !important;
+}
+
+/* =========================================================================
+   Selection / scrollbars
+   ========================================================================= */
+html[data-user-theme="dark"] ::selection {
+  background: rgba(200, 168, 90, 0.45);
+  color: var(--dk-text);
+}
+
+html[data-user-theme="dark"] ::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+html[data-user-theme="dark"] ::-webkit-scrollbar-track {
+  background: var(--dk-bg);
+}
+html[data-user-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: var(--dk-bg-4);
+  border-radius: 8px;
+  border: 3px solid var(--dk-bg);
+}
+html[data-user-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  background: var(--dk-text-3);
+}
+
+/* =========================================================================
+   404 / loading / error fallback pages (live under /[locale]/)
+   ========================================================================= */
+html[data-user-theme="dark"] [class*="not-found"],
+html[data-user-theme="dark"] [class*="error-boundary"] {
+  background: var(--dk-bg) !important;
+  color: var(--dk-text) !important;
+}
+
+/* =========================================================================
+   Industries / knowledge / custom-manufacturing CSS module helpers
+   These pages flip via semantic tokens above; the items below have
+   gradient backgrounds that need explicit dark variants.
+   ========================================================================= */
+html[data-user-theme="dark"] [class*="industries_header"],
+html[data-user-theme="dark"] [class*="knowledge_section"] {
+  background: linear-gradient(180deg, var(--dk-bg-2), var(--dk-bg)) !important;
+  border-color: var(--dk-border) !important;
+}
+
+html[data-user-theme="dark"] [class*="industries_ctaPanel"] {
+  background: linear-gradient(135deg, var(--dk-bg-2), var(--dk-bg-3)) !important;
+  border: 1px solid var(--dk-border-2) !important;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55) !important;
+}
+
+html[data-user-theme="dark"] [class*="industries_challengeItem"] {
+  background: rgba(217, 119, 6, 0.16) !important;
+  border-color: rgba(217, 119, 6, 0.4) !important;
+  color: var(--dk-text) !important;
+}
+html[data-user-theme="dark"] [class*="industries_solutionItem"] {
+  background: rgba(22, 163, 74, 0.16) !important;
+  border-color: rgba(22, 163, 74, 0.4) !important;
+  color: var(--dk-text) !important;
+}

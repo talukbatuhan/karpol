@@ -2,11 +2,13 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages, setRequestLocale } from "next-intl/server";
-import Footer from "@/components/layout/Footer";
-import Header from "@/components/layout/Header";
-import Breadcrumbs from "@/components/layout/Breadcrumbs";
+import {
+  ConditionalBreadcrumbs,
+  ConditionalFooter,
+  ConditionalHeader,
+} from "@/components/layout/ConditionalLocaleChrome";
+import ViewTransitionsProvider from "@/components/layout/ViewTransitionsProvider";
 import { siteConfig } from "@/lib/config";
-import { isRtlLocale } from "@/lib/i18n-helpers";
 
 export const metadata: Metadata = {
   title: {
@@ -18,7 +20,7 @@ export const metadata: Metadata = {
 };
 
 export function generateStaticParams() {
-  return [{ locale: "en" }, { locale: "tr" }, { locale: "de" }, { locale: "ar" }];
+  return [{ locale: "en" }, { locale: "tr" }];
 }
 
 export default async function LocaleLayout({
@@ -31,7 +33,7 @@ export default async function LocaleLayout({
   const { locale } = await params;
   setRequestLocale(locale);
   const messages = await getMessages();
-  const dir = isRtlLocale(locale) ? "rtl" : "ltr";
+  const dir = "ltr";
 
   const orgSchema = {
     "@context": "https://schema.org",
@@ -60,10 +62,11 @@ export default async function LocaleLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }}
         />
-        <Header />
-        <Breadcrumbs />
+        <ViewTransitionsProvider />
+        <ConditionalHeader />
+        <ConditionalBreadcrumbs />
         {children}
-        <Footer />
+        <ConditionalFooter />
       </div>
     </NextIntlClientProvider>
   );

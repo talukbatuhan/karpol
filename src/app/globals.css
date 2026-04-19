@@ -1,10 +1,17 @@
+@import "./dark-overrides.css";
+
+@tailwind utilities;
+
 :root {
-  /* ─── Color System (Design System v2 — Industrial) ─── */
+  /* ─── Color System (Premium v3 — Warm Gold / Cream) ─── */
+  /* Eski endüstriyel turuncu (#E8611A) kaldırıldı; tüm halka açık sayfalar
+     ProductDetailView ile aynı sıcak altın/krem tonlarını kullanır. Admin
+     paneli kendi içinde turuncuyu korur (admin.module.css). */
   --color-primary: #0F1729;
   --color-secondary: #1B2540;
-  --color-accent: #E8611A;
-  --color-accent-hover: #D4520F;
-  --color-accent-light: #FEF0E8;
+  --color-accent: #C8A85A;          /* warm gold */
+  --color-accent-hover: #B09347;    /* darker gold (hover) */
+  --color-accent-light: #F6F1E6;    /* soft cream bg */
   --color-success: #16A34A;
   --color-warning: #D97706;
   --color-error: #DC2626;
@@ -46,10 +53,10 @@
   --text-dim: var(--steel-400);
   --text-caption: var(--steel-500);
 
-  /* ─── Legacy Aliases (will be removed in Phase 2+) ─── */
+  /* ─── Legacy Aliases (premium gold — kept for back-compat) ─── */
   --gold: var(--color-accent);
-  --gold-dim: rgba(232, 97, 26, 0.12);
-  --gold-glow: rgba(232, 97, 26, 0.25);
+  --gold-dim: rgba(200, 168, 90, 0.12);
+  --gold-glow: rgba(200, 168, 90, 0.25);
 
   /* ─── Typography ─── */
   --font-primary: var(--font-inter), system-ui, -apple-system, sans-serif;
@@ -108,6 +115,22 @@
   --container-padding: 24px;
   --section-padding: 100px;
   --section-padding-mobile: 64px;
+
+  /* ─── Ivory & Navy Theme (public pages, non-home) ─── */
+  --ivory-bg: #FFFFFF;
+  --ivory-band: #F4F1EA;
+  --ivory-band-soft: #FBF8F2;
+  --ivory-surface: #FFFFFF;
+  --ivory-surface-soft: rgba(244, 241, 234, 0.55);
+  --ivory-text-strong: #0F1729;
+  --ivory-text-body: #475569;
+  --ivory-text-muted: #64748B;
+  --ivory-text-dim: #94A3B8;
+  --ivory-border: rgba(15, 23, 41, 0.08);
+  --ivory-border-strong: rgba(15, 23, 41, 0.14);
+  --ivory-accent: #C8A85A;
+  --ivory-accent-deep: #B09347;
+  --ivory-accent-soft: rgba(200, 168, 90, 0.12);
 }
 
 .dark {
@@ -228,3 +251,38 @@ a {
     font-size: 16px;
   }
 }
+
+/* ─── View Transitions (dark home ↔ ivory pages cross-fade) ─── */
+@keyframes karpol-vt-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes karpol-vt-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+::view-transition-old(root) {
+  animation: 220ms cubic-bezier(0.4, 0, 0.2, 1) both karpol-vt-fade-out;
+}
+
+::view-transition-new(root) {
+  animation: 320ms cubic-bezier(0.4, 0, 0.2, 1) both karpol-vt-fade-in;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
+}
+

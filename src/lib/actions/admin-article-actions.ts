@@ -10,8 +10,6 @@ export async function saveArticle(formData: Record<string, unknown>) {
     revalidatePath('/admin/articles')
     revalidatePath('/en/knowledge')
     revalidatePath('/tr/knowledge')
-    revalidatePath('/de/knowledge')
-    revalidatePath('/ar/knowledge')
   }
 
   return result

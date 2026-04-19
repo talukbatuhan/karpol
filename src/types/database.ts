@@ -3,7 +3,7 @@
    JSONB-based i18n for EN, TR, DE, AR
    ============================================ */
 
-export type SupportedLocale = 'en' | 'tr' | 'de' | 'ar'
+export type SupportedLocale = "en" | "tr";
 
 export type LocalizedField = Partial<Record<SupportedLocale, string>>
 export type LocalizedArrayField = Partial<Record<SupportedLocale, string[]>>
@@ -15,6 +15,10 @@ export interface ProductSpecification {
   test_method?: string
 }
 
+/**
+ * @deprecated Eski sabit-şemalı satır. Yeni kayıtlar `SizeTable` kullanır.
+ * Geriye uyumluluk için tutuluyor; `normalizeSizeTable` runtime'da otomatik dönüştürür.
+ */
 export interface ProductSizeRow {
   size: string
   wing?: string
@@ -23,16 +27,93 @@ export interface ProductSizeRow {
   width: string
 }
 
+export type SizeColumnAlign = 'left' | 'center' | 'right'
+
+/**
+ * Otomatik doldurma yapılandırması. Aktifken yeni eklenen satırlarda bu sütun
+ * `${prefix}${pad(start + index)}` deseniyle önceden doldurulur. Kullanıcı her
+ * hücreyi elle düzenleyebilir.
+ *
+ * Örn. prefix="KRP-ST/", padding=2, start=1 → "KRP-ST/01", "KRP-ST/02", ...
+ */
+export interface SizeColumnAutoFill {
+  enabled: boolean
+  prefix: string
+  /** Sayı kaç haneli yazılsın (1=1, 2=01, 3=001 …). */
+  padding: number
+  /** Başlangıç sayısı (varsayılan 1). */
+  start: number
+}
+
+export interface SizeColumn {
+  /** Sütunun benzersiz makine-okunur anahtarı (slug). Satır verisinde key olarak kullanılır. */
+  key: string
+  /** Sütun başlığı (her dil için). */
+  label: LocalizedField
+  /** İsteğe bağlı birim (örn. "mm", "kg"). Başlık yanında parantez içinde gösterilir. */
+  unit?: string
+  /** Hücre hizalama. Sayısal sütunlarda 'right' önerilir. */
+  align?: SizeColumnAlign
+  /** Otomatik model/seri numarası üretici. */
+  autoFill?: SizeColumnAutoFill
+}
+
+export type SizeRow = Record<string, string>
+
+export interface SizeTable {
+  columns: SizeColumn[]
+  rows: SizeRow[]
+}
+
+export const EMPTY_SIZE_TABLE: SizeTable = { columns: [], rows: [] }
+
 export interface ProductGalleryAsset {
   url: string
   alt?: LocalizedField
   type?: 'photo' | 'technical' | 'application'
 }
 
+export interface ProductModules {
+  specifications: boolean
+  size_table: boolean
+  technical_drawing: boolean
+  model_3d: boolean
+  gallery: boolean
+  datasheet: boolean
+  applications: boolean
+}
+
+export const DEFAULT_PRODUCT_MODULES: ProductModules = {
+  specifications: true,
+  size_table: false,
+  technical_drawing: false,
+  model_3d: false,
+  gallery: false,
+  datasheet: false,
+  applications: false,
+}
+
+export interface ProductTechnicalDrawing {
+  url: string
+  caption?: LocalizedField
+}
+
+export interface ProductModel3D {
+  glb_url?: string
+  stp_url?: string
+  preview_image_url?: string
+}
+
+export interface ProductDatasheet {
+  url: string
+  label?: LocalizedField
+}
+
 export interface ProductCategory {
   id: string
   parent_id?: string | null
   slug: string
+  slugs?: LocalizedField
   name: LocalizedField
   description: LocalizedField
   image_url?: string
@@ -49,6 +130,7 @@ export interface ProductCategory {
 export interface Product {
   id: string
   slug: string
+  slugs?: LocalizedField
   sku: string
   name: LocalizedField
   description: LocalizedField
@@ -65,12 +147,20 @@ export interface Product {
   applications?: LocalizedArrayField
   compatible_machines: string[]
   specifications?: ProductSpecification[]
-  size_table?: ProductSizeRow[]
+  /**
+   * Esnek ölçü tablosu (sütun + satır şeması). Geriye uyumluluk için eski
+   * `ProductSizeRow[]` formatı da kabul edilir; `normalizeSizeTable` çağrılmalı.
+   */
+  size_table?: SizeTable | ProductSizeRow[]
   images: string[]
   gallery?: ProductGalleryAsset[]
   model_3d_url?: string
   technical_drawing_url?: string
   datasheet_url?: string
+  modules?: ProductModules
+  technical_drawings?: ProductTechnicalDrawing[]
+  model_3d?: ProductModel3D
+  datasheets?: ProductDatasheet[]
   is_featured: boolean
   is_active: boolean
   sort_order: number

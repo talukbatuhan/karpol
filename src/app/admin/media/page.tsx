@@ -8,11 +8,11 @@ export default async function AdminMediaPage() {
     <>
       <div className={styles.topBar}>
         <div className={styles.topBarLeft}>
-          <h1 className={styles.topBarTitle}>Media Library</h1>
+          <h1 className={styles.topBarTitle}>Medya Kütüphanesi</h1>
         </div>
         <div className={styles.topBarRight}>
           <button className={`${styles.btn} ${styles.btnPrimary}`}>
-            Upload Files
+            Dosya Yükle
           </button>
         </div>
       </div>
@@ -21,8 +21,8 @@ export default async function AdminMediaPage() {
         {media.length === 0 ? (
           <div className={styles.emptyState}>
             <div className={styles.emptyStateIcon}>🖼️</div>
-            <div className={styles.emptyStateTitle}>No media files yet</div>
-            <p>Upload product images, technical drawings, and documents.</p>
+            <div className={styles.emptyStateTitle}>Henüz medya dosyası yok</div>
+            <p>Ürün görselleri, teknik resim ve dokümanlar yükleyin.</p>
           </div>
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 16 }}>
