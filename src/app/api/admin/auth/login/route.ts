@@ -6,6 +6,7 @@ import { logAdminActivity, logSecurityEvent } from '@/lib/data/admin-data'
 import { enforceSameOrigin } from '@/lib/security/request-guards'
 import { touchAdminSessionCookie } from '@/lib/security/admin-session'
 import { hasUserMfa, isAdminMfaRequired } from '@/lib/auth/admin-guard'
+import { ApiCode, jsonError, jsonSuccess } from '@/lib/api/http'
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -30,11 +31,11 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const parsed = loginSchema.safeParse(body)
     if (!parsed.success) {
-      return NextResponse.json({ error: 'Invalid request' }, { status: 400 })
+      return jsonError('Invalid request', ApiCode.VALIDATION_ERROR, 400, parsed.error.flatten())
     }
     payload = parsed.data
   } catch {
-    return NextResponse.json({ error: 'Invalid request' }, { status: 400 })
+    return jsonError('Invalid request', ApiCode.BAD_REQUEST, 400)
   }
 
   const throttled = await enforceRateLimit(request, 'auth-login', payload.email.toLowerCase())
@@ -78,7 +79,7 @@ export async function POST(request: NextRequest) {
       ip: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip'),
       details: { module: 'admin_auth' },
     })
-    return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 })
+    return jsonError('Invalid email or password', ApiCode.UNAUTHORIZED, 401)
   }
 
   if (data.user.app_metadata?.role !== 'admin') {
@@ -91,7 +92,7 @@ export async function POST(request: NextRequest) {
       userId: data.user.id,
       details: { module: 'admin_auth' },
     })
-    return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 })
+    return jsonError('Invalid email or password', ApiCode.UNAUTHORIZED, 401)
   }
 
   if (isAdminMfaRequired() && !hasUserMfa(data.user)) {
@@ -104,9 +105,10 @@ export async function POST(request: NextRequest) {
       userId: data.user.id,
       details: { module: 'admin_auth', stage: 'login' },
     })
-    return NextResponse.json(
-      { error: 'Admin MFA is required for this account' },
-      { status: 403 }
+    return jsonError(
+      'Admin MFA is required for this account',
+      ApiCode.MFA_REQUIRED,
+      403,
     )
   }
 
@@ -122,7 +124,7 @@ export async function POST(request: NextRequest) {
     },
   })
 
-  const response = NextResponse.json({ success: true })
+  const response = jsonSuccess()
   pendingCookies.forEach((cookie) => {
     response.cookies.set(cookie.name, cookie.value, cookie.options)
   })

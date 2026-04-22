@@ -14,7 +14,8 @@ const handleI18nRouting = createMiddleware(routing);
 export default async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Admin routes bypass i18n — English-only, auth-gated
+  // Admin UI bypasses i18n. `/api/*` is excluded from this middleware (see `config.matcher`);
+  // each `/api/admin/*` handler must call `requireAdminContext` (or equivalent).
   if (pathname.startsWith('/admin')) {
     if (pathname === '/admin/login') {
       return updateSession(request);

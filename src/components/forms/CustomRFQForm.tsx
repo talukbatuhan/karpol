@@ -11,6 +11,15 @@ import {
   Send,
   ChevronDown,
 } from "lucide-react";
+import {
+  FormField,
+  Label,
+  Input,
+  Textarea,
+  Select,
+  Button,
+  Spinner,
+} from "@/components/ui";
 
 export default function CustomRFQForm() {
   const t = useTranslations("CustomRFQ");
@@ -89,9 +98,16 @@ export default function CustomRFQForm() {
         </div>
         <h3 className={styles.successTitle}>{t("successTitle")}</h3>
         <p className={styles.successText}>{t("successMessage")}</p>
-        <button className={styles.resetBtn} onClick={() => { setIsSuccess(false); setFiles([]); }}>
+        <Button
+          type="button"
+          className={styles.resetBtn}
+          onClick={() => {
+            setIsSuccess(false);
+            setFiles([]);
+          }}
+        >
           Yeni Teklif Talebi
-        </button>
+        </Button>
       </div>
     );
   }
@@ -150,77 +166,111 @@ export default function CustomRFQForm() {
       {/* ── Contact Info ─────────────────────────────────── */}
       <div className={styles.sectionLabel}>İletişim Bilgileri</div>
       <div className={styles.grid2}>
-        <div className={styles.field}>
-          <label htmlFor="fullName" className={styles.label}>{t("fullName")}</label>
-          <input
-            id="fullName" name="fullName" type="text" required
-            className={styles.input} placeholder="Ad Soyad"
+        <FormField className={styles.field}>
+          <Label htmlFor="fullName" className={styles.label}>
+            {t("fullName")}
+          </Label>
+          <Input
+            id="fullName"
+            name="fullName"
+            type="text"
+            required
+            className={styles.input}
+            placeholder="Ad Soyad"
           />
-        </div>
-        <div className={styles.field}>
-          <label htmlFor="company" className={styles.label}>{t("company")}</label>
-          <input
-            id="company" name="company" type="text" required
-            className={styles.input} placeholder="Şirket Adı"
+        </FormField>
+        <FormField className={styles.field}>
+          <Label htmlFor="company" className={styles.label}>
+            {t("company")}
+          </Label>
+          <Input
+            id="company"
+            name="company"
+            type="text"
+            required
+            className={styles.input}
+            placeholder="Şirket Adı"
           />
-        </div>
-        <div className={styles.field}>
-          <label htmlFor="email" className={styles.label}>{t("email")}</label>
-          <input
-            id="email" name="email" type="email" required
-            className={styles.input} placeholder="ornek@sirket.com"
+        </FormField>
+        <FormField className={styles.field}>
+          <Label htmlFor="email" className={styles.label}>
+            {t("email")}
+          </Label>
+          <Input
+            id="email"
+            name="email"
+            type="email"
+            required
+            className={styles.input}
+            placeholder="ornek@sirket.com"
           />
-        </div>
-        <div className={styles.field}>
-          <label htmlFor="phone" className={styles.label}>{t("phone")}</label>
-          <input
-            id="phone" name="phone" type="tel" required
-            className={styles.input} placeholder="+90 555 000 00 00"
+        </FormField>
+        <FormField className={styles.field}>
+          <Label htmlFor="phone" className={styles.label}>
+            {t("phone")}
+          </Label>
+          <Input
+            id="phone"
+            name="phone"
+            type="tel"
+            required
+            className={styles.input}
+            placeholder="+90 555 000 00 00"
           />
-        </div>
+        </FormField>
       </div>
 
       {/* ── Technical Specs ───────────────────────────────── */}
       <div className={styles.sectionLabel}>Teknik Özellikler</div>
       <div className={styles.grid2}>
-        <div className={styles.field}>
-          <label htmlFor="material" className={styles.label}>{t("material")}</label>
+        <FormField className={styles.field}>
+          <Label htmlFor="material" className={styles.label}>
+            {t("material")}
+          </Label>
           <div className={styles.selectWrap}>
-            <select id="material" name="material" className={styles.select}>
+            <Select id="material" name="material" className={styles.select}>
               <option value="polyurethane">{t("materials.polyurethane")}</option>
               <option value="vulkollan">{t("materials.vulkollan")}</option>
               <option value="rubber">{t("materials.rubber")}</option>
               <option value="plastic">{t("materials.plastic")}</option>
               <option value="metal">{t("materials.metal")}</option>
               <option value="other">{t("materials.other")}</option>
-            </select>
+            </Select>
             <ChevronDown size={14} className={styles.selectChevron} strokeWidth={2} />
           </div>
-        </div>
-        <div className={styles.field}>
-          <label htmlFor="hardness" className={styles.label}>{t("hardness")}</label>
-          <input
-            id="hardness" name="hardness" type="text"
-            className={styles.input} placeholder="örn: 90 Shore A"
+        </FormField>
+        <FormField className={styles.field}>
+          <Label htmlFor="hardness" className={styles.label}>
+            {t("hardness")}
+          </Label>
+          <Input
+            id="hardness"
+            name="hardness"
+            type="text"
+            className={styles.input}
+            placeholder="örn: 90 Shore A"
           />
-        </div>
+        </FormField>
       </div>
 
       {/* ── Notes ─────────────────────────────────────────── */}
-      <div className={styles.field}>
-        <label htmlFor="notes" className={styles.label}>{t("notes")}</label>
-        <textarea
-          id="notes" name="notes"
+      <FormField className={styles.field}>
+        <Label htmlFor="notes" className={styles.label}>
+          {t("notes")}
+        </Label>
+        <Textarea
+          id="notes"
+          name="notes"
           className={styles.textarea}
           placeholder={t("notesPlaceholder")}
         />
-      </div>
+      </FormField>
 
       {/* ── Submit ────────────────────────────────────────── */}
-      <button type="submit" className={styles.submitBtn} disabled={isSubmitting}>
+      <Button type="submit" className={styles.submitBtn} disabled={isSubmitting}>
         {isSubmitting ? (
           <span className={styles.btnLoading}>
-            <span className={styles.spinner} />
+            <Spinner />
             Gönderiliyor...
           </span>
         ) : (
@@ -229,7 +279,7 @@ export default function CustomRFQForm() {
             {t("submit")}
           </>
         )}
-      </button>
+      </Button>
     </form>
   );
 }

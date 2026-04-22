@@ -1,6 +1,7 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
+/** One short-lived client per middleware invocation; refreshes auth cookies on `getUser()`. */
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
     request,

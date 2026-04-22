@@ -548,7 +548,8 @@
       "searchPlaceholder": "SKU, isim veya anahtar kelime",
       "toggleShow": "Filtreleri göster",
       "toggleHide": "Filtreleri gizle",
-      "activeCount": "{count} aktif"
+      "activeCount": "{count} aktif",
+      "categoryNav": "Kategoriler"
     },
     "results": {
       "showing": "{total} sonuçtan {visible} tanesi gösteriliyor",

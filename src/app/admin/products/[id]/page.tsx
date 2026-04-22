@@ -35,6 +35,7 @@ import {
 } from '@/types/database'
 import { normalizeSizeTable } from '@/lib/product-utils'
 import styles from '../../admin.module.css'
+import { Label, Input, Select, Button, FormAlert } from '@/components/ui'
 
 export default function EditProductPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter()
@@ -225,39 +226,26 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
           <h1 className={styles.topBarTitle}>Ürünü Düzenle</h1>
         </div>
         <div className={styles.topBarRight}>
-          <button
+          <Button
             type="button"
             onClick={handleDelete}
             className={`${styles.btn} ${styles.btnDanger}`}
           >
             <Trash2 size={16} /> Sil
-          </button>
-          <button
+          </Button>
+          <Button
             type="submit"
             form="product-form"
             className={`${styles.btn} ${styles.btnPrimary}`}
             disabled={saving}
           >
             {saving ? 'Kaydediliyor...' : 'Güncelle'}
-          </button>
+          </Button>
         </div>
       </div>
 
       <div className={styles.pageContent}>
-        {error && (
-          <div
-            style={{
-              padding: '12px 16px',
-              background: '#fee2e2',
-              color: '#991b1b',
-              borderRadius: 8,
-              marginBottom: 20,
-              fontSize: 14,
-            }}
-          >
-            {error}
-          </div>
-        )}
+        {error && <FormAlert variant="adminBanner">{error}</FormAlert>}
 
         <form id="product-form" onSubmit={handleSubmit}>
           <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 32 }}>
@@ -350,8 +338,11 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
               />
 
               <div className={styles.formGroup}>
-                <label className={styles.formLabel}>Kategori</label>
-                <select
+                <Label htmlFor="edit-product-category" className={styles.formLabel}>
+                  Kategori
+                </Label>
+                <Select
+                  id="edit-product-category"
                   className={styles.formSelect}
                   value={categoryId}
                   onChange={(e) => setCategoryId(e.target.value)}
@@ -362,7 +353,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
                       {cat.name?.tr || cat.name?.en || cat.slug}
                     </option>
                   ))}
-                </select>
+                </Select>
               </div>
 
               <SkuInput
@@ -374,8 +365,11 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
 
               <SectionTitle>Malzeme Bilgileri</SectionTitle>
               <div className={styles.formGroup}>
-                <label className={styles.formLabel}>Malzeme</label>
-                <input
+                <Label htmlFor="edit-material" className={styles.formLabel}>
+                  Malzeme
+                </Label>
+                <Input
+                  id="edit-material"
                   type="text"
                   className={styles.formInput}
                   value={material}
@@ -385,8 +379,11 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                 <div className={styles.formGroup}>
-                  <label className={styles.formLabel}>Sertlik</label>
-                  <input
+                  <Label htmlFor="edit-hardness" className={styles.formLabel}>
+                    Sertlik
+                  </Label>
+                  <Input
+                    id="edit-hardness"
                     type="text"
                     className={styles.formInput}
                     value={hardness}
@@ -394,21 +391,27 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
                   />
                 </div>
                 <div className={styles.formGroup}>
-                  <label className={styles.formLabel}>Birim</label>
-                  <select
+                  <Label htmlFor="edit-hardness-unit" className={styles.formLabel}>
+                    Birim
+                  </Label>
+                  <Select
+                    id="edit-hardness-unit"
                     className={styles.formSelect}
                     value={hardnessUnit}
                     onChange={(e) => setHardnessUnit(e.target.value)}
                   >
                     <option value="Shore A">Shore A</option>
                     <option value="Shore D">Shore D</option>
-                  </select>
+                  </Select>
                 </div>
               </div>
 
               <div className={styles.formGroup}>
-                <label className={styles.formLabel}>Renk</label>
-                <input
+                <Label htmlFor="edit-color" className={styles.formLabel}>
+                  Renk
+                </Label>
+                <Input
+                  id="edit-color"
                   type="text"
                   className={styles.formInput}
                   value={color}
@@ -417,8 +420,11 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
               </div>
 
               <div className={styles.formGroup}>
-                <label className={styles.formLabel}>Ağırlık</label>
-                <input
+                <Label htmlFor="edit-weight" className={styles.formLabel}>
+                  Ağırlık
+                </Label>
+                <Input
+                  id="edit-weight"
                   type="text"
                   className={styles.formInput}
                   value={weight}
@@ -428,8 +434,11 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                 <div className={styles.formGroup}>
-                  <label className={styles.formLabel}>Min. Sıcaklık (°C)</label>
-                  <input
+                  <Label htmlFor="edit-tmin" className={styles.formLabel}>
+                    Min. Sıcaklık (°C)
+                  </Label>
+                  <Input
+                    id="edit-tmin"
                     type="number"
                     className={styles.formInput}
                     value={temperatureMin}
@@ -437,8 +446,11 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
                   />
                 </div>
                 <div className={styles.formGroup}>
-                  <label className={styles.formLabel}>Max. Sıcaklık (°C)</label>
-                  <input
+                  <Label htmlFor="edit-tmax" className={styles.formLabel}>
+                    Max. Sıcaklık (°C)
+                  </Label>
+                  <Input
+                    id="edit-tmax"
                     type="number"
                     className={styles.formInput}
                     value={temperatureMax}
@@ -448,8 +460,11 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
               </div>
 
               <div className={styles.formGroup}>
-                <label className={styles.formLabel}>Uyumlu Makineler</label>
-                <input
+                <Label htmlFor="edit-machines" className={styles.formLabel}>
+                  Uyumlu Makineler
+                </Label>
+                <Input
+                  id="edit-machines"
                   type="text"
                   className={styles.formInput}
                   value={compatibleMachines}
@@ -460,8 +475,8 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
 
               <SectionTitle>Görünürlük</SectionTitle>
               <div className={styles.formGroup}>
-                <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
-                  <input
+                <Label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
+                  <Input
                     type="checkbox"
                     checked={isActive}
                     onChange={(e) => setIsActive(e.target.checked)}
@@ -469,12 +484,12 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
                   <span className={styles.formLabel} style={{ marginBottom: 0 }}>
                     Aktif
                   </span>
-                </label>
+                </Label>
               </div>
 
               <div className={styles.formGroup}>
-                <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
-                  <input
+                <Label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
+                  <Input
                     type="checkbox"
                     checked={isFeatured}
                     onChange={(e) => setIsFeatured(e.target.checked)}
@@ -482,12 +497,15 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
                   <span className={styles.formLabel} style={{ marginBottom: 0 }}>
                     Öne çıkan
                   </span>
-                </label>
+                </Label>
               </div>
 
               <div className={styles.formGroup}>
-                <label className={styles.formLabel}>Sıralama</label>
-                <input
+                <Label htmlFor="edit-sort" className={styles.formLabel}>
+                  Sıralama
+                </Label>
+                <Input
+                  id="edit-sort"
                   type="number"
                   className={styles.formInput}
                   value={sortOrder}

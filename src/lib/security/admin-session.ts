@@ -8,11 +8,15 @@ function getIdleTimeoutMs() {
   return minutes * 60 * 1000
 }
 
+/**
+ * Idle timeout for admin UI. Missing or corrupt cookie is treated as expired so
+ * Supabase session alone cannot bypass the activity window without `touchAdminSessionCookie`.
+ */
 export function isAdminSessionIdleExpired(request: NextRequest): boolean {
   const lastSeenRaw = request.cookies.get(ADMIN_LAST_SEEN_COOKIE)?.value
-  if (!lastSeenRaw) return false
+  if (!lastSeenRaw) return true
   const lastSeen = Number(lastSeenRaw)
-  if (!Number.isFinite(lastSeen) || lastSeen <= 0) return false
+  if (!Number.isFinite(lastSeen) || lastSeen <= 0) return true
   return Date.now() - lastSeen > getIdleTimeoutMs()
 }
 

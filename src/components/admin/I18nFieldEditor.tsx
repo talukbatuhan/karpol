@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { SUPPORTED_LOCALES, LOCALE_LABELS } from '@/lib/i18n-helpers'
 import type { LocalizedField, SupportedLocale } from '@/types/database'
 import styles from '@/app/admin/admin.module.css'
+import { Label, Input, Textarea, Button } from '@/components/ui'
 
 interface I18nFieldEditorProps {
   label: string
@@ -28,15 +29,15 @@ export default function I18nFieldEditor({
 
   return (
     <div className={styles.formGroup}>
-      <label className={styles.formLabel}>
+      <Label className={styles.formLabel}>
         {label} {required && <span style={{ color: '#e8611a' }}>*</span>}
-      </label>
+      </Label>
 
       <div className={styles.localeTabs}>
         {SUPPORTED_LOCALES.map((locale) => {
           const hasContent = !!(value[locale]?.trim())
           return (
-            <button
+            <Button
               key={locale}
               type="button"
               className={`${styles.localeTab} ${activeLocale === locale ? styles.localeTabActive : ''}`}
@@ -46,13 +47,13 @@ export default function I18nFieldEditor({
               {hasContent && (
                 <span style={{ marginLeft: 4, color: '#2ecc71', fontSize: 10 }}>●</span>
               )}
-            </button>
+            </Button>
           )
         })}
       </div>
 
       {multiline ? (
-        <textarea
+        <Textarea
           className={styles.formTextarea}
           value={value[activeLocale] || ''}
           onChange={(e) => handleChange(activeLocale, e.target.value)}
@@ -61,7 +62,7 @@ export default function I18nFieldEditor({
           required={required && activeLocale === 'tr'}
         />
       ) : (
-        <input
+        <Input
           type="text"
           className={styles.formInput}
           value={value[activeLocale] || ''}

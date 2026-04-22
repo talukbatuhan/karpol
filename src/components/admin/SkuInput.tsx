@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { Wand2, Loader2 } from 'lucide-react'
 import styles from '@/app/admin/admin.module.css'
+import { Label, Input, Button } from '@/components/ui'
 
 interface SkuInputProps {
   value: string
@@ -71,11 +72,11 @@ export default function SkuInput({
           marginBottom: 8,
         }}
       >
-        <label className={styles.formLabel} style={{ marginBottom: 0 }}>
+        <Label className={styles.formLabel} style={{ marginBottom: 0 }}>
           SKU{' '}
           {required && <span style={{ color: '#e8611a' }}>*</span>}
-        </label>
-        <button
+        </Label>
+        <Button
           type="button"
           onClick={handleGenerate}
           disabled={generating || !categoryId}
@@ -83,11 +84,15 @@ export default function SkuInput({
           title={categoryId ? 'Kategori prefix\'inden otomatik üret' : 'Önce kategori seçin'}
           style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
         >
-          {generating ? <Loader2 size={14} className="spin" /> : <Wand2 size={14} />}
+          {generating ? (
+            <Loader2 size={14} className="animate-spin" />
+          ) : (
+            <Wand2 size={14} />
+          )}
           Otomatik Üret
-        </button>
+        </Button>
       </div>
-      <input
+      <Input
         type="text"
         className={styles.formInput}
         value={value}
@@ -112,19 +117,6 @@ export default function SkuInput({
           Şablon: <code>{brand}-{'{prefix}'}-{'#'.repeat(padding)}</code>. İstediğiniz formatta elle de yazabilirsiniz.
         </div>
       )}
-      <style jsx>{`
-        .spin {
-          animation: spin 0.8s linear infinite;
-        }
-        @keyframes spin {
-          from {
-            transform: rotate(0deg);
-          }
-          to {
-            transform: rotate(360deg);
-          }
-        }
-      `}</style>
     </div>
   )
 }

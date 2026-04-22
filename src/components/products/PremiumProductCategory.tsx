@@ -3,18 +3,32 @@
 "use no memo";
 
 import { useTranslations } from "next-intl";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
 import {
   ArrowUpRight,
-  ArrowLeft,
-  Search,
   SlidersHorizontal,
   Package,
   ChevronRight,
 } from "lucide-react";
+import type {
+  CategoryAttributeDefinition,
+  CategoryFacetConfig,
+  StructuredAttributeValue,
+} from "@/types/database";
+import {
+  effectiveFacetFlags,
+  mergeFacetConfig,
+  type PublicCategoryTreeNode,
+} from "@/lib/product-category-utils";
+import ProductBreadcrumbs from "@/components/products/navigation/ProductBreadcrumbs";
+import CategoryTreeSidebar from "@/components/products/navigation/CategoryTreeSidebar";
+import ProductSectionHeader from "@/components/products/list/ProductSectionHeader";
+import ProductFacetPanel, {
+  formatFacetValueFromProduct,
+} from "@/components/products/filters/ProductFacetPanel";
 
 export type LocalizedProduct = {
   slug: string;
@@ -24,38 +38,89 @@ export type LocalizedProduct = {
   material?: string;
   hardness?: string;
   image?: string;
+  structured_attributes?: Record<string, StructuredAttributeValue> | null;
+  list_group_key?: string | null;
 };
 
 type CategoryProps = {
+  locale: string;
   categorySlug: string;
   categoryName: string;
   categoryDescription: string;
   products: LocalizedProduct[];
+  categoryTree: PublicCategoryTreeNode[];
+  facetConfig?: CategoryFacetConfig | null;
+  attributeDefinitions: CategoryAttributeDefinition[];
+  breadcrumbItems?: { label: string; href?: string }[];
 };
 
 const INITIAL_PAGE_SIZE = 12;
 const PAGE_STEP = 12;
 
+function buildInitialCustomFilters(
+  sp: URLSearchParams,
+  defs: CategoryAttributeDefinition[],
+): Record<string, Set<string>> {
+  const out: Record<string, Set<string>> = {};
+  for (const d of defs) {
+    const raw = sp.get(`f_${d.key}`);
+    if (raw) out[d.key] = new Set(raw.split(",").filter(Boolean));
+  }
+  return out;
+}
+
 export default function PremiumProductCategory({
+  locale,
   categorySlug,
   categoryName,
   categoryDescription,
   products,
+  categoryTree,
+  facetConfig: facetConfigProp,
+  attributeDefinitions,
+  breadcrumbItems,
 }: CategoryProps) {
   const t = useTranslations("ProductsCategory");
 
   const searchParams = useSearchParams();
 
+  const mergedFacetConfig = useMemo(
+    () => mergeFacetConfig(facetConfigProp ?? {}),
+    [facetConfigProp],
+  );
+  const facetFlags = useMemo(
+    () => effectiveFacetFlags(mergedFacetConfig),
+    [mergedFacetConfig],
+  );
+
+  const filterableCustomDefs = useMemo(() => {
+    const base = attributeDefinitions.filter((d) => d.is_filterable);
+    const keys = mergedFacetConfig.customFacetKeys;
+    if (!keys?.length) return base;
+    const allow = new Set(keys);
+    return base.filter((d) => allow.has(d.key));
+  }, [attributeDefinitions, mergedFacetConfig.customFacetKeys]);
+
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
   const [materialFilters, setMaterialFilters] = useState<Set<string>>(
-    () => new Set(searchParams.get("material")?.split(",").filter(Boolean) ?? [])
+    () => new Set(searchParams.get("material")?.split(",").filter(Boolean) ?? []),
   );
   const [hardnessFilters, setHardnessFilters] = useState<Set<string>>(
-    () => new Set(searchParams.get("hardness")?.split(",").filter(Boolean) ?? [])
+    () => new Set(searchParams.get("hardness")?.split(",").filter(Boolean) ?? []),
   );
   const [query, setQuery] = useState(searchParams.get("q") ?? "");
   const [visibleCount, setVisibleCount] = useState(INITIAL_PAGE_SIZE);
+  const [customFacetFilters, setCustomFacetFilters] = useState<
+    Record<string, Set<string>>
+  >({});
+  const customFiltersHydrated = useRef(false);
+
+  useEffect(() => {
+    if (customFiltersHydrated.current) return;
+    customFiltersHydrated.current = true;
+    setCustomFacetFilters(buildInitialCustomFilters(searchParams, filterableCustomDefs));
+  }, [searchParams, filterableCustomDefs]);
 
   useEffect(() => {
     const params = new URLSearchParams();
@@ -68,13 +133,25 @@ export default function PremiumProductCategory({
     if (query.trim()) {
       params.set("q", query.trim());
     }
+    for (const d of filterableCustomDefs) {
+      const set = customFacetFilters[d.key];
+      if (set && set.size > 0) {
+        params.set(`f_${d.key}`, Array.from(set).join(","));
+      }
+    }
     const qs = params.toString();
     const newUrl = qs
       ? `${window.location.pathname}?${qs}`
       : window.location.pathname;
     window.history.replaceState(null, "", newUrl);
     setVisibleCount(INITIAL_PAGE_SIZE);
-  }, [materialFilters, hardnessFilters, query]);
+  }, [
+    materialFilters,
+    hardnessFilters,
+    query,
+    customFacetFilters,
+    filterableCustomDefs,
+  ]);
 
   const materialOptions = useMemo(() => {
     const set = new Set<string>();
@@ -92,14 +169,42 @@ export default function PremiumProductCategory({
     return Array.from(set).sort((a, b) => a.localeCompare(b));
   }, [products]);
 
+  const customOptions = useMemo(() => {
+    const out: Record<string, string[]> = {};
+    for (const d of filterableCustomDefs) {
+      const s = new Set<string>();
+      for (const p of products) {
+        const v = formatFacetValueFromProduct(p.structured_attributes?.[d.key]);
+        if (v) s.add(v);
+      }
+      out[d.key] = Array.from(s).sort((a, b) => a.localeCompare(b));
+    }
+    return out;
+  }, [products, filterableCustomDefs]);
+
   const filteredProducts = useMemo(() => {
     const q = query.trim().toLowerCase();
     return products.filter((p) => {
-      if (materialFilters.size > 0 && (!p.material || !materialFilters.has(p.material))) {
+      if (
+        facetFlags.material &&
+        materialFilters.size > 0 &&
+        (!p.material || !materialFilters.has(p.material))
+      ) {
         return false;
       }
-      if (hardnessFilters.size > 0 && (!p.hardness || !hardnessFilters.has(p.hardness))) {
+      if (
+        facetFlags.hardness &&
+        hardnessFilters.size > 0 &&
+        (!p.hardness || !hardnessFilters.has(p.hardness))
+      ) {
         return false;
+      }
+      for (const d of filterableCustomDefs) {
+        const sel = customFacetFilters[d.key];
+        if (sel && sel.size > 0) {
+          const val = formatFacetValueFromProduct(p.structured_attributes?.[d.key]);
+          if (!sel.has(val)) return false;
+        }
       }
       if (q) {
         const haystack = `${p.sku} ${p.name} ${p.description}`.toLowerCase();
@@ -107,17 +212,52 @@ export default function PremiumProductCategory({
       }
       return true;
     });
-  }, [products, materialFilters, hardnessFilters, query]);
+  }, [
+    products,
+    materialFilters,
+    hardnessFilters,
+    query,
+    facetFlags.material,
+    facetFlags.hardness,
+    filterableCustomDefs,
+    customFacetFilters,
+  ]);
 
   const visibleProducts = filteredProducts.slice(0, visibleCount);
   const hasMore = visibleCount < filteredProducts.length;
-  const activeFilterCount =
-    materialFilters.size + hardnessFilters.size + (query.trim() ? 1 : 0);
+
+  const activeFilterCount = useMemo(() => {
+    let n = materialFilters.size + hardnessFilters.size + (query.trim() ? 1 : 0);
+    for (const d of filterableCustomDefs) {
+      n += customFacetFilters[d.key]?.size ?? 0;
+    }
+    return n;
+  }, [
+    materialFilters,
+    hardnessFilters,
+    query,
+    filterableCustomDefs,
+    customFacetFilters,
+  ]);
+
+  const groupedVisible = useMemo(() => {
+    const map = new Map<string, typeof visibleProducts>();
+    for (const p of visibleProducts) {
+      const key = (p.list_group_key && p.list_group_key.trim()) || "_default";
+      if (!map.has(key)) map.set(key, []);
+      map.get(key)!.push(p);
+    }
+    const entries = Array.from(map.entries());
+    const showHeaders =
+      entries.length > 1 ||
+      (entries.length === 1 && entries[0][0] !== "_default");
+    return { entries, showHeaders };
+  }, [visibleProducts]);
 
   function toggleSet(
     current: Set<string>,
     value: string,
-    setter: (v: Set<string>) => void
+    setter: (v: Set<string>) => void,
   ) {
     const next = new Set(current);
     if (next.has(value)) next.delete(value);
@@ -125,11 +265,34 @@ export default function PremiumProductCategory({
     setter(next);
   }
 
+  function toggleCustom(key: string, value: string) {
+    setCustomFacetFilters((prev) => {
+      const next = { ...prev };
+      const cur = new Set(next[key] ?? []);
+      if (cur.has(value)) cur.delete(value);
+      else cur.add(value);
+      next[key] = cur;
+      return next;
+    });
+  }
+
   function resetAll() {
     setMaterialFilters(new Set());
     setHardnessFilters(new Set());
     setQuery("");
+    setCustomFacetFilters({});
   }
+
+  const crumbs =
+    breadcrumbItems && breadcrumbItems.length > 0
+      ? breadcrumbItems.map((b) => ({
+          label: b.label,
+          href: b.href as "/products" | undefined,
+        }))
+      : [
+          { label: t("breadcrumb.all"), href: "/products" as const },
+          { label: categoryName },
+        ];
 
   return (
     <div className="pp-root">
@@ -183,6 +346,18 @@ export default function PremiumProductCategory({
           transition: color 0.2s;
         }
         .pp-breadcrumb:hover { color: #C8A85A; }
+        .pp-crumb-link {
+          text-decoration: none;
+          color: inherit;
+          display: inline-flex;
+          align-items: center;
+          gap: 0.45rem;
+        }
+        .pp-crumb-current {
+          color: rgba(15, 23, 41, 0.95);
+          font-weight: 500;
+          letter-spacing: 0.06em;
+        }
 
         .pp-eyebrow {
           display: inline-flex;
@@ -661,10 +836,7 @@ export default function PremiumProductCategory({
       {/* HEADER */}
       <header className="pp-cat-header">
         <div className="pp-header-inner">
-          <Link href="/products" className="pp-breadcrumb">
-            <ArrowLeft size={12} strokeWidth={2} />
-            {t("breadcrumb.all")}
-          </Link>
+          <ProductBreadcrumbs items={crumbs} className="pp-breadcrumb" />
 
           <div className="pp-eyebrow">
             <span className="pp-eyebrow-line" />
@@ -725,99 +897,37 @@ export default function PremiumProductCategory({
               )}
             </div>
 
-            <div className="pp-filter-group">
-              <h3 className="pp-filter-label">{t("filters.search")}</h3>
-              <div className="pp-search-wrap">
-                <Search size={14} strokeWidth={1.8} />
-                <input
-                  type="search"
-                  className="pp-search-input"
-                  placeholder={t("filters.searchPlaceholder")}
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                />
-              </div>
-            </div>
+            <CategoryTreeSidebar
+              tree={categoryTree}
+              currentCategorySlug={categorySlug}
+              heading={t("filters.categoryNav")}
+            />
 
-            {materialOptions.length > 0 && (
-              <div className="pp-filter-group">
-                <h3 className="pp-filter-label">{t("filters.material")}</h3>
-                <div className="pp-check-list">
-                  {materialOptions.map((value) => {
-                    const checked = materialFilters.has(value);
-                    return (
-                      <label
-                        key={value}
-                        className={`pp-check-label${checked ? " checked" : ""}`}
-                      >
-                        <span className="pp-check-box">
-                          {checked && (
-                            <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-                              <path
-                                d="M1.5 5L4 7.5L8.5 2.5"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              />
-                            </svg>
-                          )}
-                        </span>
-                        <input
-                          type="checkbox"
-                          checked={checked}
-                          onChange={() =>
-                            toggleSet(materialFilters, value, setMaterialFilters)
-                          }
-                          style={{ display: "none" }}
-                        />
-                        {value}
-                      </label>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
-            {hardnessOptions.length > 0 && (
-              <div className="pp-filter-group">
-                <h3 className="pp-filter-label">{t("filters.hardness")}</h3>
-                <div className="pp-check-list">
-                  {hardnessOptions.map((value) => {
-                    const checked = hardnessFilters.has(value);
-                    return (
-                      <label
-                        key={value}
-                        className={`pp-check-label${checked ? " checked" : ""}`}
-                      >
-                        <span className="pp-check-box">
-                          {checked && (
-                            <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-                              <path
-                                d="M1.5 5L4 7.5L8.5 2.5"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              />
-                            </svg>
-                          )}
-                        </span>
-                        <input
-                          type="checkbox"
-                          checked={checked}
-                          onChange={() =>
-                            toggleSet(hardnessFilters, value, setHardnessFilters)
-                          }
-                          style={{ display: "none" }}
-                        />
-                        {value}
-                      </label>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
+            <ProductFacetPanel
+              searchLabel={t("filters.search")}
+              searchPlaceholder={t("filters.searchPlaceholder")}
+              query={query}
+              onQueryChange={setQuery}
+              materialLabel={t("filters.material")}
+              materialOptions={materialOptions}
+              materialFilters={materialFilters}
+              onToggleMaterial={(value) =>
+                toggleSet(materialFilters, value, setMaterialFilters)
+              }
+              hardnessLabel={t("filters.hardness")}
+              hardnessOptions={hardnessOptions}
+              hardnessFilters={hardnessFilters}
+              onToggleHardness={(value) =>
+                toggleSet(hardnessFilters, value, setHardnessFilters)
+              }
+              showMaterial={facetFlags.material}
+              showHardness={facetFlags.hardness}
+              filterableDefinitions={filterableCustomDefs}
+              customOptions={customOptions}
+              customFilters={customFacetFilters}
+              onToggleCustom={toggleCustom}
+              locale={locale}
+            />
           </aside>
 
           {/* GRID */}
@@ -849,69 +959,142 @@ export default function PremiumProductCategory({
               </div>
             ) : (
               <>
-                <div className="pp-cat-grid">
-                  {visibleProducts.map((p) => (
-                    <Link
-                      key={p.slug}
-                      href={{
-                        pathname: "/products/[category]/[slug]",
-                        params: {
-                          category: categorySlug,
-                          slug: p.slug,
-                        },
-                      }}
-                      className="pp-prod-card"
-                    >
-                      <div className="pp-img-frame">
-                        {p.image ? (
-                          <Image
-                            src={p.image}
-                            alt={p.name}
-                            fill
-                            sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"
-                            style={{ objectFit: "cover" }}
-                          />
-                        ) : (
-                          <div className="pp-img-placeholder">
-                            <Package size={28} strokeWidth={1.25} />
-                            <span className="pp-img-placeholder-label">
-                              {t("results.noImage")}
+                {groupedVisible.showHeaders
+                  ? groupedVisible.entries.map(([groupKey, list]) => (
+                      <div key={groupKey}>
+                        {groupKey !== "_default" && (
+                          <ProductSectionHeader title={groupKey} count={list.length} />
+                        )}
+                        <div className="pp-cat-grid">
+                          {list.map((p) => (
+                            <Link
+                              key={`${groupKey}-${p.slug}`}
+                              href={{
+                                pathname: "/products/[category]/[slug]",
+                                params: {
+                                  category: categorySlug,
+                                  slug: p.slug,
+                                },
+                              }}
+                              className="pp-prod-card"
+                            >
+                              <div className="pp-img-frame">
+                                {p.image ? (
+                                  <Image
+                                    src={p.image}
+                                    alt={p.name}
+                                    fill
+                                    sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"
+                                    style={{ objectFit: "cover" }}
+                                  />
+                                ) : (
+                                  <div className="pp-img-placeholder">
+                                    <Package size={28} strokeWidth={1.25} />
+                                    <span className="pp-img-placeholder-label">
+                                      {t("results.noImage")}
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
+                              <div className="pp-prod-body">
+                                <h3 className="pp-prod-title">{p.name}</h3>
+                                {p.description && (
+                                  <p className="pp-prod-desc">{p.description}</p>
+                                )}
+                                {(p.material || p.hardness) && (
+                                  <div className="pp-prod-badges">
+                                    {p.material && (
+                                      <span className="pp-prod-badge">{p.material}</span>
+                                    )}
+                                    {p.hardness && (
+                                      <span className="pp-prod-badge">{p.hardness}</span>
+                                    )}
+                                  </div>
+                                )}
+                              </div>
+                              <div className="pp-prod-foot">
+                                <span className="pp-prod-sku">
+                                  {t("results.skuLabel")} · {p.sku}
+                                </span>
+                                <span className="pp-prod-cta">
+                                  {t("results.viewSpecs")}
+                                  <ChevronRight
+                                    size={14}
+                                    strokeWidth={2}
+                                    className="pp-prod-arrow"
+                                  />
+                                </span>
+                              </div>
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+                    ))
+                  : (
+                    <div className="pp-cat-grid">
+                      {visibleProducts.map((p) => (
+                        <Link
+                          key={p.slug}
+                          href={{
+                            pathname: "/products/[category]/[slug]",
+                            params: {
+                              category: categorySlug,
+                              slug: p.slug,
+                            },
+                          }}
+                          className="pp-prod-card"
+                        >
+                          <div className="pp-img-frame">
+                            {p.image ? (
+                              <Image
+                                src={p.image}
+                                alt={p.name}
+                                fill
+                                sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"
+                                style={{ objectFit: "cover" }}
+                              />
+                            ) : (
+                              <div className="pp-img-placeholder">
+                                <Package size={28} strokeWidth={1.25} />
+                                <span className="pp-img-placeholder-label">
+                                  {t("results.noImage")}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                          <div className="pp-prod-body">
+                            <h3 className="pp-prod-title">{p.name}</h3>
+                            {p.description && (
+                              <p className="pp-prod-desc">{p.description}</p>
+                            )}
+                            {(p.material || p.hardness) && (
+                              <div className="pp-prod-badges">
+                                {p.material && (
+                                  <span className="pp-prod-badge">{p.material}</span>
+                                )}
+                                {p.hardness && (
+                                  <span className="pp-prod-badge">{p.hardness}</span>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                          <div className="pp-prod-foot">
+                            <span className="pp-prod-sku">
+                              {t("results.skuLabel")} · {p.sku}
+                            </span>
+                            <span className="pp-prod-cta">
+                              {t("results.viewSpecs")}
+                              <ChevronRight
+                                size={14}
+                                strokeWidth={2}
+                                className="pp-prod-arrow"
+                              />
                             </span>
                           </div>
-                        )}
-                      </div>
-                      <div className="pp-prod-body">
-                        <h3 className="pp-prod-title">{p.name}</h3>
-                        {p.description && (
-                          <p className="pp-prod-desc">{p.description}</p>
-                        )}
-                        {(p.material || p.hardness) && (
-                          <div className="pp-prod-badges">
-                            {p.material && (
-                              <span className="pp-prod-badge">{p.material}</span>
-                            )}
-                            {p.hardness && (
-                              <span className="pp-prod-badge">{p.hardness}</span>
-                            )}
-                          </div>
-                        )}
-                      </div>
-                      <div className="pp-prod-foot">
-                        <span className="pp-prod-sku">
-                          {t("results.skuLabel")} · {p.sku}
-                        </span>
-                        <span className="pp-prod-cta">
-                          {t("results.viewSpecs")}
-                          <ChevronRight
-                            size={14}
-                            strokeWidth={2}
-                            className="pp-prod-arrow"
-                          />
-                        </span>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
+                        </Link>
+                      ))}
+                    </div>
+                  )}
 
                 {hasMore && (
                   <div className="pp-load-more-wrap">

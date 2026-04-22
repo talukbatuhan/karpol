@@ -4,6 +4,7 @@ import { Trash2, FileText } from 'lucide-react'
 import type { ProductDatasheet, LocalizedField } from '@/types/database'
 import FileUploader, { type UploadedAsset } from './FileUploader'
 import styles from '@/app/admin/admin.module.css'
+import { Label, Input, Button } from '@/components/ui'
 
 interface DatasheetBuilderProps {
   value: ProductDatasheet[]
@@ -33,7 +34,7 @@ export default function DatasheetBuilder({ value, onChange, productSlug }: Datas
 
   return (
     <div className={styles.formGroup}>
-      <label className={styles.formLabel}>Datasheet / Teknik Doküman (PDF)</label>
+      <Label className={styles.formLabel}>Datasheet / Teknik Doküman (PDF)</Label>
 
       <div style={{ marginBottom: 12 }}>
         <FileUploader
@@ -87,7 +88,7 @@ export default function DatasheetBuilder({ value, onChange, productSlug }: Datas
                 >
                   {item.url.split('/').pop()}
                 </a>
-                <input
+                <Input
                   type="text"
                   className={styles.formInput}
                   placeholder="Görünen ad (TR) — ör. Teknik Datasheet"
@@ -95,7 +96,7 @@ export default function DatasheetBuilder({ value, onChange, productSlug }: Datas
                   onChange={(e) => updateLabel(index, 'tr', e.target.value)}
                   style={{ fontSize: 13 }}
                 />
-                <input
+                <Input
                   type="text"
                   className={styles.formInput}
                   placeholder="Label (EN)"
@@ -105,14 +106,14 @@ export default function DatasheetBuilder({ value, onChange, productSlug }: Datas
                 />
               </div>
 
-              <button
+              <Button
                 type="button"
                 onClick={() => removeItem(index)}
                 className={`${styles.btn} ${styles.btnDanger} ${styles.btnSmall}`}
                 aria-label="Sil"
               >
                 <Trash2 size={14} />
-              </button>
+              </Button>
             </div>
           ))}
         </div>

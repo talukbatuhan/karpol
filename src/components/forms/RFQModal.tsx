@@ -1,8 +1,17 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import styles from "./RFQModal.module.css";
 import { useLocale, useTranslations } from "next-intl";
+import {
+  Modal,
+  FormField,
+  Label,
+  Input,
+  Textarea,
+  FormAlert,
+  Button,
+} from "@/components/ui";
 
 type RFQModalProps = {
   isOpen: boolean;
@@ -19,18 +28,9 @@ export default function RFQModal({
 }: RFQModalProps) {
   const t = useTranslations("RFQModal");
   const locale = useLocale();
-  const modalRef = useRef<HTMLDivElement>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-
-  useEffect(() => {
-    const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    if (isOpen) window.addEventListener("keydown", handleEsc);
-    return () => window.removeEventListener("keydown", handleEsc);
-  }, [isOpen, onClose]);
 
   useEffect(() => {
     if (!isOpen) {
@@ -39,12 +39,6 @@ export default function RFQModal({
       setErrorMsg(null);
     }
   }, [isOpen]);
-
-  const handleOverlayClick = (e: React.MouseEvent) => {
-    if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
-      onClose();
-    }
-  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -108,162 +102,163 @@ export default function RFQModal({
     }
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className={styles.overlay} onClick={handleOverlayClick}>
-      <div className={styles.modal} ref={modalRef}>
-        {isSuccess ? (
-          <div className={styles.successContainer}>
-            <span className={styles.successIcon}>✓</span>
-            <h3 className={styles.successTitle}>{t("successTitle")}</h3>
-            <p className={styles.successText}>
-              {t("successMessage")}
-            </p>
-            <button className={styles.primaryBtn} onClick={onClose} style={{ width: "100%", justifyContent: "center" }}>
-              {t("close")}
+    <Modal
+      open={isOpen}
+      onClose={onClose}
+      overlayClassName={styles.overlay}
+      contentClassName={styles.modal}
+    >
+      {isSuccess ? (
+        <div className={styles.successContainer}>
+          <span className={styles.successIcon}>✓</span>
+          <h3 className={styles.successTitle}>{t("successTitle")}</h3>
+          <p className={styles.successText}>{t("successMessage")}</p>
+          <Button
+            type="button"
+            className={styles.primaryBtn}
+            onClick={onClose}
+            style={{ width: "100%", justifyContent: "center" }}
+          >
+            {t("close")}
+          </Button>
+        </div>
+      ) : (
+        <>
+          <div className={styles.header}>
+            <div>
+              <h3 className={styles.title}>{t("title")}</h3>
+              <div className={styles.productContext}>
+                {productName} {sku && `(${sku})`}
+              </div>
+            </div>
+            <button
+              type="button"
+              className={styles.closeBtn}
+              onClick={onClose}
+              aria-label="Close"
+            >
+              ×
             </button>
           </div>
-        ) : (
-          <>
-            <div className={styles.header}>
-              <div>
-                <h3 className={styles.title}>{t("title")}</h3>
-                <div className={styles.productContext}>
-                  {productName} {sku && `(${sku})`}
-                </div>
+
+          <form onSubmit={handleSubmit}>
+            <div className={styles.body}>
+              <FormField className={styles.formGroup}>
+                <Label htmlFor="fullName" className={styles.label}>
+                  {t("fullName")}
+                </Label>
+                <Input
+                  id="fullName"
+                  name="fullName"
+                  type="text"
+                  required
+                  className={styles.input}
+                  placeholder="John Doe"
+                />
+              </FormField>
+
+              <FormField className={styles.formGroup}>
+                <Label htmlFor="company" className={styles.label}>
+                  {t("company")}
+                </Label>
+                <Input
+                  id="company"
+                  name="company"
+                  type="text"
+                  required
+                  className={styles.input}
+                  placeholder="Company Ltd."
+                />
+              </FormField>
+
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr 1fr",
+                  gap: "16px",
+                }}
+              >
+                <FormField className={styles.formGroup}>
+                  <Label htmlFor="email" className={styles.label}>
+                    {t("email")}
+                  </Label>
+                  <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    required
+                    className={styles.input}
+                    placeholder="john@company.com"
+                  />
+                </FormField>
+                <FormField className={styles.formGroup}>
+                  <Label htmlFor="phone" className={styles.label}>
+                    {t("phone")}
+                  </Label>
+                  <Input
+                    id="phone"
+                    name="phone"
+                    type="tel"
+                    required
+                    className={styles.input}
+                    placeholder="+90 555..."
+                  />
+                </FormField>
               </div>
-              <button className={styles.closeBtn} onClick={onClose} aria-label="Close">
-                ×
-              </button>
+
+              <FormField className={styles.formGroup}>
+                <Label htmlFor="quantity" className={styles.label}>
+                  {t("quantity")}
+                </Label>
+                <Input
+                  id="quantity"
+                  name="quantity"
+                  type="number"
+                  min={1}
+                  required
+                  className={styles.input}
+                  placeholder="100"
+                />
+              </FormField>
+
+              <FormField className={styles.formGroup}>
+                <Label htmlFor="notes" className={styles.label}>
+                  {t("notes")}
+                </Label>
+                <Textarea
+                  id="notes"
+                  name="notes"
+                  className={styles.textarea}
+                  placeholder={t("notesPlaceholder")}
+                />
+              </FormField>
             </div>
 
-            <form onSubmit={handleSubmit}>
-              <div className={styles.body}>
-                <div className={styles.formGroup}>
-                  <label htmlFor="fullName" className={styles.label}>
-                    {t("fullName")}
-                  </label>
-                  <input
-                    id="fullName"
-                    name="fullName"
-                    type="text"
-                    required
-                    className={styles.input}
-                    placeholder="John Doe"
-                  />
-                </div>
+            {errorMsg && (
+              <FormAlert className="mx-6 mb-3">{errorMsg}</FormAlert>
+            )}
 
-                <div className={styles.formGroup}>
-                  <label htmlFor="company" className={styles.label}>
-                    {t("company")}
-                  </label>
-                  <input
-                    id="company"
-                    name="company"
-                    type="text"
-                    required
-                    className={styles.input}
-                    placeholder="Company Ltd."
-                  />
-                </div>
-
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
-                  <div className={styles.formGroup}>
-                    <label htmlFor="email" className={styles.label}>
-                      {t("email")}
-                    </label>
-                    <input
-                      id="email"
-                      name="email"
-                      type="email"
-                      required
-                      className={styles.input}
-                      placeholder="john@company.com"
-                    />
-                  </div>
-                  <div className={styles.formGroup}>
-                    <label htmlFor="phone" className={styles.label}>
-                      {t("phone")}
-                    </label>
-                    <input
-                      id="phone"
-                      name="phone"
-                      type="tel"
-                      required
-                      className={styles.input}
-                      placeholder="+90 555..."
-                    />
-                  </div>
-                </div>
-
-                <div className={styles.formGroup}>
-                  <label htmlFor="quantity" className={styles.label}>
-                    {t("quantity")}
-                  </label>
-                  <input
-                    id="quantity"
-                    name="quantity"
-                    type="number"
-                    min="1"
-                    required
-                    className={styles.input}
-                    placeholder="100"
-                  />
-                </div>
-
-                <div className={styles.formGroup}>
-                  <label htmlFor="notes" className={styles.label}>
-                    {t("notes")}
-                  </label>
-                  <textarea
-                    id="notes"
-                    name="notes"
-                    className={styles.textarea}
-                    placeholder={t("notesPlaceholder")}
-                  />
-                </div>
-              </div>
-
-              {errorMsg && (
-                <div
-                  role="alert"
-                  style={{
-                    margin: "0 24px 12px",
-                    padding: "10px 14px",
-                    border: "1px solid rgba(220, 38, 38, 0.35)",
-                    background: "rgba(220, 38, 38, 0.10)",
-                    color: "#DC2626",
-                    borderRadius: 8,
-                    fontSize: 13,
-                    lineHeight: 1.5,
-                  }}
-                >
-                  {errorMsg}
-                </div>
-              )}
-
-              <div className={styles.footer}>
-                <button
-                  type="button"
-                  className={styles.cancelBtn}
-                  onClick={onClose}
-                  disabled={isSubmitting}
-                >
-                  {t("cancel")}
-                </button>
-                <button
-                  type="submit"
-                  className={styles.submitBtn}
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting ? t("sending") : t("submit")}
-                </button>
-              </div>
-            </form>
-          </>
-        )}
-      </div>
-    </div>
+            <div className={styles.footer}>
+              <Button
+                type="button"
+                className={styles.cancelBtn}
+                onClick={onClose}
+                disabled={isSubmitting}
+              >
+                {t("cancel")}
+              </Button>
+              <Button
+                type="submit"
+                className={styles.submitBtn}
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? t("sending") : t("submit")}
+              </Button>
+            </div>
+          </form>
+        </>
+      )}
+    </Modal>
   );
 }

@@ -4,6 +4,7 @@ import { Box, Trash2, FileText } from 'lucide-react'
 import type { ProductModel3D } from '@/types/database'
 import FileUploader, { type UploadedAsset } from './FileUploader'
 import styles from '@/app/admin/admin.module.css'
+import { Label } from '@/components/ui'
 
 interface Model3DBuilderProps {
   value: ProductModel3D
@@ -30,7 +31,7 @@ export default function Model3DBuilder({ value, onChange, productSlug }: Model3D
 
   return (
     <div className={styles.formGroup}>
-      <label className={styles.formLabel}>3D Model</label>
+      <Label className={styles.formLabel}>3D Model</Label>
 
       <div
         style={{

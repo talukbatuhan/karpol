@@ -2,9 +2,15 @@
 
 import { useState } from 'react'
 import { Wand2 } from 'lucide-react'
-import { SUPPORTED_LOCALES, LOCALE_LABELS, slugify } from '@/lib/i18n-helpers'
+import {
+  SUPPORTED_LOCALES,
+  LOCALE_LABELS,
+  slugify,
+  stripSlugPasteArtifacts,
+} from '@/lib/i18n-helpers'
 import type { LocalizedField, SupportedLocale } from '@/types/database'
 import styles from '@/app/admin/admin.module.css'
+import { Label, Input, Button } from '@/components/ui'
 
 interface LocalizedSlugInputProps {
   label: string
@@ -26,17 +32,14 @@ export default function LocalizedSlugInput({
   const [activeLocale, setActiveLocale] = useState<SupportedLocale>('tr')
 
   const finalSanitize = (raw: string) =>
-    raw
+    stripSlugPasteArtifacts(raw)
       .toLowerCase()
       .replace(/[^a-z0-9-]+/g, '-')
       .replace(/^-+|-+$/g, '')
       .replace(/-+/g, '-')
 
-  // Yazarken sadece çok temel temizlik: boşluğu tireye çevir, büyük harfi
-  // küçült. Diğer karakterler (Türkçe harfler, geçici işaretler) blur'a
-  // kadar serbest. Bu sayede "kauçuk-bileşen" yazarken cursor zıplamaz.
   const liveTransform = (raw: string) =>
-    raw.toLowerCase().replace(/\s+/g, '-')
+    stripSlugPasteArtifacts(raw).toLowerCase().replace(/\s+/g, '-')
 
   const handleChange = (locale: SupportedLocale, raw: string) => {
     onChange({ ...value, [locale]: liveTransform(raw) })
@@ -72,11 +75,11 @@ export default function LocalizedSlugInput({
           marginBottom: 6,
         }}
       >
-        <label className={styles.formLabel} style={{ marginBottom: 0 }}>
+        <Label className={styles.formLabel} style={{ marginBottom: 0 }}>
           {label} {required && <span style={{ color: '#e8611a' }}>*</span>}
-        </label>
+        </Label>
         {source && (
-          <button
+          <Button
             type="button"
             onClick={generateFromSource}
             style={{
@@ -95,7 +98,7 @@ export default function LocalizedSlugInput({
           >
             <Wand2 size={12} />
             Otomatik üret
-          </button>
+          </Button>
         )}
       </div>
 
@@ -103,7 +106,7 @@ export default function LocalizedSlugInput({
         {SUPPORTED_LOCALES.map((locale) => {
           const hasContent = !!(value[locale]?.trim())
           return (
-            <button
+            <Button
               key={locale}
               type="button"
               className={`${styles.localeTab} ${activeLocale === locale ? styles.localeTabActive : ''}`}
@@ -113,7 +116,7 @@ export default function LocalizedSlugInput({
               {hasContent && (
                 <span style={{ marginLeft: 4, color: '#2ecc71', fontSize: 10 }}>●</span>
               )}
-            </button>
+            </Button>
           )
         })}
       </div>
@@ -129,7 +132,7 @@ export default function LocalizedSlugInput({
         >
           /{activeLocale === 'tr' ? 'tr/urunler' : 'en/products'}/&hellip;/
         </span>
-        <input
+        <Input
           type="text"
           className={styles.formInput}
           value={value[activeLocale] || ''}

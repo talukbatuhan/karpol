@@ -109,6 +109,41 @@ export interface ProductDatasheet {
   label?: LocalizedField
 }
 
+/** Facet panel config for category listing (defaults: material/hardness true if omitted). */
+export interface CategoryFacetConfig {
+  material?: boolean
+  hardness?: boolean
+  /** Extra facet keys matching `category_attribute_definitions.key` with is_filterable. */
+  customFacetKeys?: string[]
+}
+
+export type CategoryAttributeFieldType =
+  | 'text'
+  | 'number'
+  | 'select'
+  | 'multiselect'
+  | 'boolean'
+
+export interface CategoryAttributeDefinition {
+  id: string
+  category_id: string
+  key: string
+  label_tr: string
+  label_en: string
+  field_type: CategoryAttributeFieldType
+  /** Select/multiselect options as string list */
+  options: string[]
+  unit?: string | null
+  is_filterable: boolean
+  is_required_for_publish: boolean
+  sort_order: number
+  maps_to_spec_key?: string | null
+  created_at: string
+  updated_at: string
+}
+
+export type StructuredAttributeValue = string | number | boolean | string[]
+
 export interface ProductCategory {
   id: string
   parent_id?: string | null
@@ -123,6 +158,12 @@ export interface ProductCategory {
   is_active: boolean
   meta_title?: LocalizedField
   meta_description?: LocalizedField
+  /** Hub / grouped list: stable key (e.g. polymers, metals). */
+  nav_group_key?: string | null
+  /** Optional section title per locale for hub cards. */
+  group_labels?: LocalizedField
+  /** Which facets to show on the public category page. */
+  facet_config?: CategoryFacetConfig | null
   created_at: string
   updated_at: string
 }
@@ -136,6 +177,10 @@ export interface Product {
   description: LocalizedField
   short_description?: LocalizedField
   category_id: string
+  /** Filterable/custom fields from category schema (JSONB). */
+  structured_attributes?: Record<string, StructuredAttributeValue> | null
+  /** Optional subsection title on category grid. */
+  list_group_key?: string | null
   material?: string
   hardness?: string
   hardness_unit?: string
@@ -166,6 +211,7 @@ export interface Product {
   sort_order: number
   meta_title?: LocalizedField
   meta_description?: LocalizedField
+  cloned_from_product_id?: string | null
   created_at: string
   updated_at: string
 }
@@ -314,6 +360,11 @@ export type Database = {
         Row: ProductCategory
         Insert: Omit<ProductCategory, 'id' | 'created_at' | 'updated_at'>
         Update: Partial<Omit<ProductCategory, 'id' | 'created_at'>>
+      }
+      category_attribute_definitions: {
+        Row: CategoryAttributeDefinition
+        Insert: Omit<CategoryAttributeDefinition, 'id' | 'created_at' | 'updated_at'>
+        Update: Partial<Omit<CategoryAttributeDefinition, 'id' | 'created_at'>>
       }
       industries: {
         Row: Industry

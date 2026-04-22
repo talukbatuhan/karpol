@@ -1,5 +1,6 @@
 import { createServerClient } from '@supabase/ssr'
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest } from 'next/server'
+import { jsonSuccess } from '@/lib/api/http'
 import { enforceRateLimit } from '@/lib/security/rate-limit'
 import { enforceSameOrigin } from '@/lib/security/request-guards'
 import { getRequestUserRole } from '@/lib/auth/admin-guard'
@@ -56,7 +57,7 @@ export async function POST(request: NextRequest) {
     })
   }
 
-  const response = NextResponse.json({ success: true })
+  const response = jsonSuccess()
   pendingCookies.forEach((cookie) => {
     response.cookies.set(cookie.name, cookie.value, cookie.options)
   })

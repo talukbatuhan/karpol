@@ -41,8 +41,18 @@ export function getLocalizedSlug(
   return anyValue || canonicalFallback
 }
 
+/**
+ * Strips soft hyphens (Word/PDF), zero-width characters, and BOM that often
+ * get pasted into slug fields. If left in place, a later sanitize pass may
+ * turn each U+00AD into a real hyphen, producing "ti-tre-si-m" style slugs.
+ */
+export function stripSlugPasteArtifacts(input: string): string {
+  return input.replace(/[\u00AD\u200B-\u200D\uFEFF\u2060]/g, '')
+}
+
 export function slugify(input: string): string {
   if (!input) return ''
+  const text = stripSlugPasteArtifacts(input)
   const trMap: Record<string, string> = {
     'ç': 'c', 'Ç': 'c',
     'ğ': 'g', 'Ğ': 'g',
@@ -51,7 +61,7 @@ export function slugify(input: string): string {
     'ş': 's', 'Ş': 's',
     'ü': 'u', 'Ü': 'u',
   }
-  return input
+  return text
     .split('')
     .map((ch) => trMap[ch] ?? ch)
     .join('')

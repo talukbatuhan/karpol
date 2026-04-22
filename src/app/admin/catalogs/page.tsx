@@ -13,6 +13,7 @@ import {
   Loader2,
 } from 'lucide-react'
 import styles from '../admin.module.css'
+import { Label, Input } from '@/components/ui'
 
 type CatalogPageAsset = {
   index: number
@@ -312,8 +313,11 @@ export default function AdminCatalogsPage() {
               </button>
             </div>
             <div className={styles.formGroup} style={{ marginBottom: 12 }}>
-              <label className={styles.formLabel}>Katalog ID (slug)</label>
-              <input
+              <Label htmlFor="catalog-new-id" className={styles.formLabel}>
+                Katalog ID (slug)
+              </Label>
+              <Input
+                id="catalog-new-id"
                 className={styles.formInput}
                 value={newId}
                 onChange={(e) => setNewId(e.target.value)}
@@ -321,8 +325,11 @@ export default function AdminCatalogsPage() {
               />
             </div>
             <div className={styles.formGroup} style={{ marginBottom: 16 }}>
-              <label className={styles.formLabel}>Başlık</label>
-              <input
+              <Label htmlFor="catalog-new-title" className={styles.formLabel}>
+                Başlık
+              </Label>
+              <Input
+                id="catalog-new-title"
                 className={styles.formInput}
                 value={newTitle}
                 onChange={(e) => setNewTitle(e.target.value)}
@@ -435,8 +442,11 @@ export default function AdminCatalogsPage() {
               <div className={styles.statCard}>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
                   <div className={styles.formGroup} style={{ marginBottom: 0 }}>
-                    <label className={styles.formLabel}>Başlık</label>
-                    <input
+                    <Label htmlFor="catalog-edit-title" className={styles.formLabel}>
+                      Başlık
+                    </Label>
+                    <Input
+                      id="catalog-edit-title"
                       className={styles.formInput}
                       value={title}
                       onChange={(e) => setTitle(e.target.value)}
@@ -444,8 +454,11 @@ export default function AdminCatalogsPage() {
                     />
                   </div>
                   <div className={styles.formGroup} style={{ marginBottom: 0 }}>
-                    <label className={styles.formLabel}>Katalog ID</label>
-                    <input
+                    <Label htmlFor="catalog-edit-id" className={styles.formLabel}>
+                      Katalog ID
+                    </Label>
+                    <Input
+                      id="catalog-edit-id"
                       className={styles.formInput}
                       value={selected}
                       readOnly
@@ -479,9 +492,9 @@ export default function AdminCatalogsPage() {
               {/* Page Thumbnail Grid */}
               <div className={styles.statCard}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-                  <label className={styles.formLabel} style={{ marginBottom: 0 }}>
+                  <Label className={styles.formLabel} style={{ marginBottom: 0 }}>
                     Sayfa Önizlemeleri
-                  </label>
+                  </Label>
                   <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>
                     {manifest.pages.length} sayfa
                   </span>
@@ -578,9 +591,9 @@ export default function AdminCatalogsPage() {
 
               {/* Upload Section */}
               <div className={styles.statCard}>
-                <label className={styles.formLabel} style={{ marginBottom: 16 }}>
+                <Label className={styles.formLabel} style={{ marginBottom: 16 }}>
                   Görsel Yükleme
-                </label>
+                </Label>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
                   <div>
                     <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-main)', marginBottom: 8 }}>
@@ -686,9 +699,9 @@ export default function AdminCatalogsPage() {
                 className={styles.statCard}
                 style={{ borderColor: 'rgba(220,38,38,0.2)' }}
               >
-                <label className={styles.formLabel} style={{ color: '#dc2626', marginBottom: 12 }}>
+                <Label className={styles.formLabel} style={{ color: '#dc2626', marginBottom: 12 }}>
                   Tehlikeli İşlemler
-                </label>
+                </Label>
                 {!confirmDelete ? (
                   <button
                     className={`${styles.btn}`}

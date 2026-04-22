@@ -78,16 +78,16 @@ Open [http://localhost:3000](http://localhost:3000)
 
 | Document | Description |
 |---|---|
-| [Website Strategy](docs/strategy/website_strategy.md) | Full 14-section digital strategy |
-| [Development Guide](docs/development/development_guide.md) | Tech standards & workflow |
+| [Website Strategy](docs/strategy/website-strategy.md) | Full 14-section digital strategy |
+| [Development Guide](docs/development/development-guide.md) | Tech standards & workflow |
 | [Development Tracker](docs/development/tracker.md) | Task progress tracking |
-| [Component Checklist](docs/development/component_checklist.md) | 38 components to build |
+| [Component Checklist](docs/development/component-checklist.md) | 38 components to build |
 | [Supabase Schema](docs/development/supabase_schema.sql) | Database tables & seed data |
-| [Design System](docs/design/design_system.md) | Colors, typography, spacing |
-| [SEO Playbook](docs/seo/seo_playbook.md) | Keywords, schema.org, i18n |
-| [Content Calendar](docs/content/content_calendar.md) | Article schedule & templates |
-| [Session Notes](docs/notes/session_notes.md) | Development session logs |
-| [Changelog](docs/development/CHANGELOG.md) | Version history |
+| [Design System](docs/design/design-system.md) | Colors, typography, spacing |
+| [SEO Playbook](docs/seo/seo-playbook.md) | Keywords, schema.org, i18n |
+| [Content Calendar](docs/content/content-calendar.md) | Article schedule & templates |
+| [Session Notes](docs/notes/session-notes.md) | Development session logs |
+| [Changelog](docs/development/changelog.md) | Version history |
 
 ---
 

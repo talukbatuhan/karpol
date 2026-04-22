@@ -33,6 +33,7 @@ import {
   type ProductCategory,
 } from '@/types/database'
 import styles from '../../admin.module.css'
+import { Label, Input, Select, Button, FormAlert } from '@/components/ui'
 
 export default function NewProductPage() {
   const router = useRouter()
@@ -145,32 +146,19 @@ export default function NewProductPage() {
           <h1 className={styles.topBarTitle}>Yeni Ürün</h1>
         </div>
         <div className={styles.topBarRight}>
-          <button
+          <Button
             type="submit"
             form="product-form"
             className={`${styles.btn} ${styles.btnPrimary}`}
             disabled={saving}
           >
             {saving ? 'Kaydediliyor...' : 'Ürünü Kaydet'}
-          </button>
+          </Button>
         </div>
       </div>
 
       <div className={styles.pageContent}>
-        {error && (
-          <div
-            style={{
-              padding: '12px 16px',
-              background: '#fee2e2',
-              color: '#991b1b',
-              borderRadius: 8,
-              marginBottom: 20,
-              fontSize: 14,
-            }}
-          >
-            {error}
-          </div>
-        )}
+        {error && <FormAlert variant="adminBanner">{error}</FormAlert>}
 
         <form id="product-form" onSubmit={handleSubmit}>
           <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 32 }}>
@@ -255,8 +243,11 @@ export default function NewProductPage() {
               />
 
               <div className={styles.formGroup}>
-                <label className={styles.formLabel}>Kategori</label>
-                <select
+                <Label htmlFor="product-category" className={styles.formLabel}>
+                  Kategori
+                </Label>
+                <Select
+                  id="product-category"
                   className={styles.formSelect}
                   value={categoryId}
                   onChange={(e) => setCategoryId(e.target.value)}
@@ -267,7 +258,7 @@ export default function NewProductPage() {
                       {cat.name?.tr || cat.name?.en || cat.slug}
                     </option>
                   ))}
-                </select>
+                </Select>
               </div>
 
               <SkuInput
@@ -279,8 +270,11 @@ export default function NewProductPage() {
 
               <SectionTitle>Malzeme Bilgileri</SectionTitle>
               <div className={styles.formGroup}>
-                <label className={styles.formLabel}>Malzeme</label>
-                <input
+                <Label htmlFor="product-material" className={styles.formLabel}>
+                  Malzeme
+                </Label>
+                <Input
+                  id="product-material"
                   type="text"
                   className={styles.formInput}
                   value={material}
@@ -291,8 +285,11 @@ export default function NewProductPage() {
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                 <div className={styles.formGroup}>
-                  <label className={styles.formLabel}>Sertlik</label>
-                  <input
+                  <Label htmlFor="product-hardness" className={styles.formLabel}>
+                    Sertlik
+                  </Label>
+                  <Input
+                    id="product-hardness"
                     type="text"
                     className={styles.formInput}
                     value={hardness}
@@ -301,21 +298,27 @@ export default function NewProductPage() {
                   />
                 </div>
                 <div className={styles.formGroup}>
-                  <label className={styles.formLabel}>Birim</label>
-                  <select
+                  <Label htmlFor="product-hardness-unit" className={styles.formLabel}>
+                    Birim
+                  </Label>
+                  <Select
+                    id="product-hardness-unit"
                     className={styles.formSelect}
                     value={hardnessUnit}
                     onChange={(e) => setHardnessUnit(e.target.value)}
                   >
                     <option value="Shore A">Shore A</option>
                     <option value="Shore D">Shore D</option>
-                  </select>
+                  </Select>
                 </div>
               </div>
 
               <div className={styles.formGroup}>
-                <label className={styles.formLabel}>Renk</label>
-                <input
+                <Label htmlFor="product-color" className={styles.formLabel}>
+                  Renk
+                </Label>
+                <Input
+                  id="product-color"
                   type="text"
                   className={styles.formInput}
                   value={color}
@@ -325,8 +328,11 @@ export default function NewProductPage() {
               </div>
 
               <div className={styles.formGroup}>
-                <label className={styles.formLabel}>Ağırlık</label>
-                <input
+                <Label htmlFor="product-weight" className={styles.formLabel}>
+                  Ağırlık
+                </Label>
+                <Input
+                  id="product-weight"
                   type="text"
                   className={styles.formInput}
                   value={weight}
@@ -337,8 +343,11 @@ export default function NewProductPage() {
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                 <div className={styles.formGroup}>
-                  <label className={styles.formLabel}>Min. Sıcaklık (°C)</label>
-                  <input
+                  <Label htmlFor="product-tmin" className={styles.formLabel}>
+                    Min. Sıcaklık (°C)
+                  </Label>
+                  <Input
+                    id="product-tmin"
                     type="number"
                     className={styles.formInput}
                     value={temperatureMin}
@@ -347,8 +356,11 @@ export default function NewProductPage() {
                   />
                 </div>
                 <div className={styles.formGroup}>
-                  <label className={styles.formLabel}>Max. Sıcaklık (°C)</label>
-                  <input
+                  <Label htmlFor="product-tmax" className={styles.formLabel}>
+                    Max. Sıcaklık (°C)
+                  </Label>
+                  <Input
+                    id="product-tmax"
                     type="number"
                     className={styles.formInput}
                     value={temperatureMax}
@@ -359,8 +371,11 @@ export default function NewProductPage() {
               </div>
 
               <div className={styles.formGroup}>
-                <label className={styles.formLabel}>Uyumlu Makineler</label>
-                <input
+                <Label htmlFor="product-machines" className={styles.formLabel}>
+                  Uyumlu Makineler
+                </Label>
+                <Input
+                  id="product-machines"
                   type="text"
                   className={styles.formInput}
                   value={compatibleMachines}
@@ -374,8 +389,8 @@ export default function NewProductPage() {
 
               <SectionTitle>Görünürlük</SectionTitle>
               <div className={styles.formGroup}>
-                <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
-                  <input
+                <Label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
+                  <Input
                     type="checkbox"
                     checked={isActive}
                     onChange={(e) => setIsActive(e.target.checked)}
@@ -383,12 +398,12 @@ export default function NewProductPage() {
                   <span className={styles.formLabel} style={{ marginBottom: 0 }}>
                     Aktif (sitede görünür)
                   </span>
-                </label>
+                </Label>
               </div>
 
               <div className={styles.formGroup}>
-                <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
-                  <input
+                <Label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
+                  <Input
                     type="checkbox"
                     checked={isFeatured}
                     onChange={(e) => setIsFeatured(e.target.checked)}
@@ -396,12 +411,15 @@ export default function NewProductPage() {
                   <span className={styles.formLabel} style={{ marginBottom: 0 }}>
                     Öne çıkan ürün
                   </span>
-                </label>
+                </Label>
               </div>
 
               <div className={styles.formGroup}>
-                <label className={styles.formLabel}>Sıralama</label>
-                <input
+                <Label htmlFor="product-sort" className={styles.formLabel}>
+                  Sıralama
+                </Label>
+                <Input
+                  id="product-sort"
                   type="number"
                   className={styles.formInput}
                   value={sortOrder}

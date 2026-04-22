@@ -4,6 +4,7 @@ import { Trash2, FileText } from 'lucide-react'
 import type { ProductTechnicalDrawing, LocalizedField } from '@/types/database'
 import FileUploader, { type UploadedAsset } from './FileUploader'
 import styles from '@/app/admin/admin.module.css'
+import { Label, Input, Button } from '@/components/ui'
 
 interface TechnicalDrawingBuilderProps {
   value: ProductTechnicalDrawing[]
@@ -41,7 +42,7 @@ export default function TechnicalDrawingBuilder({
 
   return (
     <div className={styles.formGroup}>
-      <label className={styles.formLabel}>Teknik Resimler</label>
+      <Label className={styles.formLabel}>Teknik Resimler</Label>
 
       <div style={{ marginBottom: 12 }}>
         <FileUploader
@@ -117,7 +118,7 @@ export default function TechnicalDrawingBuilder({
                 >
                   {item.url.split('/').pop()}
                 </a>
-                <input
+                <Input
                   type="text"
                   className={styles.formInput}
                   placeholder="Başlık (TR) — ör. Genel Montaj Görünümü"
@@ -125,7 +126,7 @@ export default function TechnicalDrawingBuilder({
                   onChange={(e) => updateCaption(index, 'tr', e.target.value)}
                   style={{ fontSize: 13 }}
                 />
-                <input
+                <Input
                   type="text"
                   className={styles.formInput}
                   placeholder="Caption (EN)"
@@ -135,14 +136,14 @@ export default function TechnicalDrawingBuilder({
                 />
               </div>
 
-              <button
+              <Button
                 type="button"
                 onClick={() => removeItem(index)}
                 className={`${styles.btn} ${styles.btnDanger} ${styles.btnSmall}`}
                 aria-label="Sil"
               >
                 <Trash2 size={14} />
-              </button>
+              </Button>
             </div>
           ))}
         </div>

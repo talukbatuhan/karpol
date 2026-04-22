@@ -2,8 +2,9 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { updateRFQStatus } from '@/lib/data/admin-data'
+import { updateRFQStatusAction } from '@/lib/actions/admin-rfq-actions'
 import styles from '../../admin.module.css'
+import { Label, Select, Textarea, Button } from '@/components/ui'
 
 const STATUSES = [
   { value: 'new', label: 'New' },
@@ -30,8 +31,12 @@ export default function RFQStatusForm({
 
   const handleSave = async () => {
     setSaving(true)
-    await updateRFQStatus(rfqId, status, notes)
+    const result = await updateRFQStatusAction(rfqId, status, notes)
     setSaving(false)
+    if (result.error) {
+      window.alert(result.error)
+      return
+    }
     router.refresh()
   }
 
@@ -40,17 +45,27 @@ export default function RFQStatusForm({
       <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 16 }}>Status & Notes</h3>
 
       <div className={styles.formGroup}>
-        <label className={styles.formLabel}>Status</label>
-        <select className={styles.formSelect} value={status} onChange={(e) => setStatus(e.target.value)}>
+        <Label htmlFor="rfq-status" className={styles.formLabel}>
+          Status
+        </Label>
+        <Select
+          id="rfq-status"
+          className={styles.formSelect}
+          value={status}
+          onChange={(e) => setStatus(e.target.value)}
+        >
           {STATUSES.map((s) => (
             <option key={s.value} value={s.value}>{s.label}</option>
           ))}
-        </select>
+        </Select>
       </div>
 
       <div className={styles.formGroup}>
-        <label className={styles.formLabel}>Internal Notes</label>
-        <textarea
+        <Label htmlFor="rfq-notes" className={styles.formLabel}>
+          Internal Notes
+        </Label>
+        <Textarea
+          id="rfq-notes"
           className={styles.formTextarea}
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
@@ -59,9 +74,15 @@ export default function RFQStatusForm({
         />
       </div>
 
-      <button onClick={handleSave} className={`${styles.btn} ${styles.btnPrimary}`} disabled={saving} style={{ width: '100%' }}>
+      <Button
+        type="button"
+        onClick={handleSave}
+        className={`${styles.btn} ${styles.btnPrimary}`}
+        disabled={saving}
+        style={{ width: '100%' }}
+      >
         {saving ? 'Saving...' : 'Update Status'}
-      </button>
+      </Button>
     </div>
   )
 }

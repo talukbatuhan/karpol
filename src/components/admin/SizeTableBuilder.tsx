@@ -21,6 +21,7 @@ import type {
 } from '@/types/database'
 import { slugify } from '@/lib/i18n-helpers'
 import styles from '@/app/admin/admin.module.css'
+import { Input, Select, Label } from '@/components/ui'
 
 interface SizeTableBuilderProps {
   value: SizeTable
@@ -128,7 +129,7 @@ function ColumnKeyInput({
   const [draft, setDraft] = useState<string | null>(null)
   const display = draft ?? value
   return (
-    <input
+    <Input
       type="text"
       className={inputClassName}
       value={display}
@@ -429,10 +430,10 @@ export default function SizeTableBuilder({
           flexWrap: 'wrap',
         }}
       >
-        <label className={styles.formLabel} style={{ marginBottom: 0 }}>
+        <Label className={styles.formLabel} style={{ marginBottom: 0 }}>
           Ölçü / Boyut Tablosu
-        </label>
-        <select
+        </Label>
+        <Select
           className={styles.formSelect}
           defaultValue=""
           onChange={(e) => {
@@ -448,7 +449,7 @@ export default function SizeTableBuilder({
               {t.label}
             </option>
           ))}
-        </select>
+        </Select>
       </div>
 
       {/* Sütun Yöneticisi */}
@@ -547,7 +548,7 @@ export default function SizeTableBuilder({
                           />
                         </td>
                         <td>
-                          <input
+                          <Input
                             type="text"
                             className={styles.formInput}
                             value={col.label.tr ?? ''}
@@ -561,7 +562,7 @@ export default function SizeTableBuilder({
                           />
                         </td>
                         <td>
-                          <input
+                          <Input
                             type="text"
                             className={styles.formInput}
                             value={col.label.en ?? ''}
@@ -575,7 +576,7 @@ export default function SizeTableBuilder({
                           />
                         </td>
                         <td>
-                          <input
+                          <Input
                             type="text"
                             className={styles.formInput}
                             value={col.unit ?? ''}
@@ -585,7 +586,7 @@ export default function SizeTableBuilder({
                           />
                         </td>
                         <td>
-                          <select
+                          <Select
                             className={styles.formSelect}
                             value={col.align ?? 'left'}
                             onChange={(e) =>
@@ -598,7 +599,7 @@ export default function SizeTableBuilder({
                             <option value="left">Sol</option>
                             <option value="center">Orta</option>
                             <option value="right">Sağ</option>
-                          </select>
+                          </Select>
                         </td>
                         <td>
                           <button
@@ -643,13 +644,13 @@ export default function SizeTableBuilder({
                               }}
                             >
                               <div style={{ flex: '1 1 220px' }}>
-                                <label
+                                <Label
                                   className={styles.formLabel}
                                   style={{ fontSize: 11, marginBottom: 4 }}
                                 >
                                   Prefix (öne yazılacak)
-                                </label>
-                                <input
+                                </Label>
+                                <Input
                                   type="text"
                                   className={styles.formInput}
                                   value={af.prefix}
@@ -662,13 +663,13 @@ export default function SizeTableBuilder({
                                 />
                               </div>
                               <div style={{ width: 110 }}>
-                                <label
+                                <Label
                                   className={styles.formLabel}
                                   style={{ fontSize: 11, marginBottom: 4 }}
                                 >
                                   Hane sayısı
-                                </label>
-                                <select
+                                </Label>
+                                <Select
                                   className={styles.formSelect}
                                   value={af.padding}
                                   onChange={(e) =>
@@ -682,16 +683,16 @@ export default function SizeTableBuilder({
                                   <option value={2}>2 (01, 02…)</option>
                                   <option value={3}>3 (001, 002…)</option>
                                   <option value={4}>4 (0001…)</option>
-                                </select>
+                                </Select>
                               </div>
                               <div style={{ width: 90 }}>
-                                <label
+                                <Label
                                   className={styles.formLabel}
                                   style={{ fontSize: 11, marginBottom: 4 }}
                                 >
                                   Başlangıç
-                                </label>
-                                <input
+                                </Label>
+                                <Input
                                   type="number"
                                   min={0}
                                   className={styles.formInput}
@@ -821,7 +822,7 @@ export default function SizeTableBuilder({
                           : col.label.tr || col.key
                       return (
                         <td key={col.key}>
-                          <input
+                          <Input
                             type="text"
                             className={styles.formInput}
                             value={row[col.key] ?? ''}
@@ -965,7 +966,7 @@ export default function SizeTableBuilder({
                   marginTop: 10,
                 }}
               >
-                <label
+                <Label
                   style={{
                     display: 'inline-flex',
                     alignItems: 'center',
@@ -974,7 +975,7 @@ export default function SizeTableBuilder({
                     cursor: 'pointer',
                   }}
                 >
-                  <input
+                  <Input
                     type="radio"
                     name="bulk-mode"
                     value="append"
@@ -982,8 +983,8 @@ export default function SizeTableBuilder({
                     onChange={() => setBulkMode('append')}
                   />
                   Sona ekle
-                </label>
-                <label
+                </Label>
+                <Label
                   style={{
                     display: 'inline-flex',
                     alignItems: 'center',
@@ -992,7 +993,7 @@ export default function SizeTableBuilder({
                     cursor: 'pointer',
                   }}
                 >
-                  <input
+                  <Input
                     type="radio"
                     name="bulk-mode"
                     value="replace"
@@ -1000,8 +1001,8 @@ export default function SizeTableBuilder({
                     onChange={() => setBulkMode('replace')}
                   />
                   Tüm satırları değiştir
-                </label>
-                <label
+                </Label>
+                <Label
                   style={{
                     display: 'inline-flex',
                     alignItems: 'center',
@@ -1010,13 +1011,13 @@ export default function SizeTableBuilder({
                     cursor: 'pointer',
                   }}
                 >
-                  <input
+                  <Input
                     type="checkbox"
                     checked={bulkSkipFirstRow}
                     onChange={(e) => setBulkSkipFirstRow(e.target.checked)}
                   />
                   İlk satır başlık (atla)
-                </label>
+                </Label>
 
                 <div style={{ flex: 1 }} />
 

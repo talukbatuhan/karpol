@@ -4,6 +4,7 @@ import { Trash2, Image as ImageIcon, DraftingCompass, Briefcase } from 'lucide-r
 import type { ProductGalleryAsset, LocalizedField } from '@/types/database'
 import FileUploader, { type UploadedAsset } from './FileUploader'
 import styles from '@/app/admin/admin.module.css'
+import { Label, Input, Button } from '@/components/ui'
 
 interface GalleryBuilderProps {
   value: ProductGalleryAsset[]
@@ -52,7 +53,7 @@ export default function GalleryBuilder({ value, onChange, productSlug }: Gallery
 
   return (
     <div className={styles.formGroup}>
-      <label className={styles.formLabel}>Görsel Galerisi</label>
+      <Label className={styles.formLabel}>Görsel Galerisi</Label>
 
       <div style={{ marginBottom: 12 }}>
         <FileUploader
@@ -139,7 +140,7 @@ export default function GalleryBuilder({ value, onChange, productSlug }: Gallery
                   })}
                 </div>
 
-                <input
+                <Input
                   type="text"
                   className={styles.formInput}
                   placeholder="Alt metin (TR)"
@@ -147,7 +148,7 @@ export default function GalleryBuilder({ value, onChange, productSlug }: Gallery
                   onChange={(e) => updateAlt(index, 'tr', e.target.value)}
                   style={{ fontSize: 12 }}
                 />
-                <input
+                <Input
                   type="text"
                   className={styles.formInput}
                   placeholder="Alt text (EN)"
@@ -157,7 +158,7 @@ export default function GalleryBuilder({ value, onChange, productSlug }: Gallery
                 />
 
                 <div style={{ display: 'flex', gap: 4 }}>
-                  <button
+                  <Button
                     type="button"
                     onClick={() => moveItem(index, -1)}
                     disabled={index === 0}
@@ -165,8 +166,8 @@ export default function GalleryBuilder({ value, onChange, productSlug }: Gallery
                     style={{ flex: 1, fontSize: 11 }}
                   >
                     ↑ Yukarı
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     type="button"
                     onClick={() => moveItem(index, 1)}
                     disabled={index === value.length - 1}
@@ -174,8 +175,8 @@ export default function GalleryBuilder({ value, onChange, productSlug }: Gallery
                     style={{ flex: 1, fontSize: 11 }}
                   >
                     ↓ Aşağı
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     type="button"
                     onClick={() => removeItem(index)}
                     className={`${styles.btn} ${styles.btnDanger} ${styles.btnSmall}`}
@@ -183,7 +184,7 @@ export default function GalleryBuilder({ value, onChange, productSlug }: Gallery
                     aria-label="Sil"
                   >
                     <Trash2 size={12} />
-                  </button>
+                  </Button>
                 </div>
               </div>
             )

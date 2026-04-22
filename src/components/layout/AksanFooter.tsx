@@ -1,7 +1,5 @@
-"use client";
-
 import type { ComponentProps } from "react";
-import { useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import NextLink from "next/link";
 import { Linkedin, Instagram, ArrowUpRight } from "lucide-react";
@@ -9,13 +7,8 @@ import { siteConfig, productCategories } from "@/lib/config";
 
 type LinkHref = ComponentProps<typeof Link>["href"];
 
-export type AksanFooterProps = {
-  /** "dark" matches the homepage hero. "light" matches the ivory & navy public pages. */
-  theme?: "dark" | "light";
-};
-
-export default function AksanFooter({ theme = "dark" }: AksanFooterProps) {
-  const t = useTranslations("Footer");
+export default async function AksanFooter() {
+  const t = await getTranslations("Footer");
 
   const companyLinks: { href: LinkHref; label: string }[] = [
     { href: "/about", label: t("about") },
@@ -43,26 +36,26 @@ export default function AksanFooter({ theme = "dark" }: AksanFooterProps) {
         }
 
         /* ── Dark theme (matches homepage hero) ── */
-        .ft-root[data-theme="dark"] {
+        .ft-theme-scope[data-theme="dark"] .ft-root {
           background: linear-gradient(180deg, #121018 0%, #0b0a0f 48%, #08070c 100%);
           color: rgba(235, 230, 220, 0.88);
           border-top: 1px solid rgba(200, 185, 160, 0.1);
         }
-        .ft-root[data-theme="dark"] .ft-brand-name { color: rgba(250, 248, 242, 0.95); }
-        .ft-root[data-theme="dark"] .ft-brand-desc { color: rgba(190, 180, 165, 0.55); }
-        .ft-root[data-theme="dark"] .ft-cta {
+        .ft-theme-scope[data-theme="dark"] .ft-brand-name { color: rgba(250, 248, 242, 0.95); }
+        .ft-theme-scope[data-theme="dark"] .ft-brand-desc { color: rgba(190, 180, 165, 0.55); }
+        .ft-theme-scope[data-theme="dark"] .ft-cta {
           color: rgba(235, 228, 215, 0.92);
           background: rgba(255, 255, 255, 0.05);
           border: 1px solid rgba(200, 185, 160, 0.28);
         }
-        .ft-root[data-theme="dark"] .ft-cta:hover {
+        .ft-theme-scope[data-theme="dark"] .ft-cta:hover {
           background: rgba(255, 255, 255, 0.1);
           border-color: rgba(200, 185, 160, 0.48);
         }
-        .ft-root[data-theme="dark"] .ft-col-title { color: rgba(160, 145, 120, 0.45); }
-        .ft-root[data-theme="dark"] .ft-col-link { color: rgba(195, 185, 168, 0.58); }
-        .ft-root[data-theme="dark"] .ft-col-link:hover { color: rgba(230, 220, 200, 0.95); }
-        .ft-root[data-theme="dark"] .ft-rule {
+        .ft-theme-scope[data-theme="dark"] .ft-col-title { color: rgba(160, 145, 120, 0.45); }
+        .ft-theme-scope[data-theme="dark"] .ft-col-link { color: rgba(195, 185, 168, 0.58); }
+        .ft-theme-scope[data-theme="dark"] .ft-col-link:hover { color: rgba(230, 220, 200, 0.95); }
+        .ft-theme-scope[data-theme="dark"] .ft-rule {
           background: linear-gradient(
             90deg,
             transparent,
@@ -71,43 +64,43 @@ export default function AksanFooter({ theme = "dark" }: AksanFooterProps) {
             transparent
           );
         }
-        .ft-root[data-theme="dark"] .ft-copy { color: rgba(140, 128, 108, 0.42); }
-        .ft-root[data-theme="dark"] .ft-social-btn {
+        .ft-theme-scope[data-theme="dark"] .ft-copy { color: rgba(140, 128, 108, 0.42); }
+        .ft-theme-scope[data-theme="dark"] .ft-social-btn {
           border: 1px solid rgba(200, 185, 160, 0.12);
           color: rgba(185, 172, 150, 0.5);
           background: rgba(255, 255, 255, 0.03);
         }
-        .ft-root[data-theme="dark"] .ft-social-btn:hover {
+        .ft-theme-scope[data-theme="dark"] .ft-social-btn:hover {
           border-color: rgba(200, 185, 160, 0.28);
           color: rgba(240, 232, 218, 0.9);
           background: rgba(255, 255, 255, 0.06);
         }
-        .ft-root[data-theme="dark"] .ft-divider-v { background: rgba(200, 185, 160, 0.1); }
-        .ft-root[data-theme="dark"] .ft-legal-link { color: rgba(140, 128, 108, 0.38); }
-        .ft-root[data-theme="dark"] .ft-legal-link:hover { color: rgba(200, 190, 170, 0.75); }
+        .ft-theme-scope[data-theme="dark"] .ft-divider-v { background: rgba(200, 185, 160, 0.1); }
+        .ft-theme-scope[data-theme="dark"] .ft-legal-link { color: rgba(140, 128, 108, 0.38); }
+        .ft-theme-scope[data-theme="dark"] .ft-legal-link:hover { color: rgba(200, 190, 170, 0.75); }
 
         /* ── Light theme (Ivory & Navy — matches public pages) ── */
-        .ft-root[data-theme="light"] {
+        .ft-theme-scope[data-theme="light"] .ft-root {
           background: linear-gradient(180deg, #FBF8F2 0%, #F4F1EA 100%);
           color: rgba(15, 23, 41, 0.85);
           border-top: 1px solid rgba(15, 23, 41, 0.08);
         }
-        .ft-root[data-theme="light"] .ft-brand-name { color: #0F1729; }
-        .ft-root[data-theme="light"] .ft-brand-desc { color: rgba(71, 85, 105, 0.85); }
-        .ft-root[data-theme="light"] .ft-cta {
+        .ft-theme-scope[data-theme="light"] .ft-brand-name { color: #0F1729; }
+        .ft-theme-scope[data-theme="light"] .ft-brand-desc { color: rgba(71, 85, 105, 0.85); }
+        .ft-theme-scope[data-theme="light"] .ft-cta {
           color: #0F1729;
           background: rgba(255, 255, 255, 0.85);
           border: 1px solid rgba(15, 23, 41, 0.14);
         }
-        .ft-root[data-theme="light"] .ft-cta:hover {
+        .ft-theme-scope[data-theme="light"] .ft-cta:hover {
           background: #C8A85A;
           border-color: #C8A85A;
           color: #0F1729;
         }
-        .ft-root[data-theme="light"] .ft-col-title { color: rgba(176, 147, 71, 0.95); }
-        .ft-root[data-theme="light"] .ft-col-link { color: rgba(71, 85, 105, 0.85); }
-        .ft-root[data-theme="light"] .ft-col-link:hover { color: #B09347; }
-        .ft-root[data-theme="light"] .ft-rule {
+        .ft-theme-scope[data-theme="light"] .ft-col-title { color: rgba(176, 147, 71, 0.95); }
+        .ft-theme-scope[data-theme="light"] .ft-col-link { color: rgba(71, 85, 105, 0.85); }
+        .ft-theme-scope[data-theme="light"] .ft-col-link:hover { color: #B09347; }
+        .ft-theme-scope[data-theme="light"] .ft-rule {
           background: linear-gradient(
             90deg,
             transparent,
@@ -116,20 +109,20 @@ export default function AksanFooter({ theme = "dark" }: AksanFooterProps) {
             transparent
           );
         }
-        .ft-root[data-theme="light"] .ft-copy { color: rgba(100, 116, 139, 0.85); }
-        .ft-root[data-theme="light"] .ft-social-btn {
+        .ft-theme-scope[data-theme="light"] .ft-copy { color: rgba(100, 116, 139, 0.85); }
+        .ft-theme-scope[data-theme="light"] .ft-social-btn {
           border: 1px solid rgba(15, 23, 41, 0.12);
           color: rgba(71, 85, 105, 0.85);
           background: rgba(255, 255, 255, 0.7);
         }
-        .ft-root[data-theme="light"] .ft-social-btn:hover {
+        .ft-theme-scope[data-theme="light"] .ft-social-btn:hover {
           border-color: rgba(200, 168, 90, 0.6);
           color: #B09347;
           background: rgba(200, 168, 90, 0.10);
         }
-        .ft-root[data-theme="light"] .ft-divider-v { background: rgba(15, 23, 41, 0.12); }
-        .ft-root[data-theme="light"] .ft-legal-link { color: rgba(100, 116, 139, 0.78); }
-        .ft-root[data-theme="light"] .ft-legal-link:hover { color: #B09347; }
+        .ft-theme-scope[data-theme="light"] .ft-divider-v { background: rgba(15, 23, 41, 0.12); }
+        .ft-theme-scope[data-theme="light"] .ft-legal-link { color: rgba(100, 116, 139, 0.78); }
+        .ft-theme-scope[data-theme="light"] .ft-legal-link:hover { color: #B09347; }
 
         .ft-main {
           max-width: 1440px;
@@ -278,7 +271,7 @@ export default function AksanFooter({ theme = "dark" }: AksanFooterProps) {
         }
       `}</style>
 
-      <footer className="ft-root" data-theme={theme}>
+      <footer className="ft-root">
         <div className="ft-main">
           <div className="ft-grid">
             <div className="ft-col-brand">

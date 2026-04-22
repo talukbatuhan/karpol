@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Trash2, Star, ChevronUp, ChevronDown, Plus } from 'lucide-react'
 import FileUploader, { type UploadedAsset } from './FileUploader'
 import styles from '@/app/admin/admin.module.css'
+import { Label, Input, Button } from '@/components/ui'
 
 interface ProductCoverImagesBuilderProps {
   value: string[]
@@ -52,7 +53,7 @@ export default function ProductCoverImagesBuilder({
 
   return (
     <div className={styles.formGroup}>
-      <label className={styles.formLabel}>Kart Görselleri</label>
+      <Label className={styles.formLabel}>Kart Görselleri</Label>
       <div style={{ marginBottom: 8, fontSize: 11, color: 'var(--text-muted)' }}>
         İlk görsel kategori sayfasındaki kapak (kart) görseli olarak kullanılır. Sürükle &
         bırak yerine yukarı/aşağı oklar veya yıldız simgesi ile sıralayabilirsiniz.
@@ -71,7 +72,7 @@ export default function ProductCoverImagesBuilder({
       </div>
 
       <div style={{ display: 'flex', gap: 6, marginBottom: 12 }}>
-        <input
+        <Input
           type="url"
           className={styles.formInput}
           value={manualUrl}
@@ -85,14 +86,14 @@ export default function ProductCoverImagesBuilder({
             }
           }}
         />
-        <button
+        <Button
           type="button"
           onClick={addManual}
           className={`${styles.btn} ${styles.btnSecondary} ${styles.btnSmall}`}
           style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}
         >
           <Plus size={12} /> Ekle
-        </button>
+        </Button>
       </div>
 
       {value.length === 0 ? (

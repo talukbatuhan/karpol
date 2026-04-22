@@ -49,12 +49,12 @@
 ### 📄 Documents Created
 | Document | Path | Status |
 |---|---|---|
-| Website Strategy | `docs/strategy/website_strategy.md` | ✅ Complete |
-| Development Guide | `docs/development/development_guide.md` | ✅ Complete |
-| Changelog | `docs/development/CHANGELOG.md` | ✅ Active |
-| Design System | `docs/design/design_system.md` | ✅ Complete |
-| SEO Playbook | `docs/seo/seo_playbook.md` | ✅ Complete |
-| Content Calendar | `docs/content/content_calendar.md` | ✅ Complete |
+| Website Strategy | `docs/strategy/website-strategy.md` | ✅ Complete |
+| Development Guide | `docs/development/development-guide.md` | ✅ Complete |
+| Changelog | `docs/development/changelog.md` | ✅ Active |
+| Design System | `docs/design/design-system.md` | ✅ Complete |
+| SEO Playbook | `docs/seo/seo-playbook.md` | ✅ Complete |
+| Content Calendar | `docs/content/content-calendar.md` | ✅ Complete |
 | Development Tracker | `docs/development/tracker.md` | ✅ Active |
 
 ---

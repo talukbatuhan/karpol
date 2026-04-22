@@ -1,7 +1,10 @@
+import 'server-only'
+
 import { createAdminClient } from '@/lib/supabase-admin'
 import type {
   Product,
   ProductCategory,
+  CategoryAttributeDefinition,
   Article,
   RFQSubmission,
   ContactSubmission,
@@ -9,6 +12,7 @@ import type {
   MediaLibraryItem,
   AdminActivityLog,
 } from '@/types/database'
+import { normalizeAttributeDefinitionRow } from '@/lib/product-category-utils'
 
 type DataResponse<T> = { data: T[]; error: string | null }
 type ItemResponse<T> = { data: T | null; error: string | null }
@@ -126,6 +130,115 @@ export async function deleteCategory(id: string) {
   const supabase = createAdminClient()
   const { error } = await supabase.from('product_categories').delete().eq('id', id)
   return { error: error?.message ?? null }
+}
+
+export type CategoryAttributeDefinitionInput = {
+  key: string
+  label_tr: string
+  label_en: string
+  field_type: CategoryAttributeDefinition['field_type']
+  options?: string[]
+  unit?: string | null
+  is_filterable: boolean
+  is_required_for_publish: boolean
+  sort_order: number
+  maps_to_spec_key?: string | null
+}
+
+export async function getAdminCategoryAttributeDefinitions(
+  categoryId: string,
+): Promise<DataResponse<CategoryAttributeDefinition>> {
+  const supabase = createAdminClient()
+  const { data, error } = await supabase
+    .from('category_attribute_definitions')
+    .select('*')
+    .eq('category_id', categoryId)
+    .order('sort_order', { ascending: true })
+
+  if (error) return { data: [], error: error.message }
+  const rows = (data ?? []) as CategoryAttributeDefinition[]
+  return { data: rows.map((r) => normalizeAttributeDefinitionRow(r)), error: null }
+}
+
+export async function replaceCategoryAttributeDefinitions(
+  categoryId: string,
+  definitions: CategoryAttributeDefinitionInput[],
+) {
+  const supabase = createAdminClient()
+  const { error: delErr } = await supabase
+    .from('category_attribute_definitions')
+    .delete()
+    .eq('category_id', categoryId)
+  if (delErr) return { error: delErr.message }
+
+  if (definitions.length === 0) return { error: null }
+
+  const insertRows = definitions
+    .filter((d) => d.key.trim().length > 0)
+    .map((d, i) => ({
+    category_id: categoryId,
+    key: d.key.trim(),
+    label_tr: d.label_tr,
+    label_en: d.label_en,
+    field_type: d.field_type,
+    options: d.options ?? [],
+    unit: d.unit ?? null,
+    is_filterable: d.is_filterable,
+    is_required_for_publish: d.is_required_for_publish,
+    sort_order: d.sort_order ?? i,
+    maps_to_spec_key: d.maps_to_spec_key ?? null,
+  }))
+
+  if (insertRows.length === 0) return { error: null }
+
+  const { error } = await supabase.from('category_attribute_definitions').insert(insertRows)
+  return { error: error?.message ?? null }
+}
+
+export async function bulkUpdateProductsCategory(
+  productIds: string[],
+  categoryId: string | null,
+): Promise<{ error: string | null }> {
+  const supabase = createAdminClient()
+  const { error } = await supabase
+    .from('products')
+    .update({ category_id: categoryId })
+    .in('id', productIds)
+  return { error: error?.message ?? null }
+}
+
+export async function cloneAdminProduct(sourceId: string): Promise<ItemResponse<Product>> {
+  const supabase = createAdminClient()
+  const { data: src, error: e1 } = await getAdminProductById(sourceId)
+  if (e1 || !src) return { data: null, error: e1 || 'Ürün bulunamadı' }
+
+  const suffix = Date.now().toString(36)
+  const newSlug = `${src.slug}-copy-${suffix}`.slice(0, 240)
+  const newSku = `${src.sku}-C-${suffix}`.slice(0, 240)
+
+  const baseTr = src.slugs?.tr || src.slug
+  const baseEn = src.slugs?.en || src.slug
+
+  const { id: _omitId, created_at: _omitC, updated_at: _omitU, ...rest } = src
+  void _omitId
+  void _omitC
+  void _omitU
+
+  const insertPayload = {
+    ...rest,
+    slug: newSlug,
+    sku: newSku,
+    slugs: {
+      ...src.slugs,
+      tr: `${baseTr}-kopya-${suffix}`.slice(0, 240),
+      en: `${baseEn}-copy-${suffix}`.slice(0, 240),
+    },
+    cloned_from_product_id: src.id,
+    is_active: false,
+  }
+
+  const { data, error } = await supabase.from('products').insert(insertPayload).select().single()
+  return { data: data as Product | null, error: error?.message ?? null }
 }
 
 // ─── Articles ───────────────────────────────────────────────

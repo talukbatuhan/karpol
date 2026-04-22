@@ -11,6 +11,7 @@ import {
 } from 'lucide-react'
 import type { ProductModules } from '@/types/database'
 import styles from '@/app/admin/admin.module.css'
+import { Label } from '@/components/ui'
 
 interface ModuleToggleBarProps {
   value: ProductModules
@@ -76,12 +77,12 @@ export default function ModuleToggleBar({ value, onChange }: ModuleToggleBarProp
 
   return (
     <div className={styles.formGroup}>
-      <label className={styles.formLabel}>
+      <Label className={styles.formLabel}>
         Ürün Modülleri
         <span style={{ marginLeft: 8, fontWeight: 400, color: 'var(--text-muted)', fontSize: 12 }}>
           (Bu ürün için hangi içerik blokları aktif olsun?)
         </span>
-      </label>
+      </Label>
 
       <div
         style={{

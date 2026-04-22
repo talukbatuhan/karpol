@@ -1,5 +1,6 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextRequest, NextResponse } from 'next/server'
+import { ApiCode, jsonError } from '@/lib/api/http'
 
 function createRequestScopedSupabase(request: NextRequest) {
   let response = NextResponse.next({ request })
@@ -49,11 +50,11 @@ export async function requireAdminApi(request: NextRequest): Promise<NextRespons
   const { user, role } = await getRequestUserRole(request)
 
   if (!user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    return jsonError('Unauthorized', ApiCode.UNAUTHORIZED, 401)
   }
 
   if (role !== 'admin') {
-    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    return jsonError('Forbidden', ApiCode.FORBIDDEN, 403)
   }
 
   return null
@@ -67,21 +68,25 @@ export async function requireAdminContext(request: NextRequest): Promise<{
 
   if (!user) {
     return {
-      denied: NextResponse.json({ error: 'Unauthorized' }, { status: 401 }),
+      denied: jsonError('Unauthorized', ApiCode.UNAUTHORIZED, 401),
       userId: null,
     }
   }
 
   if (role !== 'admin') {
     return {
-      denied: NextResponse.json({ error: 'Forbidden' }, { status: 403 }),
+      denied: jsonError('Forbidden', ApiCode.FORBIDDEN, 403),
       userId: null,
     }
   }
 
   if (isAdminMfaRequired() && !hasUserMfa(user)) {
     return {
-      denied: NextResponse.json({ error: 'MFA required' }, { status: 403 }),
+      denied: jsonError(
+        'MFA required for this environment',
+        ApiCode.MFA_REQUIRED,
+        403,
+      ),
       userId: user.id,
     }
   }

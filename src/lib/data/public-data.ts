@@ -1,5 +1,12 @@
 import { createClient } from "@/lib/supabase-server";
-import type { Product, ProductCategory, Industry, Article } from "@/types/database";
+import type {
+  Product,
+  ProductCategory,
+  CategoryAttributeDefinition,
+  Industry,
+  Article,
+} from "@/types/database";
+import { normalizeAttributeDefinitionRow } from "@/lib/product-category-utils";
 
 type DataResponse<T> = {
   data: T[];
@@ -63,6 +70,28 @@ export async function getProductCategoryByLocalizedSlug(
     return { data: data as ProductCategory | null, error: null };
   } catch {
     return { data: null, error: "Database connection failed" };
+  }
+}
+
+export async function getCategoryAttributeDefinitionsForCategory(
+  categoryId: string,
+): Promise<DataResponse<CategoryAttributeDefinition>> {
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from("category_attribute_definitions")
+      .select("*")
+      .eq("category_id", categoryId)
+      .order("sort_order", { ascending: true });
+
+    if (error) return { data: [], error: error.message };
+    const rows = (data ?? []) as CategoryAttributeDefinition[];
+    return {
+      data: rows.map((r) => normalizeAttributeDefinitionRow(r)),
+      error: null,
+    };
+  } catch {
+    return { data: [], error: "Database connection failed" };
   }
 }
 

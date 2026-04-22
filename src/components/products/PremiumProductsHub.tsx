@@ -12,7 +12,10 @@ type HubProps = {
   categoryLocaleSlugs?: Record<string, string>;
 };
 
-export default function PremiumProductsHub({ counts, categoryLocaleSlugs = {} }: HubProps) {
+export default function PremiumProductsHub({
+  counts,
+  categoryLocaleSlugs = {},
+}: HubProps) {
   const t = useTranslations("ProductsHub");
 
   return (

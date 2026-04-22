@@ -7,6 +7,7 @@ import {
   ConditionalFooter,
   ConditionalHeader,
 } from "@/components/layout/ConditionalLocaleChrome";
+import AksanFooter from "@/components/layout/AksanFooter";
 import ViewTransitionsProvider from "@/components/layout/ViewTransitionsProvider";
 import { siteConfig } from "@/lib/config";
 
@@ -66,7 +67,7 @@ export default async function LocaleLayout({
         <ConditionalHeader />
         <ConditionalBreadcrumbs />
         {children}
-        <ConditionalFooter />
+        <ConditionalFooter footer={<AksanFooter />} />
       </div>
     </NextIntlClientProvider>
   );

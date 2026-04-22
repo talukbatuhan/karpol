@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import styles from '../admin.module.css'
+import { Input, Button, FormAlert } from '@/components/ui'
 
 export default function AdminLoginPage() {
   const [email, setEmail] = useState('')
@@ -52,12 +53,18 @@ export default function AdminLoginPage() {
         <h1 className={styles.loginTitle}>KARPOL CMS</h1>
         <p className={styles.loginSubtitle}>Sign in to manage your content</p>
         {mfaRequiredHint && (
-          <p className={styles.loginError}>Your admin account must have MFA enabled before access is granted.</p>
+          <FormAlert variant="default" className={styles.loginError}>
+            Your admin account must have MFA enabled before access is granted.
+          </FormAlert>
         )}
 
-        {error && <p className={styles.loginError}>{error}</p>}
+        {error && (
+          <FormAlert variant="default" className={styles.loginError}>
+            {error}
+          </FormAlert>
+        )}
 
-        <input
+        <Input
           type="email"
           placeholder="Email address"
           value={email}
@@ -65,7 +72,7 @@ export default function AdminLoginPage() {
           className={styles.loginInput}
           required
         />
-        <input
+        <Input
           type="password"
           placeholder="Password"
           value={password}
@@ -73,13 +80,13 @@ export default function AdminLoginPage() {
           className={styles.loginInput}
           required
         />
-        <button
+        <Button
           type="submit"
           className={styles.loginButton}
           disabled={loading}
         >
           {loading ? 'Signing in...' : 'Sign In'}
-        </button>
+        </Button>
       </form>
     </div>
   )

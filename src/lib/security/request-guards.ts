@@ -1,4 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { type NextRequest, type NextResponse } from 'next/server'
+import { ApiCode, jsonError } from '@/lib/api/http'
 
 export function enforceSameOrigin(request: NextRequest): NextResponse | null {
   const method = request.method.toUpperCase()
@@ -8,11 +9,11 @@ export function enforceSameOrigin(request: NextRequest): NextResponse | null {
 
   const origin = request.headers.get('origin')
   if (!origin) {
-    return NextResponse.json({ error: 'Invalid request origin' }, { status: 403 })
+    return jsonError('Invalid request origin', ApiCode.INVALID_ORIGIN, 403)
   }
 
   if (origin !== request.nextUrl.origin) {
-    return NextResponse.json({ error: 'Invalid request origin' }, { status: 403 })
+    return jsonError('Invalid request origin', ApiCode.INVALID_ORIGIN, 403)
   }
 
   return null

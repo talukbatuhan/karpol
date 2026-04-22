@@ -22,16 +22,16 @@
 karpolnet/
 ├── README.md
 ├── docs/
-│   ├── strategy/website_strategy.md
+│   ├── strategy/website-strategy.md
 │   ├── development/
-│   │   ├── development_guide.md
-│   │   ├── CHANGELOG.md
+│   │   ├── development-guide.md
+│   │   ├── changelog.md
 │   │   ├── tracker.md
-│   │   └── component_checklist.md
-│   ├── design/design_system.md
-│   ├── seo/seo_playbook.md
-│   ├── content/content_calendar.md
-│   └── notes/session_notes.md
+│   │   └── component-checklist.md
+│   ├── design/design-system.md
+│   ├── seo/seo-playbook.md
+│   ├── content/content-calendar.md
+│   └── notes/session-notes.md
 ```
 
 ### 🎯 Sonraki Adımlar

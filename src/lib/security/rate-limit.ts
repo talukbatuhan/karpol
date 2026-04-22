@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { ApiCode, jsonError } from '@/lib/api/http'
 
 type RateLimitEntry = {
   count: number
@@ -109,15 +110,17 @@ export async function enforceRateLimit(
 
   if (result.allowed) return null
 
-  return NextResponse.json(
-    { error: 'Too many requests. Please retry shortly.' },
-    {
-      status: 429,
-      headers: {
-        'Retry-After': String(result.retryAfterSec),
-        'X-RateLimit-Limit': String(limit),
-        'X-RateLimit-Remaining': String(result.remaining),
-      },
-    }
+  const headers = {
+    'Retry-After': String(result.retryAfterSec),
+    'X-RateLimit-Limit': String(limit),
+    'X-RateLimit-Remaining': String(result.remaining),
+  }
+
+  return jsonError(
+    'Too many requests. Please retry shortly.',
+    ApiCode.RATE_LIMITED,
+    429,
+    { retryAfterSec: result.retryAfterSec },
+    headers,
   )
 }

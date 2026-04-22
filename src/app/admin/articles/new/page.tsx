@@ -8,6 +8,7 @@ import I18nFieldEditor from '@/components/admin/I18nFieldEditor'
 import { saveArticle } from '@/lib/actions/admin-article-actions'
 import type { LocalizedField } from '@/types/database'
 import styles from '../../admin.module.css'
+import { Label, Input, Select, Button, FormAlert } from '@/components/ui'
 
 const CATEGORIES = [
   { value: 'material', label: 'Material Science' },
@@ -70,18 +71,19 @@ export default function NewArticlePage() {
           <h1 className={styles.topBarTitle}>New Article</h1>
         </div>
         <div className={styles.topBarRight}>
-          <button type="submit" form="article-form" className={`${styles.btn} ${styles.btnPrimary}`} disabled={saving}>
+          <Button
+            type="submit"
+            form="article-form"
+            className={`${styles.btn} ${styles.btnPrimary}`}
+            disabled={saving}
+          >
             {saving ? 'Saving...' : 'Publish Article'}
-          </button>
+          </Button>
         </div>
       </div>
 
       <div className={styles.pageContent}>
-        {error && (
-          <div style={{ padding: '12px 16px', background: '#fee2e2', color: '#991b1b', borderRadius: 8, marginBottom: 20, fontSize: 14 }}>
-            {error}
-          </div>
-        )}
+        {error && <FormAlert variant="adminBanner">{error}</FormAlert>}
 
         <form id="article-form" onSubmit={handleSubmit}>
           <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 32 }}>
@@ -93,8 +95,11 @@ export default function NewArticlePage() {
 
             <div>
               <div className={styles.formGroup}>
-                <label className={styles.formLabel}>Slug <span style={{ color: '#e8611a' }}>*</span></label>
-                <input
+                <Label htmlFor="article-slug" className={styles.formLabel}>
+                  Slug <span style={{ color: '#e8611a' }}>*</span>
+                </Label>
+                <Input
+                  id="article-slug"
                   type="text"
                   className={styles.formInput}
                   value={slug}
@@ -105,17 +110,27 @@ export default function NewArticlePage() {
               </div>
 
               <div className={styles.formGroup}>
-                <label className={styles.formLabel}>Category</label>
-                <select className={styles.formSelect} value={category} onChange={(e) => setCategory(e.target.value)}>
+                <Label htmlFor="article-category" className={styles.formLabel}>
+                  Category
+                </Label>
+                <Select
+                  id="article-category"
+                  className={styles.formSelect}
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                >
                   {CATEGORIES.map((cat) => (
                     <option key={cat.value} value={cat.value}>{cat.label}</option>
                   ))}
-                </select>
+                </Select>
               </div>
 
               <div className={styles.formGroup}>
-                <label className={styles.formLabel}>Tags (comma separated)</label>
-                <input
+                <Label htmlFor="article-tags" className={styles.formLabel}>
+                  Tags (comma separated)
+                </Label>
+                <Input
+                  id="article-tags"
                   type="text"
                   className={styles.formInput}
                   value={tags}
@@ -125,8 +140,11 @@ export default function NewArticlePage() {
               </div>
 
               <div className={styles.formGroup}>
-                <label className={styles.formLabel}>Target SEO Keyword</label>
-                <input
+                <Label htmlFor="article-keyword" className={styles.formLabel}>
+                  Target SEO Keyword
+                </Label>
+                <Input
+                  id="article-keyword"
                   type="text"
                   className={styles.formInput}
                   value={targetKeyword}
@@ -136,8 +154,11 @@ export default function NewArticlePage() {
               </div>
 
               <div className={styles.formGroup}>
-                <label className={styles.formLabel}>Author</label>
-                <input
+                <Label htmlFor="article-author" className={styles.formLabel}>
+                  Author
+                </Label>
+                <Input
+                  id="article-author"
                   type="text"
                   className={styles.formInput}
                   value={author}
@@ -147,17 +168,29 @@ export default function NewArticlePage() {
               </div>
 
               <div className={styles.formGroup}>
-                <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
-                  <input type="checkbox" checked={isPublished} onChange={(e) => setIsPublished(e.target.checked)} />
+                <Label
+                  style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}
+                >
+                  <Input
+                    type="checkbox"
+                    checked={isPublished}
+                    onChange={(e) => setIsPublished(e.target.checked)}
+                  />
                   <span className={styles.formLabel} style={{ marginBottom: 0 }}>Publish immediately</span>
-                </label>
+                </Label>
               </div>
 
               <div className={styles.formGroup}>
-                <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
-                  <input type="checkbox" checked={isFeatured} onChange={(e) => setIsFeatured(e.target.checked)} />
+                <Label
+                  style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}
+                >
+                  <Input
+                    type="checkbox"
+                    checked={isFeatured}
+                    onChange={(e) => setIsFeatured(e.target.checked)}
+                  />
                   <span className={styles.formLabel} style={{ marginBottom: 0 }}>Featured article</span>
-                </label>
+                </Label>
               </div>
             </div>
           </div>

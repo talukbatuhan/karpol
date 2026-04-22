@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react'
 import styles from '@/app/admin/admin.module.css'
+import { Input, Select, Button } from '@/components/ui'
 import type { AdminActivityLog } from '@/types/database'
 
 type Props = {
@@ -81,13 +82,13 @@ export default function SecurityEventsTable({ rows }: Props) {
   return (
     <>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 220px 220px auto', gap: 12, marginBottom: 16 }}>
-        <input
+        <Input
           className={styles.formInput}
           placeholder='Search event, path, or IP'
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
-        <select
+        <Select
           className={styles.formSelect}
           value={severityFilter}
           onChange={(e) => setSeverityFilter(e.target.value as 'all' | Severity)}
@@ -97,8 +98,8 @@ export default function SecurityEventsTable({ rows }: Props) {
           <option value='medium'>Medium</option>
           <option value='high'>High</option>
           <option value='critical'>Critical</option>
-        </select>
-        <select
+        </Select>
+        <Select
           className={styles.formSelect}
           value={eventFilter}
           onChange={(e) => setEventFilter(e.target.value)}
@@ -109,10 +110,10 @@ export default function SecurityEventsTable({ rows }: Props) {
               {event}
             </option>
           ))}
-        </select>
-        <button type='button' className={`${styles.btn} ${styles.btnSecondary}`} onClick={exportCsv}>
+        </Select>
+        <Button type='button' className={`${styles.btn} ${styles.btnSecondary}`} onClick={exportCsv}>
           Export CSV
-        </button>
+        </Button>
       </div>
 
       <div style={{ marginBottom: 12, fontSize: 13, color: 'var(--text-muted)' }}>

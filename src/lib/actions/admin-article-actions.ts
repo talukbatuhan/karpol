@@ -2,8 +2,14 @@
 
 import { revalidatePath } from 'next/cache'
 import { upsertArticle, deleteArticle } from '@/lib/data/admin-data'
+import { assertAdminSession } from '@/lib/auth/server-admin-session'
 
 export async function saveArticle(formData: Record<string, unknown>) {
+  const gate = await assertAdminSession()
+  if (!gate.ok) {
+    return { error: gate.message, code: gate.code }
+  }
+
   const result = await upsertArticle(formData as Parameters<typeof upsertArticle>[0])
 
   if (!result.error) {
@@ -16,6 +22,11 @@ export async function saveArticle(formData: Record<string, unknown>) {
 }
 
 export async function removeArticle(id: string) {
+  const gate = await assertAdminSession()
+  if (!gate.ok) {
+    return { error: gate.message, code: gate.code }
+  }
+
   const result = await deleteArticle(id)
 
   if (!result.error) {

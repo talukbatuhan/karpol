@@ -548,7 +548,8 @@
       "searchPlaceholder": "SKU, name or keyword",
       "toggleShow": "Show filters",
       "toggleHide": "Hide filters",
-      "activeCount": "{count} active"
+      "activeCount": "{count} active",
+      "categoryNav": "Categories"
     },
     "results": {
       "showing": "Showing {visible} of {total}",

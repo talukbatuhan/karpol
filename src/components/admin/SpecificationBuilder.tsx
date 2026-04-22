@@ -3,6 +3,7 @@
 import { Plus, Trash2 } from 'lucide-react'
 import type { ProductSpecification } from '@/types/database'
 import styles from '@/app/admin/admin.module.css'
+import { Label, Input, Button } from '@/components/ui'
 
 interface SpecificationBuilderProps {
   value: ProductSpecification[]
@@ -26,7 +27,7 @@ export default function SpecificationBuilder({ value, onChange }: SpecificationB
 
   return (
     <div className={styles.formGroup}>
-      <label className={styles.formLabel}>Teknik Özellikler Tablosu</label>
+      <Label className={styles.formLabel}>Teknik Özellikler Tablosu</Label>
       <div className={styles.dataTable} style={{ marginBottom: 12 }}>
         <table>
           <thead>
@@ -42,7 +43,7 @@ export default function SpecificationBuilder({ value, onChange }: SpecificationB
             {value.map((spec, index) => (
               <tr key={index}>
                 <td>
-                  <input
+                  <Input
                     type="text"
                     className={styles.formInput}
                     value={spec.label}
@@ -52,7 +53,7 @@ export default function SpecificationBuilder({ value, onChange }: SpecificationB
                   />
                 </td>
                 <td>
-                  <input
+                  <Input
                     type="text"
                     className={styles.formInput}
                     value={spec.value}
@@ -62,7 +63,7 @@ export default function SpecificationBuilder({ value, onChange }: SpecificationB
                   />
                 </td>
                 <td>
-                  <input
+                  <Input
                     type="text"
                     className={styles.formInput}
                     value={spec.unit || ''}
@@ -72,7 +73,7 @@ export default function SpecificationBuilder({ value, onChange }: SpecificationB
                   />
                 </td>
                 <td>
-                  <input
+                  <Input
                     type="text"
                     className={styles.formInput}
                     value={spec.test_method || ''}
@@ -82,23 +83,23 @@ export default function SpecificationBuilder({ value, onChange }: SpecificationB
                   />
                 </td>
                 <td>
-                  <button
+                  <Button
                     type="button"
                     onClick={() => removeRow(index)}
                     className={`${styles.btn} ${styles.btnDanger} ${styles.btnSmall}`}
                     style={{ padding: 6 }}
                   >
                     <Trash2 size={14} />
-                  </button>
+                  </Button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-      <button type="button" onClick={addRow} className={`${styles.btn} ${styles.btnSecondary} ${styles.btnSmall}`}>
+      <Button type="button" onClick={addRow} className={`${styles.btn} ${styles.btnSecondary} ${styles.btnSmall}`}>
         <Plus size={14} /> Satır Ekle
-      </button>
+      </Button>
     </div>
   )
 }

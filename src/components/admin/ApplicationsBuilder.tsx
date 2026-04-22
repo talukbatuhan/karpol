@@ -3,6 +3,7 @@
 import { Plus, Trash2 } from 'lucide-react'
 import type { LocalizedArrayField } from '@/types/database'
 import styles from '@/app/admin/admin.module.css'
+import { Label, Input, Button } from '@/components/ui'
 
 interface ApplicationsBuilderProps {
   value: LocalizedArrayField
@@ -39,14 +40,14 @@ export default function ApplicationsBuilder({ value, onChange }: ApplicationsBui
 
   return (
     <div className={styles.formGroup}>
-      <label className={styles.formLabel}>Uygulama Alanları</label>
+      <Label className={styles.formLabel}>Uygulama Alanları</Label>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 12 }}>
         {Array.from({ length: maxLen }).map((_, index) => (
           <div
             key={index}
             style={{ display: 'grid', gridTemplateColumns: '1fr 1fr auto', gap: 8, alignItems: 'center' }}
           >
-            <input
+            <Input
               type="text"
               className={styles.formInput}
               placeholder="TR — ör. Mermer kesme makineleri"
@@ -54,7 +55,7 @@ export default function ApplicationsBuilder({ value, onChange }: ApplicationsBui
               onChange={(e) => updateLocale('tr', index, e.target.value)}
               style={{ fontSize: 13 }}
             />
-            <input
+            <Input
               type="text"
               className={styles.formInput}
               placeholder="EN — e.g. Marble cutting machines"
@@ -62,7 +63,7 @@ export default function ApplicationsBuilder({ value, onChange }: ApplicationsBui
               onChange={(e) => updateLocale('en', index, e.target.value)}
               style={{ fontSize: 13 }}
             />
-            <button
+            <Button
               type="button"
               onClick={() => removeRow(index)}
               className={`${styles.btn} ${styles.btnDanger} ${styles.btnSmall}`}
@@ -70,17 +71,17 @@ export default function ApplicationsBuilder({ value, onChange }: ApplicationsBui
               aria-label="Sil"
             >
               <Trash2 size={14} />
-            </button>
+            </Button>
           </div>
         ))}
       </div>
-      <button
+      <Button
         type="button"
         onClick={addRow}
         className={`${styles.btn} ${styles.btnSecondary} ${styles.btnSmall}`}
       >
         <Plus size={14} /> Uygulama Ekle
-      </button>
+      </Button>
     </div>
   )
 }

@@ -1,9 +1,9 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { usePathname } from "@/i18n/navigation";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import PremiumNav from "@/components/layout/PremiumNav";
-import AksanFooter from "@/components/layout/AksanFooter";
 import {
   useThemePreference,
   type EffectiveTheme,
@@ -51,10 +51,14 @@ export function ConditionalBreadcrumbs() {
   return <Breadcrumbs />;
 }
 
-export function ConditionalFooter() {
+export function ConditionalFooter({ footer }: { footer: ReactNode }) {
   const pathname = usePathname();
   const { effective } = useThemePreference({
     autoEffective: autoThemeFor(pathname),
   });
-  return <AksanFooter theme={effective} />;
+  return (
+    <div className="ft-theme-scope" data-theme={effective}>
+      {footer}
+    </div>
+  );
 }
