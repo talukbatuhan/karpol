@@ -7,6 +7,7 @@ import {
   getProductByLocalizedSlug,
   getProductCategoryByLocalizedSlug,
   getRelatedProductsByCategory,
+  getIndustriesForProduct,
 } from "@/lib/data/public-data";
 import { getRichProductContent } from "@/lib/product-content";
 import {
@@ -243,6 +244,7 @@ export default async function ProductDetailPage({
 
   // Related (locale-aware slugs)
   const related: { id: string; name: string; slug: string; image?: string }[] = [];
+  let linkedIndustries: { slug: string; name: string }[] = [];
   if (product) {
     const { data: rel } = await getRelatedProductsByCategory(
       product.category_id,
@@ -257,6 +259,11 @@ export default async function ProductDetailPage({
         image: p.images?.[0],
       });
     }
+    const { data: inds } = await getIndustriesForProduct(product.id);
+    linkedIndustries = (inds ?? []).map((i) => ({
+      slug: i.slug,
+      name: getLocalizedField(i.name, locale),
+    }));
   }
 
   const schemaData = {
@@ -281,6 +288,7 @@ export default async function ProductDetailPage({
     <>
       <ProductDetailView
         locale={locale}
+        productId={product?.id}
         productTitle={productTitle}
         shortDesc={shortDesc}
         longDesc={longDesc}
@@ -300,6 +308,7 @@ export default async function ProductDetailPage({
         applications={applications}
         highlights={highlights}
         compatibleMachines={compatibleMachines}
+        linkedIndustries={linkedIndustries}
         technicalDrawings={technicalDrawings}
         datasheets={datasheets}
         related={related}

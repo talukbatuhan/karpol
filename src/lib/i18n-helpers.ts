@@ -60,6 +60,7 @@ export function slugify(input: string): string {
     'ö': 'o', 'Ö': 'o',
     'ş': 's', 'Ş': 's',
     'ü': 'u', 'Ü': 'u',
+    'ä': 'ae', 'Ä': 'ae', 'ß': 'ss',
   }
   return text
     .split('')

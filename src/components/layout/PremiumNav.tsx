@@ -10,6 +10,7 @@ import { siteConfig } from "@/lib/config";
 import ThemeToggleButton from "@/components/layout/ThemeToggleButton";
 import { useThemePreference } from "@/components/layout/ThemePreferenceProvider";
 import { autoThemeFor } from "@/components/layout/ConditionalLocaleChrome";
+import { APP_LOCALES } from "@/i18n/config";
 
 const NAV_ITEMS = [
   { key: "home", href: "/" },
@@ -31,7 +32,7 @@ function PremiumLocaleSwitcher({
   const router = useRouter();
   const pathname = usePathname();
   const rawParams = useParams();
-  const locales = ["en", "tr"] as const;
+  const locales = APP_LOCALES;
   const wrapClass = variant === "desktop" ? "pn-locale" : "pn-nav-mobile-locale";
 
   // Dynamic segments (category, slug, catalogId, ...) are LOCALIZED in our DB.
@@ -136,12 +137,12 @@ export default function PremiumNav() {
         .pn-nav-wrap {
           position: fixed;
           top: 0; left: 0; right: 0;
-          z-index: 100;
+          z-index: var(--z-sticky);
           background: rgba(255, 255, 255, 0.88);
           backdrop-filter: blur(20px);
           -webkit-backdrop-filter: blur(20px);
           border-bottom: 1px solid rgba(15, 23, 41, 0.08);
-          box-shadow: 0 1px 0 rgba(15, 23, 41, 0.02);
+          box-shadow: var(--shadow-nav);
         }
         .pn-nav {
           max-width: 1440px;
@@ -268,6 +269,7 @@ export default function PremiumNav() {
         .pn-mobile-menu {
           position: absolute;
           top: 100%; left: 1rem; right: 1rem;
+          z-index: var(--z-dropdown);
           background: rgba(255, 255, 255, 0.98);
           backdrop-filter: blur(20px);
           -webkit-backdrop-filter: blur(20px);
@@ -278,7 +280,7 @@ export default function PremiumNav() {
           flex-direction: column;
           gap: 0.25rem;
           animation: pnSlideDown 0.25s ease;
-          box-shadow: 0 20px 40px rgba(15, 23, 41, 0.12);
+          box-shadow: var(--elevation-2);
         }
         @keyframes pnSlideDown {
           from { opacity: 0; transform: translateY(-6px); }
@@ -369,7 +371,7 @@ export default function PremiumNav() {
         .pn-nav-wrap[data-theme="dark"] .pn-mobile-menu {
           background: rgba(13, 18, 32, 0.96);
           border: 1px solid rgba(255, 255, 255, 0.08);
-          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.40);
+          box-shadow: var(--elevation-2);
         }
         .pn-nav-wrap[data-theme="dark"] .pn-mobile-link {
           color: rgba(203, 213, 225, 0.85);

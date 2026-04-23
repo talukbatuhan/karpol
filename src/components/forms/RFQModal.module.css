@@ -14,7 +14,7 @@
   align-items: center;
   justify-content: center;
   padding: 20px;
-  z-index: 9999;
+  z-index: var(--z-modal);
   animation: rfq-fade-in 0.2s ease-out;
 }
 
@@ -29,8 +29,7 @@
   color: var(--text-main);
   border-radius: 20px;
   border: 1px solid var(--border-color);
-  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.45),
-              0 0 0 1px rgba(255, 255, 255, 0.02) inset;
+  box-shadow: var(--shadow-modal), 0 0 0 1px rgba(255, 255, 255, 0.02) inset;
   overflow: hidden;
   animation: rfq-slide-up 0.32s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -306,8 +305,7 @@
 
 /* ── Dark theme polish (sadece focus/hover'larda ekstra parlaklık) ─── */
 :global(html[data-user-theme="dark"]) .modal {
-  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.6),
-              0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+  box-shadow: var(--shadow-modal), 0 0 0 1px rgba(255, 255, 255, 0.04) inset;
 }
 :global(html[data-user-theme="dark"]) .input,
 :global(html[data-user-theme="dark"]) .textarea {

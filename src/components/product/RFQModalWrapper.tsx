@@ -2,11 +2,15 @@
 "use no memo";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { ArrowUpRight, MessageCircle } from "lucide-react";
 import RFQModal from "@/components/forms/RFQModal";
 import WhatsAppChatModal from "@/components/forms/WhatsAppChatModal";
+import MobileActionBar from "@/components/layout/MobileActionBar";
+import { useQuoteList } from "@/contexts/QuoteListContext";
 
 type RFQModalWrapperProps = {
+  productId?: string;
   productName: string;
   sku?: string;
   /** Korunmuştur (bazı sayfalar hâlâ iletişim sayfası linkine fallback verebilir). */
@@ -16,21 +20,45 @@ type RFQModalWrapperProps = {
 };
 
 export default function RFQModalWrapper({
+  productId,
   productName,
   sku,
   buttonText = "Teklif İste",
   contactText = "Canlı Destek Alın",
 }: RFQModalWrapperProps) {
+  const tNav = useTranslations("Navigation");
   const [rfqOpen, setRfqOpen] = useState(false);
   const [waOpen, setWaOpen] = useState(false);
+  const { addItem, items } = useQuoteList();
+  const inList = Boolean(
+    items.some((i) => i.productId && productId && i.productId === productId) ||
+      (sku ? items.some((i) => i.productSku === sku) : false),
+  );
 
   return (
     <>
       <div className="pd-cta-row">
+        {productName && (
+          <button
+            type="button"
+            onClick={() => {
+              addItem({
+                productId,
+                productSku: sku,
+                productName: sku ? `${productName} (${sku})` : productName,
+              });
+            }}
+            className="pd-btn-secondary pd-cta-add-list"
+            disabled={inList}
+            style={{ opacity: inList ? 0.5 : 1 }}
+          >
+            {inList ? "Listede" : "Teklif listesine ekle"}
+          </button>
+        )}
         <button
           type="button"
           onClick={() => setRfqOpen(true)}
-          className="pd-btn-primary"
+          className="pd-btn-primary pd-cta-rfq"
         >
           {buttonText}
           <ArrowUpRight size={14} strokeWidth={1.6} />
@@ -38,7 +66,7 @@ export default function RFQModalWrapper({
         <button
           type="button"
           onClick={() => setWaOpen(true)}
-          className="pd-btn-secondary"
+          className="pd-btn-secondary pd-cta-wa"
         >
           <MessageCircle size={13} strokeWidth={1.6} />
           {contactText}
@@ -59,16 +87,32 @@ export default function RFQModalWrapper({
         sku={sku}
       />
 
+      <MobileActionBar
+        onRequestQuote={() => setRfqOpen(true)}
+        onWhatsApp={() => setWaOpen(true)}
+        requestQuoteLabel={buttonText}
+        contactLabel={tNav("contact")}
+        whatsAppAriaLabel={contactText}
+      />
+
       <style jsx>{`
         .pd-cta-row {
           display: inline-flex;
           flex-wrap: wrap;
           gap: 12px;
         }
+        /* RFQ + WhatsApp: sticky MobileActionBar on small viewports; keep "add to list" in hero */
+        @media (max-width: 767px) {
+          .pd-cta-rfq,
+          .pd-cta-wa {
+            display: none;
+          }
+        }
         .pd-btn-primary {
           display: inline-flex;
           align-items: center;
           gap: 8px;
+          min-height: 44px;
           padding: 12px 22px;
           font-family: 'DM Sans', sans-serif;
           font-size: 12px;
@@ -91,6 +135,7 @@ export default function RFQModalWrapper({
           display: inline-flex;
           align-items: center;
           gap: 8px;
+          min-height: 44px;
           padding: 12px 22px;
           font-family: 'DM Sans', sans-serif;
           font-size: 12px;

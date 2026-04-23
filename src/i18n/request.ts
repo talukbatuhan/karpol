@@ -1,9 +1,10 @@
 import { getRequestConfig } from "next-intl/server";
+import { isAppLocale } from "./config";
 
 export default getRequestConfig(async ({ requestLocale }) => {
   let locale = await requestLocale;
 
-  if (!locale || (locale !== "en" && locale !== "tr")) {
+  if (!locale || !isAppLocale(locale)) {
     locale = "en";
   }
 

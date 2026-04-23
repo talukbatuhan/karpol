@@ -27,7 +27,7 @@ export async function saveProduct(formData: Record<string, unknown>) {
     revalidatePath('/tr/products')
     revalidatePath('/[locale]/products/[category]', 'page')
     revalidatePath('/[locale]/products/[category]/[slug]', 'page')
-    revalidateTag('product-catalog')
+    revalidateTag('product-catalog', 'max')
   }
 
   return result
@@ -47,7 +47,7 @@ export async function removeProduct(id: string) {
     revalidatePath('/tr/products')
     revalidatePath('/[locale]/products/[category]', 'page')
     revalidatePath('/[locale]/products/[category]/[slug]', 'page')
-    revalidateTag('product-catalog')
+    revalidateTag('product-catalog', 'max')
   }
 
   return result
@@ -65,7 +65,7 @@ export async function saveCategory(formData: Record<string, unknown>) {
     revalidatePath('/admin/categories')
     revalidatePath('/en/products')
     revalidatePath('/tr/products')
-    revalidateTag('product-catalog')
+    revalidateTag('product-catalog', 'max')
   }
 
   return result
@@ -81,7 +81,7 @@ export async function removeCategory(id: string) {
 
   if (!result.error) {
     revalidatePath('/admin/categories')
-    revalidateTag('product-catalog')
+    revalidateTag('product-catalog', 'max')
   }
 
   return result
@@ -100,7 +100,7 @@ export async function saveCategoryAttributeDefinitionsAction(
   if (!error) {
     revalidatePath('/admin/categories')
     revalidatePath(`/admin/categories/${categoryId}`)
-    revalidateTag('product-catalog')
+    revalidateTag('product-catalog', 'max')
   }
   return { error: error ?? null }
 }
@@ -124,7 +124,7 @@ export async function bulkAssignProductsCategoryAction(
     revalidatePath('/en/products')
     revalidatePath('/tr/products')
     revalidatePath('/[locale]/products/[category]', 'page')
-    revalidateTag('product-catalog')
+    revalidateTag('product-catalog', 'max')
   }
   return { error: err }
 }
@@ -138,7 +138,7 @@ export async function cloneProductAction(sourceId: string) {
   const { data, error } = await cloneAdminProduct(sourceId)
   if (!error && data) {
     revalidatePath('/admin/products')
-    revalidateTag('product-catalog')
+    revalidateTag('product-catalog', 'max')
   }
   return { error: error ?? null, id: data?.id ?? null }
 }

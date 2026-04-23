@@ -34,10 +34,10 @@ function resolveTargetNumber(): string {
 }
 
 const overlayClass =
-  "fixed inset-0 z-[9999] flex items-center justify-center bg-[rgba(8,11,18,0.62)] p-5 backdrop-blur-[6px] [-webkit-backdrop-filter:blur(6px)]";
+  "fixed inset-0 z-modal flex items-center justify-center bg-[rgba(8,11,18,0.62)] p-5 backdrop-blur-[6px] [-webkit-backdrop-filter:blur(6px)]";
 
 const panelClass =
-  "w-full max-w-[460px] overflow-hidden rounded-[18px] border border-[var(--border-color,rgba(15,23,41,0.08))] bg-[var(--bg-secondary,#ffffff)] text-[var(--text-main,#0f1729)] shadow-[0_24px_70px_rgba(0,0,0,0.45)]";
+  "w-full max-w-[460px] overflow-hidden rounded-[18px] border border-[var(--border-color,rgba(15,23,41,0.08))] bg-[var(--bg-secondary,#ffffff)] text-[var(--text-main,#0f1729)] shadow-modal";
 
 const headerClass =
   "flex items-center justify-between gap-3 bg-gradient-to-br from-[#128C7E] to-[#25D366] px-[18px] py-4 text-white";

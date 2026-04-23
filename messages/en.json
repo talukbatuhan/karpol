@@ -21,6 +21,12 @@
     "aluminum cnc parts": "Aluminum CNC Parts",
     "engineering plastics": "Engineering Plastics"
   },
+  "MobileActionBar": {
+    "navLabel": "Quick actions",
+    "requestQuote": "Get a quote",
+    "contact": "Contact",
+    "whatsappAria": "WhatsApp support"
+  },
   "Hero": {
     "headline": "Precision Engineered. Globally Delivered.",
     "subheadline": "Advanced industrial components and custom manufacturing solutions for the world's most demanding machinery.",
@@ -53,6 +59,7 @@
     "applications": "Typical Applications",
     "advantages": "Engineering Advantages",
     "compatibility": "Machine Compatibility",
+    "industryTags": "Industry applications",
     "downloads": "Engineering Resources",
     "drawings": "Technical Drawings",
     "drawing": "Technical Drawing",
@@ -544,6 +551,7 @@
       "reset": "Reset all",
       "material": "Material",
       "hardness": "Hardness",
+      "industry": "Industry / machine",
       "search": "Search",
       "searchPlaceholder": "SKU, name or keyword",
       "toggleShow": "Show filters",

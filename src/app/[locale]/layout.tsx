@@ -9,6 +9,8 @@ import {
 } from "@/components/layout/ConditionalLocaleChrome";
 import AksanFooter from "@/components/layout/AksanFooter";
 import ViewTransitionsProvider from "@/components/layout/ViewTransitionsProvider";
+import ClientProviders from "@/components/providers/ClientProviders";
+import { APP_LOCALES } from "@/i18n/config";
 import { siteConfig } from "@/lib/config";
 
 export const metadata: Metadata = {
@@ -21,7 +23,7 @@ export const metadata: Metadata = {
 };
 
 export function generateStaticParams() {
-  return [{ locale: "en" }, { locale: "tr" }];
+  return APP_LOCALES.map((locale) => ({ locale }));
 }
 
 export default async function LocaleLayout({
@@ -34,7 +36,6 @@ export default async function LocaleLayout({
   const { locale } = await params;
   setRequestLocale(locale);
   const messages = await getMessages();
-  const dir = "ltr";
 
   const orgSchema = {
     "@context": "https://schema.org",
@@ -57,17 +58,24 @@ export default async function LocaleLayout({
 
   return (
     <NextIntlClientProvider messages={messages}>
-      <div lang={locale} dir={dir}>
-        <Script
-          id="org-schema"
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }}
-        />
-        <ViewTransitionsProvider />
-        <ConditionalHeader />
-        <ConditionalBreadcrumbs />
-        {children}
-        <ConditionalFooter footer={<AksanFooter />} />
+      {/*
+        Shell (lang/dir) stays in the RSC tree under NextIntl, not as the only
+        child of ClientProviders, to avoid RSC+client boundary hydration issues
+        (e.g. styled-jsx / first-node mismatches with QuoteListProvider).
+      */}
+      <div lang={locale} dir="ltr" suppressHydrationWarning>
+        <ClientProviders>
+          <Script
+            id="org-schema"
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }}
+          />
+          <ViewTransitionsProvider />
+          <ConditionalHeader />
+          <ConditionalBreadcrumbs />
+          {children}
+          <ConditionalFooter footer={<AksanFooter />} />
+        </ClientProviders>
       </div>
     </NextIntlClientProvider>
   );

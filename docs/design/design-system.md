@@ -1,269 +1,190 @@
 # KARPOL — Design System Reference
 
-> Görsel tasarım sistemi ve UI bileşen standartları
+> Görsel tasarım sistemi ve UI bileşen standartları. **Tek kaynak (token’lar, tipografi değişkenleri, gölge/z-index):** [`src/app/globals.css`](../../src/app/globals.css) (`:root`, yardımcı sınıflar, kök `::view-transition-*`). Koyu kullanıcı teması ve birçok public sayfada “ivory’yi karanlığa çevirme” mantığı ayrıca [`src/app/dark-overrides.css`](../../src/app/dark-overrides.css) içindedir. Bu belge, ekip referansı ve WCAG/typography kurallarını özetler; belge ile kod çelişirse **kod / `globals.css` baskındır**.
 
 ---
 
-## 🎨 Color Palette
+## Premium v3 (Mevcut — Navy / Ivory / Warm Gold)
 
-### Primary Colors
+Eski endüstriyel turuncu (`#E8611A`) **halka açık sitede** kaldırıldı. Vurgu rengi **ılık altın**; derin alan rengi **lacivert**. **Admin** arayüzü kendi modül stillerinde turuncu kullanmaya devam edebilir (`admin.module.css`); public/marketing yüzeyleri Premium v3 ile uyumludur.
 
-| Name | Hex | RGB | Usage |
-|---|---|---|---|
-| Graphite Black | `#1A1A2E` | `26, 26, 46` | Hero backgrounds, headers, footers |
-| Steel Grey | `#2D2D44` | `45, 45, 68` | Cards, secondary backgrounds, overlays |
-| Warm White | `#F5F5F0` | `245, 245, 240` | Page backgrounds, content areas |
-| Pure White | `#FFFFFF` | `255, 255, 255` | Text on dark, content containers |
+### Marka ve yüzey
 
-### Accent Colors
+| Name | Hex | Kullanım |
+|------|-----|----------|
+| Navy (primary) | `#0F1729` | Başlıklar, marka ciddiyeti, koyu alan |
+| Navy secondary | `#1B2540` | Kart/gradient ikincil alan |
+| Warm gold (accent) | `#C8A85A` | CTA, eyebrow, odak, aktif sınır |
+| Gold hover | `#B09347` | Hover / pressed (açık zeminde) |
+| Cream / accent light | `#F6F1E6` | Yumuşak vurgu zemin |
+| Steel scale | `--steel-50` … `--steel-900` (globals) | Nötr gövde, sınır, metin hiyerarşisi |
+| Semantic | `--color-success` / `warning` / `error` / `info` | Form ve durum mesajları |
 
-| Name | Hex | RGB | Usage |
-|---|---|---|---|
-| Industrial Orange | `#E8611A` | `232, 97, 26` | CTAs, highlights, active states |
-| Deep Orange | `#CC5216` | `204, 82, 22` | Hover states, pressed states |
-| Orange Light | `#FFF3ED` | `255, 243, 237` | Orange tinted backgrounds |
+### Ivory bant (ürün/landing sayfaları)
 
-### Semantic Colors
+`globals.css` içinde: `--ivory-bg`, `--ivory-band`, `--ivory-text-strong`, `--ivory-text-body`, `--ivory-text-muted`, `--ivory-text-dim`, `--ivory-border`, `--ivory-accent*`.
 
-| Name | Hex | Usage |
-|---|---|---|
-| Success Green | `#2ECC71` | Success states, check marks |
-| Warning Amber | `#F39C12` | Warning indicators |
-| Error Red | `#E74C3C` | Error states, validation |
-| Info Blue | `#3498DB` | Information badges |
+**Metin tercihi:** Açık krem/ivory üzerinde gövde için **`--ivory-text-body`**; ikincil metin için **`--ivory-text-muted`**; çok hafif etiketler için `--ivory-text-dim` (yalnızca büyük puntoda veya bold ile).
 
-### Neutral Scale
+### Z-index stack (sabit)
 
-| Name | Hex | Usage |
-|---|---|---|
-| Text Primary | `#1A1A1A` | Body text on light backgrounds |
-| Text Secondary | `#6B7280` | Supporting text, captions |
-| Text Tertiary | `#9CA3AF` | Placeholder text |
-| Border | `#E2E8F0` | Dividers, card borders |
-| Border Light | `#F1F5F9` | Subtle separators |
+Sihirli büyük `z-index` değerleri yerine yalnızca bu ölçek (tanım: `globals.css`):
 
----
+| Token | Değer (ref.) | Kullanım |
+|--------|----------------|----------|
+| `--z-base` | 0 | Varsayılan istifleme |
+| `--z-raised` | 1 | Hafif üst üste (badge, tablo hücresi) |
+| `--z-stacked` | 2 | İkinci düzey yerel üst üste |
+| `--z-sticky` | 20 | Sabit navbar |
+| `--z-dropdown` / `--z-dock` | 30 | Açılır menü, mobil alt dock |
+| `--z-overlay` | 40 | Yarı saydam perde (modal dışı) |
+| `--z-modal` | 50 | Modal, sheet |
+| `--z-toast` | 60 | Toast yığını |
+| `--z-max` | 100 | Nadir, üst sınır (ör. kritik global overlay) |
 
-## 🔤 Typography
+### Gölge / elevation
 
-### Font Stack
+`globals.css` içinde hem isimlendirilmiş elevation (`--elevation-*`) hem de legacy `--shadow-*` alias’ları vardır; yeni kodda tercihen semantic elevation veya aşağıdaki eşleşmeler.
 
-```css
-/* Primary: Inter — Engineering clarity */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+| Token | Anlam / eşleşen alias |
+|------|--------|
+| `--elevation-0` | Düz yüzey |
+| `--shadow-sm` | Çok hafif ayırıcı (1px ağırlıklı) |
+| `--elevation-1` / `--shadow-card` | Varsayılan kart |
+| `--elevation-2` / `--shadow-hover` | Hover / vurgu |
+| `--elevation-popover` / `--shadow-md` | Menü, küçük panel |
+| `--shadow-lg` | Daha yüksek yüzen panel / kart (orta-yüksek) |
+| `--elevation-dialog` / `--shadow-modal` | Dialog / tam odak modali |
+| `--shadow-nav` | Sticky bar / alt dock ayracı |
 
-/* Monospace: JetBrains Mono — Technical data */
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap');
-```
-
-### Type Scale
-
-| Element | Font | Weight | Size (Desktop) | Size (Mobile) | Line Height | Letter Spacing |
-|---|---|---|---|---|---|---|
-| Display | Inter | 800 | 80px | 40px | 1.05 | -0.02em |
-| H1 | Inter | 800 | 64px | 36px | 1.1 | -0.02em |
-| H2 | Inter | 700 | 48px | 30px | 1.2 | -0.01em |
-| H3 | Inter | 600 | 32px | 24px | 1.3 | 0 |
-| H4 | Inter | 600 | 24px | 20px | 1.4 | 0 |
-| H5 | Inter | 600 | 20px | 18px | 1.4 | 0.01em |
-| Body Large | Inter | 400 | 18px | 16px | 1.6 | 0 |
-| Body | Inter | 400 | 16px | 15px | 1.6 | 0 |
-| Body Small | Inter | 400 | 14px | 13px | 1.5 | 0.01em |
-| Caption | Inter | 400 | 13px | 12px | 1.5 | 0.02em |
-| Technical | JetBrains Mono | 400 | 14px | 13px | 1.5 | 0 |
-| Button | Inter | 600 | 15px | 14px | 1.0 | 0.03em |
+**Geriye dönük altın alias’lar:** `--gold`, `--gold-dim`, `--gold-glow` → `--color-accent` tabanlı; yeni bileşenlerde doğrudan `--color-accent` / `--ivory-accent` tercih edin.
 
 ---
 
-## 📐 Spacing System
+## Tipografi (uygulama)
 
-### Base Unit: 4px
+### Sans ve nav (yükleme)
 
-| Token | Value | Usage |
-|---|---|---|
-| `--space-1` | 4px | Minimal gap |
-| `--space-2` | 8px | Tight spacing |
-| `--space-3` | 12px | Small gap |
-| `--space-4` | 16px | Default gap |
-| `--space-5` | 20px | Medium gap |
-| `--space-6` | 24px | Gutter |
-| `--space-8` | 32px | Section inner |
-| `--space-10` | 40px | Large gap |
-| `--space-12` | 48px | Section separator |
-| `--space-16` | 64px | Large section |
-| `--space-20` | 80px | Section gap (mobile) |
-| `--space-24` | 96px | Section gap (tablet) |
-| `--space-30` | 120px | Section gap (desktop) |
+Fontlar `next/font` ile kök layout’ta yüklenir: [**Inter**](https://fonts.google.com/specimen/Inter) (gövde, UI, formlar), [**Barlow**](https://fonts.google.com/specimen/Barlow) (nav/hero vurgu ailesi, `var(--font-nav)`), teknik monospaced aile aşağıdaki karara göre.
 
-### Layout
+### Monospace: Roboto Mono (kanonik) — JetBrains yok
 
-| Property | Value |
-|---|---|
-| Container Max | 1200px |
-| Container Padding | 24px (mobile: 16px) |
-| Grid Columns | 12 |
-| Grid Gutter | 24px (mobile: 16px) |
-| Sidebar Width | 280px |
+| Karar | Açıklama |
+|--------|-----------|
+| **Kullanılan** | **Roboto Mono** — [`src/app/layout.tsx`](../../src/app/layout.tsx) içinde `Roboto_Mono` → `--font-roboto-mono`; `globals.css` içinde `--font-mono: var(--font-roboto-mono), monospace`. |
+| **Kullanılmayan** | **JetBrains Mono** projede `next/font` veya bu token zinciriyle yüklenmiyor. Strateji/PDF gibi dış belgelerde geçen JetBrains, geçmiş öneri sayılır; UI ve kod **Roboto Mono** ile hizalanır. |
+| **Ne zaman** | SKU, ölçü, spec tabloları, kod benzeri string’ler: `var(--font-mono)` + mümkünse `font-variant-numeric: tabular-nums` (veya `text-tabular-nums`). |
+| **JetBrains’e geçiş** | İstenirse ayrı iş kalemi: `layout.tsx`’e font ekleme, `--font-mono` ataması ve tüm tüketimlerin regresyon testi. |
 
----
+| Rol | Aile | Not |
+|-----|------|-----|
+| UI / okuma / form | `Inter` / `var(--font-primary)` | Tr / EN / DE / AR metinler |
+| Nav / vurgu UI | `Barlow` nerede kullanıldıysa | `var(--font-nav)` |
+| Teknik veri | **Roboto Mono** / `var(--font-mono)` | `tabular-nums` tercih edilir |
+| Görsel başlık (üretim sayfaları) | Cormorant / DM Sans (bileşen özel) | Sadece ilgili Premium bileşenlerde |
 
-## 🔘 Component Styles
+### Type scale (hedef; bileşenlerde `clamp` kullanımı yaygın)
 
-### Buttons
-
-| Variant | Background | Text | Border | Hover |
-|---|---|---|---|---|
-| **Primary** | `#E8611A` | `#FFFFFF` | none | `#CC5216` + shadow |
-| **Secondary** | transparent | `#FFFFFF` | 2px `#FFFFFF` | `rgba(255,255,255,0.1)` bg |
-| **Ghost** | transparent | `#1A1A2E` | 2px `#E2E8F0` | `#F5F5F0` bg |
-| **Dark** | `#1A1A2E` | `#FFFFFF` | none | `#2D2D44` |
-
-```css
-/* Button Base */
-.btn {
-  padding: 14px 28px;
-  border-radius: 8px;
-  font-family: var(--font-primary);
-  font-weight: 600;
-  font-size: 15px;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: var(--transition);
-}
-```
-
-### Cards
-
-```css
-.card {
-  background: var(--color-white);
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-  padding: 24px;
-  box-shadow: var(--shadow-card);
-  transition: var(--transition);
-}
-
-.card:hover {
-  box-shadow: var(--shadow-hover);
-  transform: translateY(-2px);
-}
-```
-
-### Product Category Card
-
-```css
-.category-card {
-  position: relative;
-  overflow: hidden;
-  border-radius: 8px;
-  aspect-ratio: 4/3;
-  background: var(--color-primary);
-}
-
-.category-card__overlay {
-  background: linear-gradient(
-    to top,
-    rgba(26, 26, 46, 0.9) 0%,
-    rgba(26, 26, 46, 0.3) 100%
-  );
-}
-```
+| Element | Ağırlık | Masaüstü | Mobil |
+|---------|---------|----------|--------|
+| Display / H1 | 700–800 | büyük clamp | küçük clamp |
+| H2–H3 | 600–700 | — | — |
+| Body | 400 | 16–18px | 15–16px |
+| Caption | 500–600 | 12–14px | — |
+| Button | 600 | 14–15px | uppercase (ürün bölümlerinde) |
 
 ---
 
-## 🖼 Shadows & Effects
+## Spacing, radius, hareket
 
-| Token | Value | Usage |
-|---|---|---|
-| `--shadow-card` | `0 4px 24px rgba(0,0,0,0.08)` | Default card elevation |
-| `--shadow-hover` | `0 8px 32px rgba(0,0,0,0.12)` | Hover state elevation |
-| `--shadow-modal` | `0 24px 64px rgba(0,0,0,0.24)` | Modal/dialog backdrop |
-| `--shadow-nav` | `0 2px 16px rgba(0,0,0,0.06)` | Sticky navbar shadow |
+`--space-*`, `--radius-*`, `--ease-out`, `--ease-in-out`, `--ease-spring`, `--transition`, `--duration-fast` / `normal` — tümü `globals.css` içinde. Buton **active** hafif ölçek için `--ease-spring` kullanır; `prefers-reduced-motion: reduce` altında ölçek yok.
 
----
+### Touch hedefi
 
-## 📱 Breakpoints
-
-| Name | Min Width | Usage |
-|---|---|---|
-| `xs` | 0px | Mobile (portrait) |
-| `sm` | 576px | Mobile (landscape) |
-| `md` | 768px | Tablet |
-| `lg` | 1024px | Desktop |
-| `xl` | 1280px | Large desktop |
-| `xxl` | 1440px | Ultra-wide |
-
-```css
-/* Mobile-first approach */
-@media (min-width: 768px) { /* Tablet */ }
-@media (min-width: 1024px) { /* Desktop */ }
-@media (min-width: 1280px) { /* Large desktop */ }
-```
+Etkileşimli kontroller (mobil): en az **44×44px**; `.touch-target` sınıfı `globals.css` içinde.
 
 ---
 
-## 🎬 Animation Tokens
+## Bileşenler ve durumlar
 
-```css
-:root {
-  --ease-out: cubic-bezier(0.4, 0, 0.2, 1);
-  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
-  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
-
-  --duration-fast: 150ms;
-  --duration-normal: 300ms;
-  --duration-slow: 500ms;
-  --duration-enter: 400ms;
-}
-
-/* Fade In Up — for scroll reveals */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(24px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Scale In — for modals */
-@keyframes scaleIn {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-```
+- **Buton / link:** `:focus-visible` ile görünür halka (navy/altın); hover/active tanımlı.
+- **Yükleme:** `Spinner` (kısa işlemler), `Skeleton` (içerik iskeleti); mümkünse layout kayması yok.
+- **Modal:** `var(--z-modal)`; RFQ, WhatsApp vb. aynı katmanda.
+- **Toast:** `sonner` + `Toaster` — `var(--z-toast)`.
+- **Breadcrumb:** `src/components/ui/breadcrumbs` — `nav` + `ol` + `aria-current="page"`.
+- **Mobil:** `MobileActionBar` (PDP / kategori) — `var(--z-dock)` + `safe-area-inset-bottom`.
 
 ---
 
-## 🖼 Image Guidelines
+## Performans
 
-| Context | Aspect Ratio | Min Resolution | Format |
-|---|---|---|---|
-| Hero Banner | 16:9 | 1920×1080 | WebP + JPEG fallback |
-| Product Hero | 1:1 | 2400×2400 | WebP |
-| Product Thumbnail | 4:3 | 600×450 | WebP |
-| Category Card | 4:3 | 800×600 | WebP |
-| Blog Header | 16:9 | 1200×675 | WebP |
-| Logo | SVG | Vector | SVG |
+- **Content visibility:** `globals.css` içinde `.section` ve `.lazy-section` için `content-visibility: auto` + `contain-intrinsic-size` (sırasıyla ~500px / ~480px referans yükseklik). LCP/hero ve üst kısım yüklerinde kullanmayın; uzun sayfalarda LCP dışı bloklarda tercih edin.
+- Görseller: `next/image` + açık `aspect-ratio` (kart, galeri, liste).
+- Kök `::view-transition-old/new(root)` cross-fade (ör. koyu ↔ ivory) `globals.css` içinde; `prefers-reduced-motion: reduce` altında animasyon yok.
 
 ---
 
-## ✅ Design Checklist (New Component)
+## Görsel yönergeler (ölçü)
 
-- [ ] Uses design tokens (no hardcoded values)
-- [ ] Responsive across all breakpoints
-- [ ] Hover and focus states defined
-- [ ] Accessible (contrast ratio ≥ 4.5:1)
-- [ ] Animates with defined easing curves
-- [ ] Works on dark and light backgrounds
-- [ ] Loading/skeleton state defined
+| Bağlam | Oran | Not |
+|--------|------|-----|
+| Hero / banner | 16:9 | LCP: priority, lazy-section kullanma |
+| Ürün galeri ana | 4:3 | `ProductVisualsWrapper` |
+| İlgili ürün kartı | 4:3 | `ProductDetailView` |
+| Kategori / küçük önizleme | 4:3 | — |
+
+---
+
+## WCAG 4.5:1 — kontrast (ivory / açık zemin)
+
+Hesap: **WCAG 2.1** göreli parlaklık oranı (normal metin **AA** eşiği **4.5:1**). Aşağıdaki değerler `sRGB` üzerinden doğrulanmıştır; arka plan hex’leri `globals.css` ile aynıdır.
+
+### Global ikincil metin — `--color-text-secondary`
+
+Açık temada `var(--steel-600)` → **`#475569`**. `.section-text` ve diğer `var(--color-text-secondary)` kullanımları için:
+
+| Arka plan (token / hex) | Kontrast |
+|-------------------------|----------|
+| `--ivory-bg` / beyaz `#FFFFFF` | **7.58:1** |
+| `--ivory-band` `#F4F1EA` | **6.72:1** |
+| `--ivory-band-soft` `#FBF8F2` | **7.15:1** |
+| `--bg-main` / `--steel-50` `#F8FAFC` | **7.24:1** |
+| `--steel-100` `#F1F5F9` | **6.92:1** |
+
+**Sonuç:** Ek token değişikliği gerekmez; `--color-text-secondary` bu yüzeylerde AA normal metin eşiğini karşılar.
+
+### Ivory hiyerarşisi — `--ivory-text-*`
+
+| Token | Açık tema rengi | Not |
+|--------|------------------|-----|
+| `--ivory-text-strong` | `#0F1729` | Başlıklar / vurgu gövde |
+| `--ivory-text-body` | `#475569` | `steel-600` ile aynı; `--color-text-secondary` ile uyumlu |
+| `--ivory-text-muted` | `#5C6575` | Krem bantlarda `steel-500` yerine koyulaştırıldı (AA); hâlâ gövdeden bir kademe daha düşük kontrast |
+| `--ivory-text-dim` | `#94A3B8` | Yalnızca büyük punto, kalın veya yardımcı etiket; küçük gövde metninde kullanmayın |
+
+### Kullanıcı koyu teması — `html[data-user-theme="dark"]`
+
+`--color-text-secondary` → `var(--dk-text-2)` (**`#CBD5E1`**). `--dk-bg` / `--dk-bg-2` / `--dk-bg-3` üzerinde ölçülen oranlar **~11.7:1–13.3:1** (AA büyük ölçüde).
+
+### Diğer
+
+- **Altın** (`--color-accent`): ince metin ve küçük puntoda çift kontrol; tercihen büyük veya kalın vurgu.
+- **Doğrulama:** Tarayıcı geliştirici araçları, Figma kontrast, veya `axe`.
+
+---
+
+## Checklist (yeni bileşen)
+
+- [ ] Design token; hardcoded # yok
+- [ ] Tüm kırılmalar ve touch 44px (mobil)
+- [ ] Hover, focus-visible, active (gerekirse)
+- [ ] Kontrast 4.5:1 (gövde)
+- [ ] `prefers-reduced-motion` (animasyon / spring)
+- [ ] Açık + koyu (veya sadece açık public)
+- [ ] Yükleme: skeleton / spinner
+
+---
+
+## Tarihsel: Endüstriyel “turuncu” palet (arşiv)
+
+Tasarım evrimi öncesi: Graphite `#1A1A2E`, CTA turuncu `#E8611A` / hover `#CC5216`, “Warm white” arka plan. Eski pazarlama PDF veya ekran görüntüleri bu renkleri yansıtabilir. **Kod ve canlı sitede** yukarıdaki **Premium v3** geçerlidir.

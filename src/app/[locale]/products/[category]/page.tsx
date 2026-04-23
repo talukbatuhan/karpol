@@ -5,6 +5,8 @@ import {
   getProductCategoryByLocalizedSlug,
   getProductCategories,
   getCategoryAttributeDefinitionsForCategory,
+  getIndustrySlugsByProductIds,
+  getIndustriesBySlugs,
 } from "@/lib/data/public-data";
 import { getLocalizedField, getLocalizedSlug } from "@/lib/i18n-helpers";
 import { productCategories } from "@/lib/config";
@@ -113,6 +115,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
     : category;
 
   let products: LocalizedProduct[] = [];
+  let industryFilterOptions: { slug: string; name: string }[] = [];
   let attributeDefinitions: Awaited<
     ReturnType<typeof getCategoryAttributeDefinitionsForCategory>
   >["data"] = [];
@@ -131,7 +134,21 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
     const { data: defs } = await getCategoryAttributeDefinitionsForCategory(categoryData.id);
     attributeDefinitions = defs;
 
-    products = ((productsRaw ?? []) as Product[]).map((p) => ({
+    const pr = (productsRaw ?? []) as Product[];
+    const pids = pr.map((p) => p.id);
+    const byPid = await getIndustrySlugsByProductIds(pids);
+    const allIndSlugs = new Set<string>();
+    for (const s of byPid.values()) for (const x of s) allIndSlugs.add(x);
+    const { data: indRows } = await getIndustriesBySlugs([...allIndSlugs]);
+    const indBySlug = new Map((indRows ?? []).map((i) => [i.slug, i]));
+    industryFilterOptions = [...allIndSlugs]
+      .map((slug) => ({
+        slug,
+        name: getLocalizedField(indBySlug.get(slug)?.name, locale) || slug,
+      }))
+      .sort((a, b) => a.name.localeCompare(b.name, locale === "tr" ? "tr" : "en"));
+
+    products = pr.map((p) => ({
       slug: getLocalizedSlug(p.slugs, locale, p.slug),
       sku: p.sku,
       name: getLocalizedField(p.name, locale),
@@ -146,6 +163,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
       image: p.images && p.images.length > 0 ? p.images[0] : undefined,
       structured_attributes: p.structured_attributes ?? null,
       list_group_key: p.list_group_key ?? null,
+      industrySlugs: byPid.get(p.id) ?? [],
     }));
   } else {
     if (allCategories.length === 0) {
@@ -185,6 +203,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
       categoryTree={categoryTree}
       facetConfig={categoryData?.facet_config ?? null}
       attributeDefinitions={attributeDefinitions}
+      industryFilterOptions={industryFilterOptions}
       breadcrumbItems={crumbItems}
     />
   );

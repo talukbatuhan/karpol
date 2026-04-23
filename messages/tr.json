@@ -21,6 +21,12 @@
     "aluminum cnc parts": "Alüminyum CNC Parçalar",
     "engineering plastics": "Mühendislik Plastikleri"
   },
+  "MobileActionBar": {
+    "navLabel": "Hızlı işlemler",
+    "requestQuote": "Teklif iste",
+    "contact": "İletişim",
+    "whatsappAria": "WhatsApp canlı destek"
+  },
   "Hero": {
     "headline": "Hassas Mühendislik. Küresel Çözümler.",
     "subheadline": "Dünyanın en zorlu makineleri için geliştirilmiş ileri endüstriyel bileşenler ve özel imalat çözümleri.",
@@ -53,6 +59,7 @@
     "applications": "Tipik Uygulamalar",
     "advantages": "Mühendislik Avantajları",
     "compatibility": "Makine Uyumluluğu",
+    "industryTags": "Sektör uygulamaları",
     "downloads": "Mühendislik Kaynakları",
     "drawings": "Teknik Çizimler",
     "drawing": "Teknik Çizim",
@@ -544,6 +551,7 @@
       "reset": "Tümünü sıfırla",
       "material": "Malzeme",
       "hardness": "Sertlik",
+      "industry": "Sektör / makine",
       "search": "Ara",
       "searchPlaceholder": "SKU, isim veya anahtar kelime",
       "toggleShow": "Filtreleri göster",

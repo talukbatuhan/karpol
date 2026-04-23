@@ -6,6 +6,7 @@ import { useLocale } from "next-intl";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import { Menu, X, ArrowUpRight, MapPin, Phone, Mail, Clock } from "lucide-react";
 import { siteConfig } from "@/lib/config";
+import { APP_LOCALES } from "@/i18n/config";
 
 const navLinks = [
   { label: "Home", href: "/" },
@@ -22,7 +23,7 @@ function ContactLocaleSwitcher({ variant }: { variant: "desktop" | "mobile" }) {
   const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
-  const locales = ["en", "tr"] as const;
+  const locales = APP_LOCALES;
   const wrapClass = variant === "desktop" ? "ak-locale" : "ak-nav-mobile-locale";
   return (
     <div className={wrapClass}>
@@ -137,7 +138,7 @@ function AksanContactInner() {
         .ak-nav-wrap {
           position: fixed;
           top: 0; left: 0; right: 0;
-          z-index: 100;
+          z-index: var(--z-sticky);
           background: rgba(245, 242, 238, 0.9);
           backdrop-filter: blur(20px);
           -webkit-backdrop-filter: blur(20px);

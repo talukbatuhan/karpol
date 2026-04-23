@@ -5,7 +5,7 @@ import { Menu, X, ArrowUpRight } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import { siteConfig } from "@/lib/config";
-
+import { APP_LOCALES } from "@/i18n/config";
 
 const NAV_ITEMS = [
   { key: "home", href: "/" },
@@ -19,7 +19,7 @@ function HeroLocaleSwitcher() {
   const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
-  const locales = ["en", "tr"] as const;
+  const locales = APP_LOCALES;
   return (
     <div className="hero-locale">
       {locales.map((l) => (

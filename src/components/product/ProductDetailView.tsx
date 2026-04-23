@@ -29,6 +29,7 @@ import type {
 
 export type ProductDetailViewProps = {
   locale: string;
+  productId?: string;
   productTitle: string;
   shortDesc: string;
   longDesc: string;
@@ -59,6 +60,8 @@ export type ProductDetailViewProps = {
   applications: string[];
   highlights: string[];
   compatibleMachines: string[];
+  /** From `industry_products` pivot — links to industry pages. */
+  linkedIndustries?: { slug: string; name: string }[];
   technicalDrawings: { url: string; title: string }[];
   datasheets: { url: string; title: string }[];
   related: {
@@ -71,6 +74,7 @@ export type ProductDetailViewProps = {
 
 export default function ProductDetailView({
   locale,
+  productId,
   productTitle,
   shortDesc,
   longDesc,
@@ -85,6 +89,7 @@ export default function ProductDetailView({
   applications,
   highlights,
   compatibleMachines,
+  linkedIndustries = [],
   technicalDrawings,
   datasheets,
   related,
@@ -317,163 +322,7 @@ export default function ProductDetailView({
           margin-top: 8px;
         }
 
-        .pd-size-wrap {
-          border: 1px solid rgba(200, 168, 90, 0.18);
-          border-radius: 16px;
-          overflow: hidden;
-          background: rgba(244, 241, 234, 0.55);
-        }
-        .pd-size-scroll {
-          max-height: 560px;
-          overflow-y: auto;
-          overflow-x: auto;
-          scrollbar-width: thin;
-          scrollbar-color: rgba(200, 168, 90, 0.26) transparent;
-        }
-        .pd-size-scroll::-webkit-scrollbar { width: 8px; height: 8px; }
-        .pd-size-scroll::-webkit-scrollbar-thumb {
-          background: rgba(200, 168, 90, 0.22);
-          border-radius: 4px;
-        }
-        .pd-size-table {
-          width: 100%;
-          border-collapse: collapse;
-          font-family: 'DM Sans', sans-serif;
-        }
-        .pd-size-table th {
-          position: sticky;
-          top: 0;
-          z-index: 2;
-          text-align: left;
-          padding: 16px 24px;
-          font-size: 10px;
-          letter-spacing: 0.22em;
-          text-transform: uppercase;
-          color: rgba(200, 168, 90, 0.85);
-          background: rgba(255, 255, 255, 0.98);
-          backdrop-filter: blur(12px);
-          -webkit-backdrop-filter: blur(12px);
-          border-bottom: 1px solid rgba(200, 168, 90, 0.22);
-          font-weight: 500;
-          box-shadow: 0 1px 0 rgba(15, 23, 41, 0.18);
-        }
-        .pd-size-table td {
-          padding: 16px 24px;
-          font-size: 14px;
-          color: rgba(15, 23, 41, 0.92);
-          border-bottom: 1px solid rgba(200, 168, 90, 0.08);
-          font-variant-numeric: tabular-nums;
-        }
-        .pd-size-table tr:last-child td { border-bottom: none; }
-        .pd-size-table tbody tr { transition: background 0.15s ease; }
-        .pd-size-table tbody tr:hover { background: rgba(200, 168, 90, 0.06); }
-        .pd-size-cell-primary {
-          font-family: ui-monospace, monospace;
-          color: rgba(200, 168, 90, 0.95);
-          letter-spacing: 0.05em;
-        }
-        .pd-size-empty {
-          padding: 48px 24px !important;
-          text-align: center;
-          color: rgba(100, 116, 139, 0.75);
-          font-size: 13px;
-          letter-spacing: 0.06em;
-        }
-
-        .pd-size-search {
-          display: inline-flex;
-          align-items: center;
-          gap: 8px;
-          padding: 9px 14px;
-          border: 1px solid rgba(200, 168, 90, 0.22);
-          border-radius: 999px;
-          background: rgba(244, 241, 234, 0.75);
-          transition: border-color 0.2s ease, background 0.2s ease;
-          min-width: 220px;
-          color: rgba(200, 168, 90, 0.78);
-        }
-        .pd-size-search:focus-within {
-          border-color: rgba(200, 168, 90, 0.55);
-          background: rgba(255, 255, 255, 0.96);
-        }
-        .pd-size-search input {
-          flex: 1;
-          background: transparent;
-          border: none;
-          outline: none;
-          color: rgba(15, 23, 41, 0.92);
-          font-family: 'DM Sans', sans-serif;
-          font-size: 13px;
-          letter-spacing: 0.02em;
-          min-width: 0;
-        }
-        .pd-size-search input::placeholder {
-          color: rgba(100, 116, 139, 0.65);
-        }
-        .pd-size-search-clear {
-          background: transparent;
-          border: none;
-          color: rgba(200, 168, 90, 0.65);
-          cursor: pointer;
-          padding: 2px;
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          border-radius: 50%;
-          transition: color 0.2s ease, background 0.2s ease;
-        }
-        .pd-size-search-clear:hover {
-          color: rgba(15, 23, 41, 0.95);
-          background: rgba(200, 168, 90, 0.10);
-        }
-
-        .pd-size-pager {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          gap: 12px;
-          padding: 14px 18px;
-          border-top: 1px solid rgba(200, 168, 90, 0.14);
-          background: rgba(244, 241, 234, 0.6);
-          flex-wrap: wrap;
-        }
-        .pd-size-pager-info {
-          font-size: 11px;
-          letter-spacing: 0.12em;
-          text-transform: uppercase;
-          color: rgba(100, 116, 139, 0.82);
-          font-family: 'DM Sans', sans-serif;
-        }
-        .pd-size-pager-btn {
-          display: inline-flex;
-          align-items: center;
-          gap: 6px;
-          padding: 8px 14px;
-          background: transparent;
-          border: 1px solid rgba(200, 168, 90, 0.26);
-          border-radius: 999px;
-          color: rgba(15, 23, 41, 0.88);
-          font-family: 'DM Sans', sans-serif;
-          font-size: 12px;
-          letter-spacing: 0.08em;
-          text-transform: uppercase;
-          cursor: pointer;
-          transition: all 0.2s ease;
-        }
-        .pd-size-pager-btn:hover:not(:disabled) {
-          border-color: rgba(200, 168, 90, 0.6);
-          background: rgba(200, 168, 90, 0.08);
-        }
-        .pd-size-pager-btn:disabled {
-          opacity: 0.35;
-          cursor: not-allowed;
-        }
-
-        @media (max-width: 720px) {
-          .pd-size-search { min-width: 0; width: 100%; }
-          .pd-size-pager { padding: 12px; }
-          .pd-size-pager-info { order: -1; flex-basis: 100%; text-align: center; }
-        }
+        /* Size table: styles live in ProductDetailSizeTableSection (separate client component). */
 
         .pd-app-grid {
           display: grid;
@@ -801,6 +650,7 @@ export default function ProductDetailView({
               )}
 
               <RFQModalWrapper
+                productId={productId}
                 productName={productTitle}
                 sku={sku}
                 contactLink={`/${locale}/contact`}
@@ -824,7 +674,7 @@ export default function ProductDetailView({
 
       {longDesc && (
         <>
-          <section className="pd-section">
+          <section className="pd-section lazy-section">
             <div className="pd-container">
               <p className="pd-overview-text">{longDesc}</p>
             </div>
@@ -835,7 +685,7 @@ export default function ProductDetailView({
 
       {modules.specifications && specifications.length > 0 && (
         <>
-          <section className="pd-section">
+          <section className="pd-section lazy-section">
             <div className="pd-container">
               <div className="pd-section-head">
                 <div>
@@ -874,7 +724,7 @@ export default function ProductDetailView({
 
       {modules.applications && applications.length > 0 && (
         <>
-          <section className="pd-section">
+          <section className="pd-section lazy-section">
             <div className="pd-container">
               <div className="pd-section-head">
                 <div>
@@ -906,7 +756,7 @@ export default function ProductDetailView({
 
       {highlights.length > 0 && (
         <>
-          <section className="pd-section">
+          <section className="pd-section lazy-section">
             <div className="pd-container">
               <div className="pd-section-head">
                 <div>
@@ -935,7 +785,7 @@ export default function ProductDetailView({
 
       {compatibleMachines.length > 0 && (
         <>
-          <section className="pd-section">
+          <section className="pd-section lazy-section">
             <div className="pd-container">
               <div className="pd-section-head">
                 <div>
@@ -960,9 +810,42 @@ export default function ProductDetailView({
         </>
       )}
 
+      {linkedIndustries.length > 0 && (
+        <>
+          <section className="pd-section lazy-section">
+            <div className="pd-container">
+              <div className="pd-section-head">
+                <div>
+                  <div className="pd-section-eyebrow">
+                    <span className="pd-section-eyebrow-line" />
+                    {t("eyebrow.compatibility")}
+                  </div>
+                  <h2 className="pd-section-title">
+                    {t("industryTags")} <em>—</em>
+                  </h2>
+                </div>
+              </div>
+              <div className="pd-machine-tags">
+                {linkedIndustries.map((ind) => (
+                  <Link
+                    key={ind.slug}
+                    href={{ pathname: "/industries/[slug]", params: { slug: ind.slug } }}
+                    className="pd-machine-tag"
+                    style={{ textDecoration: "none", cursor: "pointer" }}
+                  >
+                    {ind.name}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </section>
+          <div className="pd-section-divider" />
+        </>
+      )}
+
       {modules.technical_drawing && technicalDrawings.length > 0 && (
         <>
-          <section className="pd-section">
+          <section className="pd-section lazy-section">
             <div className="pd-container">
               <div className="pd-section-head">
                 <div>
@@ -1003,7 +886,7 @@ export default function ProductDetailView({
 
       {modules.datasheet && datasheets.length > 0 && (
         <>
-          <section className="pd-section">
+          <section className="pd-section lazy-section">
             <div className="pd-container">
               <div className="pd-section-head">
                 <div>
@@ -1045,7 +928,7 @@ export default function ProductDetailView({
         </>
       )}
 
-      <section className="pd-section">
+      <section className="pd-section lazy-section">
         <div className="pd-container">
           <div className="pd-cta-section">
             <div className="pd-cta-grid-bg" aria-hidden />
@@ -1074,7 +957,7 @@ export default function ProductDetailView({
       </section>
 
       {related.length > 0 && (
-        <section className="pd-section">
+        <section className="pd-section lazy-section">
           <div className="pd-container">
             <div className="pd-section-head">
               <div>
@@ -1105,7 +988,7 @@ export default function ProductDetailView({
                         alt={p.name}
                         fill
                         sizes="(max-width: 768px) 50vw, 25vw"
-                        style={{ objectFit: "contain", padding: 18 }}
+                        className="object-cover"
                       />
                     ) : (
                       <div className="pd-related-img-empty">

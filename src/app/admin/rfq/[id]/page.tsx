@@ -85,6 +85,25 @@ export default async function RFQDetailPage({ params }: { params: Promise<{ id: 
               </div>
             </div>
 
+            {rfq.line_items && rfq.line_items.length > 0 && (
+              <div className={styles.statCard} style={{ marginBottom: 24 }}>
+                <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 16 }}>Line items</h3>
+                <ul style={{ margin: 0, paddingLeft: 18, lineHeight: 1.8 }}>
+                  {rfq.line_items.map((line, i) => (
+                    <li key={i} style={{ fontSize: 14 }}>
+                      {(line.product_name || line.product_sku || 'Item') +
+                        (line.quantity ? ` — Qty: ${line.quantity}` : '')}
+                      {line.product_id ? (
+                        <span style={{ color: 'var(--text-muted)', fontSize: 12, marginLeft: 6 }}>
+                          ({line.product_id.slice(0, 8)}…)
+                        </span>
+                      ) : null}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
             {/* Files */}
             {rfq.file_urls && rfq.file_urls.length > 0 && (
               <div className={styles.statCard}>

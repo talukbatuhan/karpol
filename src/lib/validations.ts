@@ -1,5 +1,13 @@
 import { z } from 'zod'
 
+const rfqLineItemSchema = z.object({
+  product_id: z.string().optional(),
+  product_sku: z.string().optional(),
+  product_name: z.string().optional(),
+  quantity: z.string().optional(),
+  notes: z.string().optional(),
+})
+
 export const rfqSchema = z.object({
   name: z.string().min(2, 'Name is required'),
   email: z.string().email('Valid email is required'),
@@ -14,6 +22,7 @@ export const rfqSchema = z.object({
   urgency: z.enum(['standard', 'urgent', 'critical']).default('standard'),
   message: z.string().min(1, 'Message is required'),
   file_urls: z.array(z.string()).default([]),
+  line_items: z.array(rfqLineItemSchema).optional().default([]),
   source_page: z.string().optional(),
   locale: z.string().optional(),
 })

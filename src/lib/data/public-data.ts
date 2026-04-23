@@ -265,6 +265,24 @@ export async function getIndustries(): Promise<DataResponse<Industry>> {
   }
 }
 
+export async function getIndustriesBySlugs(
+  slugs: string[],
+): Promise<DataResponse<Industry>> {
+  if (slugs.length === 0) return { data: [], error: null };
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from("industries")
+      .select("*")
+      .in("slug", slugs);
+
+    if (error) return { data: [], error: error.message };
+    return { data: (data ?? []) as Industry[], error: null };
+  } catch {
+    return { data: [], error: "Database connection failed" };
+  }
+}
+
 export async function getIndustryBySlug(slug: string): Promise<ItemResponse<Industry>> {
   try {
     const supabase = await createClient();
@@ -278,6 +296,64 @@ export async function getIndustryBySlug(slug: string): Promise<ItemResponse<Indu
     return { data: data as Industry | null, error: null };
   } catch {
     return { data: null, error: "Database connection failed" };
+  }
+}
+
+export async function getIndustriesForProduct(productId: string): Promise<DataResponse<Industry>> {
+  try {
+    const supabase = await createClient();
+    const { data: links, error: e1 } = await supabase
+      .from("industry_products")
+      .select("industry_id")
+      .eq("product_id", productId);
+
+    if (e1) return { data: [], error: e1.message };
+    const ids = [...new Set((links ?? []).map((l) => l.industry_id as string))];
+    if (ids.length === 0) return { data: [], error: null };
+
+    const { data: rows, error: e2 } = await supabase
+      .from("industries")
+      .select("*")
+      .in("id", ids);
+
+    if (e2) return { data: [], error: e2.message };
+    return { data: (rows ?? []) as Industry[], error: null };
+  } catch {
+    return { data: [], error: "Database connection failed" };
+  }
+}
+
+/** Map of product_id -> industry slugs (for category facet filtering). */
+export async function getIndustrySlugsByProductIds(
+  productIds: string[],
+): Promise<Map<string, string[]>> {
+  const out = new Map<string, string[]>();
+  if (productIds.length === 0) return out;
+  try {
+    const supabase = await createClient();
+    const { data: links, error: e1 } = await supabase
+      .from("industry_products")
+      .select("product_id, industry_id")
+      .in("product_id", productIds);
+    if (e1 || !links?.length) return out;
+    const indIds = [...new Set(links.map((l) => l.industry_id as string))];
+    const { data: inds, error: e2 } = await supabase
+      .from("industries")
+      .select("id, slug")
+      .in("id", indIds);
+    if (e2 || !inds) return out;
+    const idToSlug = new Map(inds.map((i) => [i.id as string, i.slug as string]));
+    for (const l of links) {
+      const sid = l.product_id as string;
+      const slug = idToSlug.get(l.industry_id as string);
+      if (!slug) continue;
+      const cur = out.get(sid) ?? [];
+      if (!cur.includes(slug)) cur.push(slug);
+      out.set(sid, cur);
+    }
+    return out;
+  } catch {
+    return out;
   }
 }
 

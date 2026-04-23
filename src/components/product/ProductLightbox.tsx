@@ -117,7 +117,7 @@ export default function ProductLightbox({
         .pd-lb {
           position: fixed;
           inset: 0;
-          z-index: 1000;
+          z-index: var(--z-max);
           background: rgba(15, 23, 41, 0.96);
           backdrop-filter: blur(12px);
           display: flex;

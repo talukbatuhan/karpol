@@ -1,7 +1,10 @@
 "use client";
 
+import type { ComponentProps } from "react";
 import { ChevronRight } from "lucide-react";
 import { Link } from "@/i18n/navigation";
+
+type ProductBreadcrumbLinkHref = ComponentProps<typeof Link>["href"];
 
 export type ProductBreadcrumbItem = {
   label: string;
@@ -28,7 +31,10 @@ export default function ProductBreadcrumbs({
         >
           {i > 0 && <ChevronRight size={11} strokeWidth={1.5} />}
           {item.href ? (
-            <Link href={item.href as "/products" | { pathname: string; params?: Record<string, string> }} className="pp-breadcrumb pp-crumb-link">
+            <Link
+              href={item.href as ProductBreadcrumbLinkHref}
+              className="pp-breadcrumb pp-crumb-link"
+            >
               {item.label}
             </Link>
           ) : (

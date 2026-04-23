@@ -12,6 +12,7 @@ import {
   FormAlert,
   Button,
 } from "@/components/ui";
+import { useQuoteList } from "@/contexts/QuoteListContext";
 
 type RFQModalProps = {
   isOpen: boolean;
@@ -28,6 +29,7 @@ export default function RFQModal({
 }: RFQModalProps) {
   const t = useTranslations("RFQModal");
   const locale = useLocale();
+  const { toRfqLineItems, clear } = useQuoteList();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -54,21 +56,38 @@ export default function RFQModal({
     const notes = String(formData.get("notes") || "").trim();
 
     const productLabel = sku ? `${productName} (${sku})` : productName;
+    const fromList = toRfqLineItems();
+    const line_items =
+      fromList.length > 0
+        ? fromList
+        : [
+            {
+              product_sku: sku,
+              product_name: productName,
+              quantity: quantity || undefined,
+            },
+          ];
     const messageBody =
       notes ||
-      `Bu ürün için teklif talebim var: ${productLabel}` +
-        (quantity ? ` — Adet: ${quantity}` : "");
+      (fromList.length
+        ? `Teklif listesi (${fromList.length} kalem) üzerinden talep. İlk referans: ${productLabel}.`
+        : `Bu ürün için teklif talebim var: ${productLabel}`) +
+        (quantity && !fromList.length ? ` — Adet: ${quantity}` : "");
 
     const payload = {
       name: fullName,
       email,
       phone: phone || undefined,
       company: company || undefined,
-      product_interest: productLabel,
-      quantity: quantity || undefined,
+      product_interest:
+        fromList.length > 0
+          ? `Quote list (${fromList.length} items)`
+          : productLabel,
+      quantity: fromList.length ? String(fromList.length) : quantity || undefined,
       message: messageBody,
       urgency: "standard" as const,
       file_urls: [],
+      line_items,
       source_page:
         typeof window !== "undefined" ? window.location.pathname : undefined,
       locale,
@@ -93,6 +112,7 @@ export default function RFQModal({
       }
 
       setIsSuccess(true);
+      clear();
     } catch (err) {
       const fallback =
         "Talep gönderilemedi. Lütfen birkaç saniye sonra tekrar deneyin veya doğrudan iletişim sayfasını kullanın.";

@@ -1,7 +1,8 @@
 'use client'
 
 import { Package, ArrowRight, Eye } from 'lucide-react'
-import type { LocalizedField } from '@/types/database'
+import type { LocalizedField, SupportedLocale } from '@/types/database'
+import { SUPPORTED_LOCALES, getLocalizedField } from '@/lib/i18n-helpers'
 
 interface ProductCardPreviewProps {
   name: LocalizedField
@@ -14,8 +15,8 @@ interface ProductCardPreviewProps {
   sku?: string
   isActive?: boolean
   isFeatured?: boolean
-  locale?: 'tr' | 'en'
-  onLocaleChange?: (loc: 'tr' | 'en') => void
+  locale?: SupportedLocale
+  onLocaleChange?: (loc: SupportedLocale) => void
 }
 
 export default function ProductCardPreview({
@@ -33,16 +34,9 @@ export default function ProductCardPreview({
   onLocaleChange,
 }: ProductCardPreviewProps) {
   const cover = images[0]
-  const displayName =
-    name[locale] || name.tr || name.en || 'Ürün adı henüz girilmedi'
+  const displayName = getLocalizedField(name, locale) || 'Ürün adı henüz girilmedi'
   const displayDescription =
-    shortDescription[locale] ||
-    shortDescription.tr ||
-    shortDescription.en ||
-    description[locale] ||
-    description.tr ||
-    description.en ||
-    ''
+    getLocalizedField(shortDescription, locale) || getLocalizedField(description, locale) || ''
 
   const hardnessLabel =
     hardness && hardnessUnit
@@ -92,7 +86,7 @@ export default function ProductCardPreview({
               background: '#fff',
             }}
           >
-            {(['tr', 'en'] as const).map((loc) => (
+            {SUPPORTED_LOCALES.map((loc) => (
               <button
                 key={loc}
                 type="button"

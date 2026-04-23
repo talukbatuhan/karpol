@@ -52,7 +52,7 @@ export default function ProductDetailSizeTableSection({
 
   return (
     <>
-      <section className="pd-section">
+      <section className="pd-section lazy-section pd-size-table-section">
         <div className="pd-container">
           <div className="pd-section-head">
             <div>

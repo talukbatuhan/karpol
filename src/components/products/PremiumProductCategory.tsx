@@ -3,8 +3,8 @@
 "use no memo";
 
 import { useTranslations } from "next-intl";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
 import {
@@ -29,6 +29,7 @@ import ProductSectionHeader from "@/components/products/list/ProductSectionHeade
 import ProductFacetPanel, {
   formatFacetValueFromProduct,
 } from "@/components/products/filters/ProductFacetPanel";
+import CategoryMobileActionBar from "@/components/products/CategoryMobileActionBar";
 
 export type LocalizedProduct = {
   slug: string;
@@ -40,6 +41,8 @@ export type LocalizedProduct = {
   image?: string;
   structured_attributes?: Record<string, StructuredAttributeValue> | null;
   list_group_key?: string | null;
+  /** Industry slugs from `industry_products` (for facet filter). */
+  industrySlugs?: string[];
 };
 
 type CategoryProps = {
@@ -51,11 +54,23 @@ type CategoryProps = {
   categoryTree: PublicCategoryTreeNode[];
   facetConfig?: CategoryFacetConfig | null;
   attributeDefinitions: CategoryAttributeDefinition[];
+  industryFilterOptions?: { slug: string; name: string }[];
   breadcrumbItems?: { label: string; href?: string }[];
 };
 
 const INITIAL_PAGE_SIZE = 12;
 const PAGE_STEP = 12;
+
+/** Order-independent compare so we do not router.replace when only param ordering differs. */
+function urlSearchParamsMatch(a: URLSearchParams, b: URLSearchParams): boolean {
+  const keys = new Set<string>();
+  a.forEach((_, k) => keys.add(k));
+  b.forEach((_, k) => keys.add(k));
+  for (const k of keys) {
+    if (a.get(k) !== b.get(k)) return false;
+  }
+  return true;
+}
 
 function buildInitialCustomFilters(
   sp: URLSearchParams,
@@ -78,11 +93,13 @@ export default function PremiumProductCategory({
   categoryTree,
   facetConfig: facetConfigProp,
   attributeDefinitions,
+  industryFilterOptions: industryFilterOptionsProp = [],
   breadcrumbItems,
 }: CategoryProps) {
   const t = useTranslations("ProductsCategory");
-
   const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const router = useRouter();
 
   const mergedFacetConfig = useMemo(
     () => mergeFacetConfig(facetConfigProp ?? {}),
@@ -109,6 +126,9 @@ export default function PremiumProductCategory({
   const [hardnessFilters, setHardnessFilters] = useState<Set<string>>(
     () => new Set(searchParams.get("hardness")?.split(",").filter(Boolean) ?? []),
   );
+  const [industryFilters, setIndustryFilters] = useState<Set<string>>(
+    () => new Set(searchParams.get("industry")?.split(",").filter(Boolean) ?? []),
+  );
   const [query, setQuery] = useState(searchParams.get("q") ?? "");
   const [visibleCount, setVisibleCount] = useState(INITIAL_PAGE_SIZE);
   const [customFacetFilters, setCustomFacetFilters] = useState<
@@ -116,7 +136,7 @@ export default function PremiumProductCategory({
   >({});
   const customFiltersHydrated = useRef(false);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (customFiltersHydrated.current) return;
     customFiltersHydrated.current = true;
     setCustomFacetFilters(buildInitialCustomFilters(searchParams, filterableCustomDefs));
@@ -130,6 +150,9 @@ export default function PremiumProductCategory({
     if (hardnessFilters.size > 0) {
       params.set("hardness", Array.from(hardnessFilters).join(","));
     }
+    if (industryFilters.size > 0) {
+      params.set("industry", Array.from(industryFilters).join(","));
+    }
     if (query.trim()) {
       params.set("q", query.trim());
     }
@@ -139,18 +162,23 @@ export default function PremiumProductCategory({
         params.set(`f_${d.key}`, Array.from(set).join(","));
       }
     }
+    if (urlSearchParamsMatch(params, searchParams)) {
+      return;
+    }
     const qs = params.toString();
-    const newUrl = qs
-      ? `${window.location.pathname}?${qs}`
-      : window.location.pathname;
-    window.history.replaceState(null, "", newUrl);
+    const next = qs ? `${pathname}?${qs}` : pathname;
+    router.replace(next, { scroll: false });
     setVisibleCount(INITIAL_PAGE_SIZE);
   }, [
     materialFilters,
     hardnessFilters,
+    industryFilters,
     query,
     customFacetFilters,
     filterableCustomDefs,
+    pathname,
+    router,
+    searchParams,
   ]);
 
   const materialOptions = useMemo(() => {
@@ -206,6 +234,13 @@ export default function PremiumProductCategory({
           if (!sel.has(val)) return false;
         }
       }
+      if (
+        facetFlags.industry &&
+        industryFilters.size > 0 &&
+        !(p.industrySlugs ?? []).some((s) => industryFilters.has(s))
+      ) {
+        return false;
+      }
       if (q) {
         const haystack = `${p.sku} ${p.name} ${p.description}`.toLowerCase();
         if (!haystack.includes(q)) return false;
@@ -219,6 +254,8 @@ export default function PremiumProductCategory({
     query,
     facetFlags.material,
     facetFlags.hardness,
+    facetFlags.industry,
+    industryFilters,
     filterableCustomDefs,
     customFacetFilters,
   ]);
@@ -227,7 +264,11 @@ export default function PremiumProductCategory({
   const hasMore = visibleCount < filteredProducts.length;
 
   const activeFilterCount = useMemo(() => {
-    let n = materialFilters.size + hardnessFilters.size + (query.trim() ? 1 : 0);
+    let n =
+      materialFilters.size +
+      hardnessFilters.size +
+      industryFilters.size +
+      (query.trim() ? 1 : 0);
     for (const d of filterableCustomDefs) {
       n += customFacetFilters[d.key]?.size ?? 0;
     }
@@ -235,6 +276,7 @@ export default function PremiumProductCategory({
   }, [
     materialFilters,
     hardnessFilters,
+    industryFilters,
     query,
     filterableCustomDefs,
     customFacetFilters,
@@ -279,6 +321,7 @@ export default function PremiumProductCategory({
   function resetAll() {
     setMaterialFilters(new Set());
     setHardnessFilters(new Set());
+    setIndustryFilters(new Set());
     setQuery("");
     setCustomFacetFilters({});
   }
@@ -304,6 +347,11 @@ export default function PremiumProductCategory({
           font-family: "DM Sans", var(--font-inter), system-ui, sans-serif;
           position: relative;
           overflow-x: hidden;
+        }
+        @media (max-width: 767px) {
+          .pp-root {
+            padding-bottom: 5.5rem;
+          }
         }
 
         /* ── HEADER ── */
@@ -869,7 +917,7 @@ export default function PremiumProductCategory({
           {/* Mobile toggle */}
           <button
             type="button"
-            className="pp-filters-toggle"
+            className="pp-filters-toggle touch-target--min-h"
             onClick={() => setMobileFiltersOpen((v) => !v)}
             aria-expanded={mobileFiltersOpen}
           >
@@ -922,6 +970,13 @@ export default function PremiumProductCategory({
               }
               showMaterial={facetFlags.material}
               showHardness={facetFlags.hardness}
+              industryLabel={t("filters.industry")}
+              industryOptions={industryFilterOptionsProp}
+              industryFilters={industryFilters}
+              onToggleIndustry={(value) =>
+                toggleSet(industryFilters, value, setIndustryFilters)
+              }
+              showIndustry={facetFlags.industry}
               filterableDefinitions={filterableCustomDefs}
               customOptions={customOptions}
               customFilters={customFacetFilters}
@@ -930,8 +985,8 @@ export default function PremiumProductCategory({
             />
           </aside>
 
-          {/* GRID */}
-          <div>
+          {/* GRID — content-visibility on results only (filters stay eager) */}
+          <div className="lazy-section-product-grid">
             <div className="pp-grid-head">
               <span className="pp-result-count">
                 {t("results.showing", {
@@ -1100,7 +1155,7 @@ export default function PremiumProductCategory({
                   <div className="pp-load-more-wrap">
                     <button
                       type="button"
-                      className="pp-load-more"
+                      className="pp-load-more touch-target--min-h"
                       onClick={() => setVisibleCount((v) => v + PAGE_STEP)}
                     >
                       {t("results.loadMore")}
@@ -1113,6 +1168,8 @@ export default function PremiumProductCategory({
           </div>
         </div>
       </section>
+
+      <CategoryMobileActionBar categoryName={categoryName} />
     </div>
   );
 }

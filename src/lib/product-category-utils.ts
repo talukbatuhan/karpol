@@ -19,6 +19,7 @@ export function mergeFacetConfig(raw: unknown): CategoryFacetConfig {
   return {
     material: typeof o.material === 'boolean' ? o.material : undefined,
     hardness: typeof o.hardness === 'boolean' ? o.hardness : undefined,
+    industry: typeof o.industry === 'boolean' ? o.industry : undefined,
     customFacetKeys: Array.isArray(custom)
       ? custom.filter((x): x is string => typeof x === 'string')
       : undefined,
@@ -30,6 +31,8 @@ export function effectiveFacetFlags(config: CategoryFacetConfig | null | undefin
   return {
     material: c.material !== false,
     hardness: c.hardness !== false,
+    /** Shown only when `facet_config.industry` is explicitly true. */
+    industry: c.industry === true,
     customFacetKeys: c.customFacetKeys ?? [],
   }
 }

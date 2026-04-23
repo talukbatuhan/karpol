@@ -1,4 +1,5 @@
 @import "./dark-overrides.css";
+@import "../components/product/product-detail-size-table.css";
 
 @tailwind utilities;
 
@@ -29,10 +30,11 @@
   --steel-800: #1E293B;
   --steel-900: #0F172A;
 
-  /* Semantic Color Aliases */
+  /* Semantic Color Aliases
+     Secondary text uses steel-600 on light (WCAG ~4.5:1+ on steel-50/ivory at 14px+). */
   --color-text-primary: var(--steel-900);
-  --color-text-secondary: var(--steel-500);
-  --color-text-tertiary: var(--steel-400);
+  --color-text-secondary: var(--steel-600);
+  --color-text-tertiary: var(--steel-500);
   --color-border: var(--steel-200);
   --color-border-light: var(--steel-100);
   --color-white: #FFFFFF;
@@ -49,9 +51,9 @@
 
   --text-main: var(--steel-900);
   --text-body: var(--steel-700);
-  --text-muted: var(--steel-500);
-  --text-dim: var(--steel-400);
-  --text-caption: var(--steel-500);
+  --text-muted: var(--steel-600);
+  --text-dim: var(--steel-500);
+  --text-caption: var(--steel-600);
 
   /* ─── Legacy Aliases (premium gold — kept for back-compat) ─── */
   --gold: var(--color-accent);
@@ -95,17 +97,38 @@
   --radius-2xl: 24px;
   --radius-full: 9999px;
 
-  /* ─── Shadows (Navy-tinted) ─── */
+  /* ─── Shadows (Navy-tinted) + semantic elevation aliases ─── */
+  --elevation-0: none;
+  --elevation-1: 0 4px 20px rgba(15, 23, 42, 0.06);
+  --elevation-2: 0 8px 30px rgba(15, 23, 42, 0.1);
+  --elevation-popover: 0 4px 12px rgba(15, 23, 42, 0.08);
+  --elevation-dialog: 0 24px 60px rgba(15, 23, 42, 0.2);
   --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.04);
-  --shadow-card: 0 4px 20px rgba(15, 23, 42, 0.06);
-  --shadow-hover: 0 8px 30px rgba(15, 23, 42, 0.10);
-  --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
+  --shadow-card: var(--elevation-1);
+  --shadow-hover: var(--elevation-2);
+  --shadow-md: var(--elevation-popover);
   --shadow-lg: 0 12px 40px rgba(15, 23, 42, 0.12);
-  --shadow-modal: 0 24px 60px rgba(15, 23, 42, 0.20);
+  --shadow-modal: var(--elevation-dialog);
   --shadow-nav: 0 2px 16px rgba(15, 23, 42, 0.05);
+
+  /* Z-index (single stack — replace ad-hoc 9999) */
+  --z-base: 0;
+  --z-raised: 1;
+  --z-stacked: 2;
+  --z-sticky: 20;
+  --z-dock: 30;
+  --z-dropdown: 30;
+  --z-overlay: 40;
+  --z-modal: 50;
+  --z-toast: 60;
+  /* Fullscreen lightbox / critical overlay — above modal (50) and toast (60) per stack */
+  --z-max: 70;
 
   /* ─── Transitions ─── */
   --ease-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  /* Press / micro-interaction (e.g. Button — pair with ~120–150ms duration) */
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
   --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   --duration-fast: 150ms;
   --duration-normal: 300ms;
@@ -124,7 +147,8 @@
   --ivory-surface-soft: rgba(244, 241, 234, 0.55);
   --ivory-text-strong: #0F1729;
   --ivory-text-body: #475569;
-  --ivory-text-muted: #64748B;
+  /* Darker than --steel-500: 4.5:1+ on --ivory-band / --ivory-band-soft (WCAG AA normal text). */
+  --ivory-text-muted: #5C6575;
   --ivory-text-dim: #94A3B8;
   --ivory-border: rgba(15, 23, 41, 0.08);
   --ivory-border-strong: rgba(15, 23, 41, 0.14);
@@ -160,10 +184,35 @@
   --shadow-hover: 0 8px 32px rgba(0, 0, 0, 0.40);
 }
 
-/* ─── Performance: Content Visibility ─── */
+/* ─── Performance: Content Visibility (below-the-fold; not on LCP hero) ─── */
 .section {
   content-visibility: auto;
   contain-intrinsic-size: auto 500px;
+}
+
+.lazy-section {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 480px;
+}
+
+/* Taller placeholder for category product grid (many cards); avoids tiny 480px scrollbar jump */
+.lazy-section-product-grid {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 1200px;
+}
+
+/* Minimum touch target (mobile primary controls) — 44×44 (WCAG) */
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Full-width control: at least 44px tall; does not set min-width */
+.touch-target--min-h {
+  min-height: 44px;
 }
 
 html,

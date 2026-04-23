@@ -1,6 +1,6 @@
 /* ============================================
    KARPOL — Database Types v2.0
-   JSONB-based i18n for EN, TR, DE, AR
+   JSONB-based i18n (public site: EN, TR)
    ============================================ */
 
 export type SupportedLocale = "en" | "tr";
@@ -113,6 +113,8 @@ export interface ProductDatasheet {
 export interface CategoryFacetConfig {
   material?: boolean
   hardness?: boolean
+  /** When true, show industry / machine line facet (from `industry_products`). */
+  industry?: boolean
   /** Extra facet keys matching `category_attribute_definitions.key` with is_filterable. */
   customFacetKeys?: string[]
 }
@@ -260,6 +262,14 @@ export interface Article {
   updated_at: string
 }
 
+export interface RFQLineItem {
+  product_id?: string
+  product_sku?: string
+  product_name?: string
+  quantity?: string
+  notes?: string
+}
+
 export interface RFQSubmission {
   id: string
   created_at: string
@@ -276,6 +286,8 @@ export interface RFQSubmission {
   urgency: 'standard' | 'urgent' | 'critical'
   message: string
   file_urls: string[]
+  /** Multi-product cart / quote list (optional DB column). */
+  line_items?: RFQLineItem[] | null
   source_page?: string
   locale?: string
   status: 'new' | 'in_review' | 'quoted' | 'accepted' | 'rejected' | 'closed'

@@ -26,6 +26,11 @@ type ProductFacetPanelProps = {
   onToggleHardness: (value: string) => void;
   showMaterial: boolean;
   showHardness: boolean;
+  industryLabel: string;
+  industryOptions: { slug: string; name: string }[];
+  industryFilters: Set<string>;
+  onToggleIndustry: (slug: string) => void;
+  showIndustry: boolean;
   filterableDefinitions: CategoryAttributeDefinition[];
   customOptions: Record<string, string[]>;
   customFilters: Record<string, Set<string>>;
@@ -52,6 +57,11 @@ export default function ProductFacetPanel({
   onToggleHardness,
   showMaterial,
   showHardness,
+  industryLabel,
+  industryOptions,
+  industryFilters,
+  onToggleIndustry,
+  showIndustry,
   filterableDefinitions,
   customOptions,
   customFilters,
@@ -137,6 +147,41 @@ export default function ProductFacetPanel({
                     style={{ display: "none" }}
                   />
                   {value}
+                </label>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {showIndustry && industryOptions.length > 0 && (
+        <div className="pp-filter-group">
+          <h3 className="pp-filter-label">{industryLabel}</h3>
+          <div className="pp-check-list">
+            {industryOptions.map(({ slug, name }) => {
+              const checked = industryFilters.has(slug);
+              return (
+                <label key={slug} className={`pp-check-label${checked ? " checked" : ""}`}>
+                  <span className="pp-check-box">
+                    {checked && (
+                      <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+                        <path
+                          d="M1.5 5L4 7.5L8.5 2.5"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    )}
+                  </span>
+                  <input
+                    type="checkbox"
+                    checked={checked}
+                    onChange={() => onToggleIndustry(slug)}
+                    style={{ display: "none" }}
+                  />
+                  {name}
                 </label>
               );
             })}

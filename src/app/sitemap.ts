@@ -1,9 +1,11 @@
 import { MetadataRoute } from "next";
+import { APP_LOCALES } from "@/i18n/config";
 import { siteConfig } from "@/lib/config";
 import { getProductCategories, getPublishedArticles, getIndustries } from "@/lib/data/public-data";
 
 const baseUrl = siteConfig.url;
-const locales = ["en", "tr"];
+
+const locales = [...APP_LOCALES];
 
 function generateAlternates(path: string) {
   const languages: Record<string, string> = {};

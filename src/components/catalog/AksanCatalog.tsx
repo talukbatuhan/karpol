@@ -187,7 +187,7 @@ export default function AksanCatalog({ manifests, loadError }: AksanCatalogProps
           border-bottom: 1px solid rgba(15,23,41,0.08);
           position: sticky;
           top: 72px;
-          z-index: 50;
+          z-index: var(--z-dropdown);
         }
 
         .ck-filter-inner {
