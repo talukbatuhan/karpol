@@ -3,6 +3,7 @@ import {
   Product,
   ProductSizeRow,
   SizeColumn,
+  SizeTableBlock,
   SizeRow,
   SizeTable,
 } from "@/types/database";
@@ -299,4 +300,64 @@ export function normalizeSizeTable(input: unknown): SizeTable {
   }
 
   return EMPTY_SIZE_TABLE;
+}
+
+function hasVisibleRows(table: SizeTable): boolean {
+  return table.columns.length > 0 && table.rows.length > 0;
+}
+
+export function normalizeSizeTables(input: unknown): SizeTableBlock[] {
+  if (!input) return [];
+
+  if (typeof input === "object" && !Array.isArray(input)) {
+    const obj = input as { tables?: unknown[] };
+    if (Array.isArray(obj.tables)) {
+      const blocks: SizeTableBlock[] = [];
+      for (let index = 0; index < obj.tables.length; index++) {
+        const raw = obj.tables[index];
+        if (!raw || typeof raw !== "object") continue;
+        const entry = raw as {
+          id?: unknown;
+          title?: unknown;
+          table?: unknown;
+          columns?: unknown;
+          rows?: unknown;
+        };
+        const tableInput =
+          entry.table ?? ({ columns: entry.columns, rows: entry.rows } as unknown);
+        const table = normalizeSizeTable(tableInput);
+        if (!hasVisibleRows(table)) continue;
+        blocks.push({
+          id:
+            typeof entry.id === "string" && entry.id.trim().length > 0
+              ? entry.id
+              : `table-${index + 1}`,
+          title:
+            entry.title && typeof entry.title === "object"
+              ? (entry.title as SizeTableBlock["title"])
+              : undefined,
+          table,
+        });
+      }
+      if (blocks.length > 0) return blocks;
+    }
+  }
+
+  const single = normalizeSizeTable(input);
+  if (!hasVisibleRows(single)) return [];
+  return [{ id: "table-1", table: single }];
+}
+
+export function serializeSizeTables(blocks: SizeTableBlock[]): unknown {
+  const normalized = blocks
+    .map((b, index) => ({
+      id: b.id?.trim() || `table-${index + 1}`,
+      ...(b.title ? { title: b.title } : {}),
+      table: b.table,
+    }))
+    .filter((b) => hasVisibleRows(b.table));
+
+  if (normalized.length === 0) return EMPTY_SIZE_TABLE;
+  if (normalized.length === 1) return normalized[0].table;
+  return { tables: normalized };
 }

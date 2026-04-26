@@ -83,7 +83,7 @@ export function productFormToServerPayload(
     id?: string
     modules: import('@/types/database').ProductModules
     specifications: import('@/types/database').ProductSpecification[]
-    size_table: import('@/types/database').SizeTable
+    size_table: unknown
     gallery: import('@/types/database').ProductGalleryAsset[]
     technical_drawings: import('@/types/database').ProductTechnicalDrawing[]
     model_3d: import('@/types/database').ProductModel3D
@@ -132,6 +132,6 @@ export function productFormToServerPayload(
     is_featured: data.is_featured,
     images: extra.images,
     sort_order: Number.isFinite(Number(data.sort_order)) ? Number(data.sort_order) : 0,
-    structured_attributes: Object.keys(struct).length > 0 ? struct : null,
+    structured_attributes: Object.keys(struct).length > 0 ? struct : {},
   }
 }

@@ -14,23 +14,29 @@ import {
 import { assertAdminSession } from '@/lib/auth/server-admin-session'
 
 export async function saveProduct(formData: Record<string, unknown>) {
-  const gate = await assertAdminSession()
-  if (!gate.ok) {
-    return { error: gate.message, code: gate.code }
+  try {
+    const gate = await assertAdminSession()
+    if (!gate.ok) {
+      return { error: gate.message, code: gate.code }
+    }
+
+    const result = await upsertProduct(formData as Parameters<typeof upsertProduct>[0])
+
+    if (!result.error) {
+      revalidatePath('/admin/products')
+      revalidatePath('/en/products')
+      revalidatePath('/tr/products')
+      revalidatePath('/[locale]/products/[category]', 'page')
+      revalidatePath('/[locale]/products/[category]/[slug]', 'page')
+      revalidateTag('product-catalog', 'max')
+    }
+
+    return result
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : 'Ürün kaydedilirken beklenmeyen bir hata oluştu'
+    return { error: message }
   }
-
-  const result = await upsertProduct(formData as Parameters<typeof upsertProduct>[0])
-
-  if (!result.error) {
-    revalidatePath('/admin/products')
-    revalidatePath('/en/products')
-    revalidatePath('/tr/products')
-    revalidatePath('/[locale]/products/[category]', 'page')
-    revalidatePath('/[locale]/products/[category]/[slug]', 'page')
-    revalidateTag('product-catalog', 'max')
-  }
-
-  return result
 }
 
 export async function removeProduct(id: string) {

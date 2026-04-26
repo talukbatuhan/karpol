@@ -9,7 +9,7 @@ import I18nFieldEditor from '@/components/admin/I18nFieldEditor'
 import LocalizedSlugInput from '@/components/admin/LocalizedSlugInput'
 import SkuInput from '@/components/admin/SkuInput'
 import SpecificationBuilder from '@/components/admin/SpecificationBuilder'
-import SizeTableBuilder from '@/components/admin/SizeTableBuilder'
+import MultiSizeTableBuilder from '@/components/admin/MultiSizeTableBuilder'
 import GalleryBuilder from '@/components/admin/GalleryBuilder'
 import TechnicalDrawingBuilder from '@/components/admin/TechnicalDrawingBuilder'
 import Model3DBuilder from '@/components/admin/Model3DBuilder'
@@ -32,7 +32,7 @@ import {
   type LocalizedField,
   type LocalizedArrayField,
   type ProductSpecification,
-  type SizeTable,
+  type SizeTableBlock,
   type ProductGalleryAsset,
   type ProductTechnicalDrawing,
   type ProductModel3D,
@@ -43,7 +43,7 @@ import {
   type CategoryAttributeDefinition,
   type SupportedLocale,
 } from '@/types/database'
-import { normalizeSizeTable } from '@/lib/product-utils'
+import { normalizeSizeTables, serializeSizeTables } from '@/lib/product-utils'
 import styles from '@/app/admin/admin.module.css'
 import { Label, Input, Select, Button, FormAlert } from '@/components/ui'
 
@@ -75,6 +75,20 @@ type ProductEditorFormProps = {
   productId?: string
 }
 
+type ProductDraftPayload = {
+  form: FormValues
+  modules: ProductModules
+  specifications: ProductSpecification[]
+  sizeTables: SizeTableBlock[]
+  gallery: ProductGalleryAsset[]
+  technicalDrawings: ProductTechnicalDrawing[]
+  model3d: ProductModel3D
+  datasheets: ProductDatasheet[]
+  applications: LocalizedArrayField
+  images: string[]
+  updatedAt: string
+}
+
 export default function ProductEditorForm({ mode, productId }: ProductEditorFormProps) {
   const router = useRouter()
   const [saving, setSaving] = useState(false)
@@ -85,7 +99,9 @@ export default function ProductEditorForm({ mode, productId }: ProductEditorForm
   const [attributeDefinitions, setAttributeDefinitions] = useState<CategoryAttributeDefinition[]>([])
   const [modules, setModules] = useState<ProductModules>(DEFAULT_PRODUCT_MODULES)
   const [specifications, setSpecifications] = useState<ProductSpecification[]>([])
-  const [sizeTable, setSizeTable] = useState<SizeTable>(EMPTY_SIZE_TABLE)
+  const [sizeTables, setSizeTables] = useState<SizeTableBlock[]>([
+    { id: 'table-1', title: { tr: 'Ölçü Tablosu 1', en: 'Size Table 1' }, table: EMPTY_SIZE_TABLE },
+  ])
   const [gallery, setGallery] = useState<ProductGalleryAsset[]>([])
   const [technicalDrawings, setTechnicalDrawings] = useState<ProductTechnicalDrawing[]>([])
   const [model3d, setModel3d] = useState<ProductModel3D>({})
@@ -93,7 +109,12 @@ export default function ProductEditorForm({ mode, productId }: ProductEditorForm
   const [applications, setApplications] = useState<LocalizedArrayField>({ tr: [], en: [] })
   const [images, setImages] = useState<string[]>([])
   const [previewLocale, setPreviewLocale] = useState<SupportedLocale>('tr')
+  const [draftAvailable, setDraftAvailable] = useState(false)
+  const [draftUpdatedAt, setDraftUpdatedAt] = useState<string | null>(null)
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
+  const [draftSavedAt, setDraftSavedAt] = useState<string | null>(null)
   const prevCategoryRef = useRef<string | undefined>(undefined)
+  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const {
     register,
@@ -106,6 +127,7 @@ export default function ProductEditorForm({ mode, productId }: ProductEditorForm
   })
 
   const categoryId = watch('category_id')
+  const allFormValues = watch()
   const wSlugs = watch('slugs') as LocalizedField | undefined
   const wName = watch('name') as LocalizedField | undefined
   const wShort = watch('short_description') as LocalizedField | undefined
@@ -113,6 +135,10 @@ export default function ProductEditorForm({ mode, productId }: ProductEditorForm
   const sAttr = (watch('structured_attributes') as Record<string, unknown> | undefined) ?? {}
 
   const productSlug = canonicalProductSlug(wSlugs)
+  const draftKey =
+    mode === 'edit' && productId
+      ? `admin:product-draft:${productId}`
+      : 'admin:product-draft:new'
 
   useEffect(() => {
     fetch('/api/admin/categories')
@@ -194,7 +220,12 @@ export default function ProductEditorForm({ mode, productId }: ProductEditorForm
         })
         setModules({ ...DEFAULT_PRODUCT_MODULES, ...(product.modules ?? {}) })
         setSpecifications(product.specifications || [])
-        setSizeTable(normalizeSizeTable(product.size_table))
+        const normalizedTables = normalizeSizeTables(product.size_table)
+        setSizeTables(
+          normalizedTables.length > 0
+            ? normalizedTables
+            : [{ id: 'table-1', title: { tr: 'Ölçü Tablosu 1', en: 'Size Table 1' }, table: EMPTY_SIZE_TABLE }],
+        )
         setGallery(product.gallery || [])
         setTechnicalDrawings(product.technical_drawings || [])
         setModel3d(product.model_3d || {})
@@ -213,26 +244,134 @@ export default function ProductEditorForm({ mode, productId }: ProductEditorForm
     }
   }, [mode, productId, reset])
 
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    try {
+      const raw = window.localStorage.getItem(draftKey)
+      if (!raw) return
+      const parsed = JSON.parse(raw) as ProductDraftPayload
+      if (!parsed || typeof parsed !== 'object') return
+      setDraftAvailable(true)
+      setDraftUpdatedAt(parsed.updatedAt ?? null)
+    } catch {
+      // ignore broken draft payload
+    }
+  }, [draftKey])
+
+  const restoreDraft = () => {
+    if (typeof window === 'undefined') return
+    try {
+      const raw = window.localStorage.getItem(draftKey)
+      if (!raw) return
+      const parsed = JSON.parse(raw) as ProductDraftPayload
+      reset(parsed.form ?? emptyForm)
+      setModules(parsed.modules ?? DEFAULT_PRODUCT_MODULES)
+      setSpecifications(parsed.specifications ?? [])
+      setSizeTables(parsed.sizeTables ?? [])
+      setGallery(parsed.gallery ?? [])
+      setTechnicalDrawings(parsed.technicalDrawings ?? [])
+      setModel3d(parsed.model3d ?? {})
+      setDatasheets(parsed.datasheets ?? [])
+      setApplications(parsed.applications ?? { tr: [], en: [] })
+      setImages(parsed.images ?? [])
+      setHasUnsavedChanges(true)
+      setDraftSavedAt(parsed.updatedAt ?? null)
+      setDraftAvailable(false)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Taslak geri yüklenemedi')
+    }
+  }
+
+  const discardDraft = () => {
+    if (typeof window === 'undefined') return
+    window.localStorage.removeItem(draftKey)
+    setDraftAvailable(false)
+    setDraftUpdatedAt(null)
+  }
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    if (mode === 'edit' && loading) return
+
+    if (saveTimerRef.current) clearTimeout(saveTimerRef.current)
+    setHasUnsavedChanges(true)
+
+    saveTimerRef.current = setTimeout(() => {
+      const payload: ProductDraftPayload = {
+        form: allFormValues as FormValues,
+        modules,
+        specifications,
+        sizeTables,
+        gallery,
+        technicalDrawings,
+        model3d,
+        datasheets,
+        applications,
+        images,
+        updatedAt: new Date().toISOString(),
+      }
+      window.localStorage.setItem(draftKey, JSON.stringify(payload))
+      setDraftSavedAt(payload.updatedAt)
+      setDraftAvailable(false)
+    }, 800)
+
+    return () => {
+      if (saveTimerRef.current) clearTimeout(saveTimerRef.current)
+    }
+  }, [
+    mode,
+    loading,
+    draftKey,
+    allFormValues,
+    modules,
+    specifications,
+    sizeTables,
+    gallery,
+    technicalDrawings,
+    model3d,
+    datasheets,
+    applications,
+    images,
+  ])
+
+  useEffect(() => {
+    const beforeUnload = (event: BeforeUnloadEvent) => {
+      if (!hasUnsavedChanges) return
+      event.preventDefault()
+      event.returnValue = ''
+    }
+    window.addEventListener('beforeunload', beforeUnload)
+    return () => window.removeEventListener('beforeunload', beforeUnload)
+  }, [hasUnsavedChanges])
+
   const onValid = async (data: FormValues) => {
     setSaving(true)
     setError('')
-    const base = productFormToServerPayload(data, {
-      ...(mode === 'edit' && productId ? { id: productId } : {}),
-      modules,
-      specifications: modules.specifications ? specifications : [],
-      size_table: modules.size_table ? sizeTable : EMPTY_SIZE_TABLE,
-      gallery: modules.gallery ? gallery : [],
-      technical_drawings: modules.technical_drawing ? technicalDrawings : [],
-      model_3d: modules.model_3d ? model3d : {},
-      datasheets: modules.datasheet ? datasheets : [],
-      applications: modules.applications ? applications : {},
-      images,
-    })
-    const result = await saveProduct(base as Record<string, unknown>)
-    if (result.error) {
-      setError(result.error)
-    } else {
-      router.push('/admin/products')
+    try {
+      const base = productFormToServerPayload(data, {
+        ...(mode === 'edit' && productId ? { id: productId } : {}),
+        modules,
+        specifications: modules.specifications ? specifications : [],
+        size_table: modules.size_table ? serializeSizeTables(sizeTables) : EMPTY_SIZE_TABLE,
+        gallery: modules.gallery ? gallery : [],
+        technical_drawings: modules.technical_drawing ? technicalDrawings : [],
+        model_3d: modules.model_3d ? model3d : {},
+        datasheets: modules.datasheet ? datasheets : [],
+        applications: modules.applications ? applications : {},
+        images,
+      })
+      const result = await saveProduct(base as Record<string, unknown>)
+      if (result.error) {
+        setError(result.error)
+      } else {
+        if (typeof window !== 'undefined') {
+          window.localStorage.removeItem(draftKey)
+        }
+        setHasUnsavedChanges(false)
+        router.push('/admin/products')
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Kayıt sırasında beklenmeyen bir hata oluştu')
     }
     setSaving(false)
   }
@@ -316,6 +455,23 @@ export default function ProductEditorForm({ mode, productId }: ProductEditorForm
 
       <div className={styles.pageContent}>
         {error && <FormAlert variant="adminBanner">{error}</FormAlert>}
+        {draftAvailable && (
+          <FormAlert variant="adminBanner">
+            Kaydedilmemiş bir taslak bulundu
+            {draftUpdatedAt ? ` (${new Date(draftUpdatedAt).toLocaleString('tr-TR')})` : ''}.{' '}
+            <button type="button" className={`${styles.btn} ${styles.btnSecondary}`} onClick={restoreDraft}>
+              Taslağı Yükle
+            </button>{' '}
+            <button type="button" className={`${styles.btn} ${styles.btnDanger}`} onClick={discardDraft}>
+              Taslağı Sil
+            </button>
+          </FormAlert>
+        )}
+        {draftSavedAt && (
+          <div style={{ marginBottom: 10, fontSize: 12, color: 'var(--text-muted)' }}>
+            Taslak otomatik kaydedildi: {new Date(draftSavedAt).toLocaleString('tr-TR')}
+          </div>
+        )}
 
         <form id="product-form" onSubmit={parseAndSubmit}>
           <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 32 }}>
@@ -354,7 +510,7 @@ export default function ProductEditorForm({ mode, productId }: ProductEditorForm
               )}
 
               {modules.size_table && (
-                <SizeTableBuilder value={sizeTable} onChange={setSizeTable} />
+                <MultiSizeTableBuilder value={sizeTables} onChange={setSizeTables} />
               )}
 
               {modules.gallery && (

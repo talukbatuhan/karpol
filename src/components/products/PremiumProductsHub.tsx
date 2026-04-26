@@ -1,604 +1,99 @@
 "use client";
-// styled-jsx is incompatible with React Compiler's memoization — opt this file out.
-"use no memo";
-
-import { useTranslations } from "next-intl";
+import {
+  ArrowRight,
+} from "lucide-react";
 import { Link } from "@/i18n/navigation";
-import { ArrowUpRight, ChevronRight } from "lucide-react";
+import { useLocale, useTranslations } from "next-intl";
 import { productCategories } from "@/lib/config";
+import type { ProductCategory } from "@/types/database";
+import { getLocalizedField } from "@/lib/i18n-helpers";
 
 type HubProps = {
   counts: Record<string, number>;
   categoryLocaleSlugs?: Record<string, string>;
+  categories?: ProductCategory[];
 };
 
 export default function PremiumProductsHub({
   counts,
   categoryLocaleSlugs = {},
+  categories = [],
 }: HubProps) {
-  const t = useTranslations("ProductsHub");
+  const locale = useLocale();
+  const t = useTranslations("ProductsHub.premium");
+  const bannerStyles = [
+    "bg-[radial-gradient(circle_at_20%_20%,rgba(249,115,22,0.35),transparent_45%),linear-gradient(155deg,#1e293b,#0f172a)]",
+    "bg-[radial-gradient(circle_at_85%_20%,rgba(249,115,22,0.25),transparent_40%),linear-gradient(135deg,#111827,#1f2937)]",
+    "bg-[radial-gradient(circle_at_15%_25%,rgba(59,130,246,0.22),transparent_38%),linear-gradient(135deg,#0f172a,#1e293b)]",
+    "bg-[radial-gradient(circle_at_75%_80%,rgba(16,185,129,0.22),transparent_38%),linear-gradient(145deg,#111827,#172554)]",
+  ];
+  const displayCategories =
+    categories.length > 0
+      ? categories
+      : productCategories.map((cat) => ({
+          slug: cat.slug,
+          name: { tr: cat.name, en: cat.name },
+          description: { tr: "", en: "" },
+          icon: cat.icon,
+          image_url: undefined,
+        }));
 
   return (
-    <div className="pp-root">
-      <style jsx>{`
-        .pp-root {
-          min-height: 100vh;
-          background: #FFFFFF;
-          color: rgba(15, 23, 41, 0.88);
-          font-family: "DM Sans", var(--font-inter), system-ui, sans-serif;
-          position: relative;
-          overflow-x: hidden;
-        }
-
-        /* ── HERO ── */
-        .pp-hero {
-          position: relative;
-          min-height: min(86vh, 920px);
-          width: 100%;
-          overflow: hidden;
-          display: flex;
-          flex-direction: column;
-          justify-content: flex-end;
-          background: #FFFFFF;
-        }
-        .pp-hero-bg {
-          position: absolute;
-          inset: 0;
-          background:
-            radial-gradient(ellipse 90% 60% at 50% 0%, rgba(200, 168, 90, 0.18) 0%, rgba(244, 241, 234, 0) 55%),
-            radial-gradient(ellipse 60% 60% at 85% 100%, rgba(200, 168, 90, 0.12) 0%, transparent 60%),
-            radial-gradient(ellipse 60% 60% at 15% 90%, rgba(200, 168, 90, 0.10) 0%, transparent 55%),
-            linear-gradient(180deg, #F4F1EA 0%, #FFFFFF 60%, #FFFFFF 100%);
-          z-index: 0;
-        }
-        .pp-hero-grid {
-          position: absolute;
-          inset: 0;
-          background-image:
-            linear-gradient(rgba(200, 168, 90, 0.06) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(200, 168, 90, 0.06) 1px, transparent 1px);
-          background-size: 48px 48px;
-          mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, black 0%, transparent 75%);
-          -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, black 0%, transparent 75%);
-          z-index: 1;
-        }
-        .pp-hero-glow {
-          position: absolute;
-          inset: 0;
-          background: radial-gradient(ellipse 40% 30% at 50% 55%, rgba(200, 168, 90, 0.12) 0%, transparent 70%);
-          z-index: 2;
-        }
-
-        .pp-hero-content {
-          position: relative;
-          z-index: 10;
-          max-width: 1280px;
-          margin: 0 auto;
-          width: 100%;
-          padding: 8rem 1.75rem 5.5rem;
-        }
-        @media (min-width: 640px) { .pp-hero-content { padding: 9rem 3rem 6rem; } }
-        @media (min-width: 1024px) { .pp-hero-content { padding: 10rem 4rem 7rem; } }
-
-        .pp-eyebrow {
-          display: inline-flex;
-          align-items: center;
-          gap: 0.7rem;
-          margin-bottom: 1.75rem;
-          color: rgba(176, 147, 71, 0.95);
-          font-size: 0.68rem;
-          letter-spacing: 0.24em;
-          text-transform: uppercase;
-          font-weight: 500;
-        }
-        .pp-eyebrow-line {
-          width: 40px;
-          height: 1px;
-          background: rgba(200, 168, 90, 0.65);
-        }
-
-        .pp-hero-title {
-          font-family: "Cormorant Garamond", serif;
-          font-weight: 300;
-          font-size: clamp(2.6rem, 7vw, 5.4rem);
-          line-height: 1.02;
-          letter-spacing: -0.02em;
-          color: rgba(15, 23, 41, 0.98);
-          margin: 0 0 1.5rem;
-          max-width: 20ch;
-        }
-        .pp-hero-title em {
-          font-style: italic;
-          font-weight: 400;
-          color: #C8A85A;
-        }
-        .pp-hero-sub {
-          font-size: 1rem;
-          line-height: 1.7;
-          max-width: 58ch;
-          color: rgba(71, 85, 105, 0.88);
-          margin: 0 0 2.5rem;
-        }
-        @media (min-width: 768px) { .pp-hero-sub { font-size: 1.08rem; } }
-
-        .pp-cta-row {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 0.9rem;
-          align-items: center;
-        }
-        .pp-btn-primary,
-        .pp-btn-secondary {
-          display: inline-flex;
-          align-items: center;
-          gap: 0.55rem;
-          padding: 0.95rem 1.55rem;
-          font-family: var(--font-inter), system-ui, sans-serif;
-          font-size: 0.7rem;
-          letter-spacing: 0.18em;
-          text-transform: uppercase;
-          font-weight: 600;
-          text-decoration: none;
-          border-radius: 4px;
-          transition: all 0.25s;
-          cursor: pointer;
-          border: 1px solid transparent;
-        }
-        .pp-btn-primary {
-          background: #C8A85A;
-          color: #0F1729;
-          border-color: #C8A85A;
-        }
-        .pp-btn-primary:hover {
-          background: #B09347;
-          border-color: #B09347;
-          transform: translateY(-2px);
-        }
-        .pp-btn-secondary {
-          color: rgba(15, 23, 41, 0.92);
-          background: transparent;
-          border-color: rgba(15, 23, 41, 0.18);
-        }
-        .pp-btn-secondary:hover {
-          border-color: rgba(200, 168, 90, 0.65);
-          color: #0F1729;
-          background: rgba(200, 168, 90, 0.10);
-        }
-
-        .pp-scroll-hint {
-          position: absolute;
-          bottom: 1.75rem;
-          left: 50%;
-          transform: translateX(-50%);
-          z-index: 10;
-          display: flex;
-          align-items: center;
-          gap: 0.6rem;
-          color: rgba(200, 168, 90, 0.6);
-          font-size: 0.6rem;
-          letter-spacing: 0.28em;
-          text-transform: uppercase;
-        }
-        .pp-scroll-hint::before {
-          content: "";
-          display: inline-block;
-          width: 1px;
-          height: 32px;
-          background: linear-gradient(to bottom, transparent, rgba(200, 168, 90, 0.65), transparent);
-          animation: pp-scrollPulse 2.4s ease-in-out infinite;
-        }
-        @keyframes pp-scrollPulse {
-          0%, 100% { opacity: 0.3; }
-          50% { opacity: 1; }
-        }
-
-        /* ── STRIP ── */
-        .pp-strip-wrap {
-          position: relative;
-          z-index: 20;
-          margin-top: -80px;
-          padding: 0 1.25rem;
-        }
-        @media (min-width: 640px) { .pp-strip-wrap { padding: 0 2rem; } }
-        @media (min-width: 1024px) { .pp-strip-wrap { padding: 0 4rem; margin-top: -90px; } }
-
-        .pp-strip-inner {
-          max-width: 1200px;
-          margin: 0 auto;
-          display: grid;
-          grid-template-columns: 1fr;
-          gap: 0.9rem;
-          background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.98));
-          border: 1px solid rgba(15, 23, 41, 0.08);
-          border-radius: 14px;
-          padding: 1.35rem 1.25rem;
-          box-shadow: 0 30px 60px -30px rgba(15, 23, 41, 0.18);
-          backdrop-filter: blur(14px);
-        }
-        @media (min-width: 768px) {
-          .pp-strip-inner {
-            grid-template-columns: repeat(4, 1fr);
-            padding: 1.5rem 1.75rem;
-            gap: 1.25rem;
-          }
-        }
-        .pp-strip-item {
-          display: flex;
-          align-items: center;
-          gap: 0.85rem;
-          padding: 0.3rem 0;
-        }
-        .pp-strip-item + .pp-strip-item {
-          border-top: 1px solid rgba(15, 23, 41, 0.06);
-          padding-top: 0.85rem;
-        }
-        @media (min-width: 768px) {
-          .pp-strip-item + .pp-strip-item {
-            border-top: none;
-            border-left: 1px solid rgba(15, 23, 41, 0.08);
-            padding-top: 0.3rem;
-            padding-left: 1.1rem;
-          }
-        }
-        .pp-strip-icon {
-          width: 38px;
-          height: 38px;
-          border-radius: 8px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: #C8A85A;
-          background: rgba(200, 168, 90, 0.12);
-          border: 1px solid rgba(200, 168, 90, 0.22);
-          flex-shrink: 0;
-        }
-        .pp-strip-label {
-          font-size: 0.62rem;
-          letter-spacing: 0.2em;
-          text-transform: uppercase;
-          color: rgba(100, 116, 139, 0.88);
-          margin-bottom: 3px;
-        }
-        .pp-strip-value {
-          font-size: 0.84rem;
-          font-weight: 500;
-          color: rgba(15, 23, 41, 0.96);
-          line-height: 1.25;
-        }
-
-        /* ── SECTION ── */
-        .pp-section {
-          position: relative;
-          padding: 6rem 1.25rem;
-        }
-        @media (min-width: 640px) { .pp-section { padding: 7rem 2rem; } }
-        @media (min-width: 1024px) { .pp-section { padding: 8rem 4rem; } }
-
-        .pp-container {
-          max-width: 1280px;
-          margin: 0 auto;
-          position: relative;
-          z-index: 2;
-        }
-
-        .pp-section-head {
-          max-width: 720px;
-          margin: 0 auto 4rem;
-          text-align: center;
-        }
-        .pp-section-head .pp-eyebrow {
-          justify-content: center;
-        }
-        .pp-section-title {
-          font-family: "Cormorant Garamond", serif;
-          font-weight: 300;
-          font-size: clamp(2rem, 4.5vw, 3.4rem);
-          line-height: 1.08;
-          color: rgba(15, 23, 41, 0.98);
-          margin: 0 0 1rem;
-          letter-spacing: -0.015em;
-        }
-        .pp-section-sub {
-          font-size: 1rem;
-          line-height: 1.7;
-          color: rgba(100, 116, 139, 0.9);
-          margin: 0;
-        }
-
-        /* ── GRID ── */
-        .pp-grid {
-          display: grid;
-          grid-template-columns: 1fr;
-          gap: 1.25rem;
-        }
-        @media (min-width: 640px) { .pp-grid { grid-template-columns: repeat(2, 1fr); } }
-        @media (min-width: 1024px) { .pp-grid { grid-template-columns: repeat(3, 1fr); gap: 1.5rem; } }
-
-        .pp-card {
-          position: relative;
-          display: flex;
-          flex-direction: column;
-          padding: 1.75rem;
-          border-radius: 14px;
-          background: linear-gradient(180deg, rgba(244, 241, 234, 0.7), rgba(244, 241, 234, 0.6));
-          border: 1px solid rgba(15, 23, 41, 0.08);
-          color: inherit;
-          text-decoration: none;
-          transition: all 0.35s ease;
-          overflow: hidden;
-          min-height: 260px;
-        }
-        .pp-card::before {
-          content: "";
-          position: absolute;
-          inset: 0;
-          background: radial-gradient(ellipse 60% 50% at 50% 0%, rgba(200, 168, 90, 0.12) 0%, transparent 70%);
-          opacity: 0;
-          transition: opacity 0.35s;
-          pointer-events: none;
-        }
-        .pp-card:hover {
-          border-color: rgba(200, 168, 90, 0.32);
-          transform: translateY(-3px);
-          background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(244, 241, 234, 0.7));
-        }
-        .pp-card:hover::before { opacity: 1; }
-        .pp-card:hover .pp-card-arrow { transform: translate(2px, -2px); color: rgba(15, 23, 41, 0.98); }
-
-        .pp-card-top {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          margin-bottom: 1.75rem;
-          position: relative;
-          z-index: 2;
-        }
-        .pp-card-icon {
-          width: 46px;
-          height: 46px;
-          border-radius: 10px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          background: rgba(200, 168, 90, 0.12);
-          border: 1px solid rgba(200, 168, 90, 0.22);
-          font-size: 1.25rem;
-          line-height: 1;
-        }
-        .pp-card-prefix {
-          font-family: var(--font-inter), system-ui, sans-serif;
-          font-size: 0.62rem;
-          font-weight: 600;
-          letter-spacing: 0.18em;
-          text-transform: uppercase;
-          color: rgba(176, 147, 71, 0.95);
-          padding: 0.3rem 0.55rem;
-          border: 1px solid rgba(200, 168, 90, 0.4);
-          border-radius: 4px;
-          background: rgba(200, 168, 90, 0.08);
-        }
-
-        .pp-card-body {
-          flex: 1;
-          position: relative;
-          z-index: 2;
-        }
-        .pp-card-title {
-          font-family: "Cormorant Garamond", serif;
-          font-weight: 400;
-          font-size: 1.55rem;
-          line-height: 1.15;
-          color: rgba(15, 23, 41, 0.98);
-          margin: 0 0 0.65rem;
-          letter-spacing: -0.01em;
-        }
-        .pp-card-desc {
-          font-size: 0.88rem;
-          line-height: 1.55;
-          color: rgba(100, 116, 139, 0.9);
-          margin: 0;
-        }
-
-        .pp-card-foot {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          margin-top: 1.75rem;
-          padding-top: 1.25rem;
-          border-top: 1px solid rgba(15, 23, 41, 0.08);
-          position: relative;
-          z-index: 2;
-        }
-        .pp-card-count {
-          font-family: var(--font-inter), system-ui, sans-serif;
-          font-size: 0.7rem;
-          letter-spacing: 0.14em;
-          text-transform: uppercase;
-          color: rgba(100, 116, 139, 0.85);
-          font-weight: 500;
-        }
-        .pp-card-cta {
-          display: inline-flex;
-          align-items: center;
-          gap: 0.4rem;
-          font-family: var(--font-inter), system-ui, sans-serif;
-          font-size: 0.7rem;
-          letter-spacing: 0.16em;
-          text-transform: uppercase;
-          color: #C8A85A;
-          font-weight: 600;
-        }
-        .pp-card-arrow {
-          transition: transform 0.3s, color 0.3s;
-          color: rgba(176, 147, 71, 0.95);
-        }
-
-        /* ── CTA ── */
-        .pp-cta {
-          position: relative;
-          margin: 0 1.25rem 5rem;
-          border-radius: 20px;
-          overflow: hidden;
-          padding: 4rem 1.75rem;
-          background:
-            radial-gradient(ellipse 60% 80% at 10% 0%, rgba(200, 168, 90, 0.14), transparent 65%),
-            radial-gradient(ellipse 80% 80% at 100% 100%, rgba(200, 168, 90, 0.15), transparent 65%),
-            linear-gradient(180deg, #F4F1EA 0%, #FBF8F2 100%);
-          border: 1px solid rgba(15, 23, 41, 0.10);
-          max-width: 1200px;
-        }
-        @media (min-width: 640px) { .pp-cta { margin: 0 2rem 6rem; padding: 5rem 3rem; } }
-        @media (min-width: 1024px) {
-          .pp-cta {
-            margin: 0 auto 8rem;
-            padding: 5.5rem 5rem;
-          }
-        }
-        .pp-cta-inner {
-          display: flex;
-          flex-direction: column;
-          gap: 2rem;
-          position: relative;
-          z-index: 2;
-        }
-        @media (min-width: 1024px) {
-          .pp-cta-inner {
-            flex-direction: row;
-            align-items: center;
-            justify-content: space-between;
-            gap: 3rem;
-          }
-        }
-        .pp-cta-title {
-          font-family: "Cormorant Garamond", serif;
-          font-weight: 300;
-          font-size: clamp(1.8rem, 3.6vw, 2.8rem);
-          line-height: 1.1;
-          color: rgba(15, 23, 41, 0.98);
-          margin: 0 0 0.85rem;
-          letter-spacing: -0.015em;
-          max-width: 22ch;
-        }
-        .pp-cta-text {
-          font-size: 0.98rem;
-          line-height: 1.65;
-          color: rgba(100, 116, 139, 0.92);
-          margin: 0;
-          max-width: 50ch;
-        }
-        .pp-cta-actions {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 0.9rem;
-          flex-shrink: 0;
-        }
-      `}</style>
-
-      {/* ── HERO ── */}
-      <section className="pp-hero">
-        <div className="pp-hero-bg" aria-hidden />
-        <div className="pp-hero-grid" aria-hidden />
-        <div className="pp-hero-glow" aria-hidden />
-
-        <div className="pp-hero-content">
-          <div className="pp-eyebrow">
-            <span className="pp-eyebrow-line" />
-            {t("hero.eyebrow")}
-          </div>
-          <h1 className="pp-hero-title">
-            {t("hero.titleLine1")} <em>{t("hero.titleLine2")}</em>
-          </h1>
-          <p className="pp-hero-sub">{t("hero.subtitle")}</p>
-          <div className="pp-cta-row">
-            <a href="#categories" className="pp-btn-primary">
-              {t("hero.primaryCta")}
-              <ArrowUpRight size={14} strokeWidth={2.25} />
-            </a>
-            <Link href="/contact" className="pp-btn-secondary">
-              {t("hero.secondaryCta")}
-              <ArrowUpRight size={13} strokeWidth={2} />
-            </Link>
-          </div>
-        </div>
-
-        <div className="pp-scroll-hint" aria-hidden>
-          {t("hero.scrollHint")}
-        </div>
-      </section>
-
-      {/* ── CATEGORIES ── */}
-      <section id="categories" className="pp-section">
-        <div className="pp-container">
-          <div className="pp-grid">
-            {productCategories.map((cat) => {
-              const count = counts[cat.slug] ?? 0;
-              const localeSlug = categoryLocaleSlugs[cat.slug] ?? cat.slug;
-              return (
-                <Link
-                  key={cat.slug}
-                  href={{
-                    pathname: "/products/[category]",
-                    params: { category: localeSlug },
-                  }}
-                  className="pp-card"
-                >
-                  <div className="pp-card-top">
-                    <div className="pp-card-icon" aria-hidden>
-                      {cat.icon}
-                    </div>
-                    <span className="pp-card-prefix">{cat.prefix}</span>
-                  </div>
-                  <div className="pp-card-body">
-                    <h3 className="pp-card-title">
-                      {t(`categoryNames.${cat.slug}`)}
-                    </h3>
-                    <p className="pp-card-desc">
-                      {t(`categoryDescriptions.${cat.slug}`)}
-                    </p>
-                  </div>
-                  <div className="pp-card-foot">
-                    <span className="pp-card-count">
-                      {t("card.productsCount", { count })}
-                    </span>
-                    <span className="pp-card-cta">
-                      {t("card.browseCta")}
-                      <ChevronRight
-                        size={14}
-                        strokeWidth={2}
-                        className="pp-card-arrow"
-                      />
-                    </span>
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* ── CTA ── */}
-      <section className="pp-cta">
-        <div className="pp-cta-inner">
+    <div className="min-h-screen bg-slate-900 text-slate-100 dark:bg-[#0a0f1c]">
+      <section id="categories" className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-12">
+        <div className="mb-8 flex items-end justify-between gap-4">
           <div>
-            <div className="pp-eyebrow">
-              <span className="pp-eyebrow-line" />
-              {t("cta.eyebrow")}
-            </div>
-            <h2 className="pp-cta-title">{t("cta.title")}</h2>
-            <p className="pp-cta-text">{t("cta.text")}</p>
-          </div>
-          <div className="pp-cta-actions">
-            <Link href="/contact" className="pp-btn-primary">
-              {t("cta.primaryCta")}
-              <ArrowUpRight size={14} strokeWidth={2.25} />
-            </Link>
-            <Link href="/custom-manufacturing" className="pp-btn-secondary">
-              {t("cta.secondaryCta")}
-              <ArrowUpRight size={13} strokeWidth={2} />
-            </Link>
+            <p className="text-xs uppercase tracking-[0.22em] text-orange-300">{t("categories.eyebrow")}</p>
           </div>
         </div>
+
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {displayCategories.map((cat, index) => {
+            const localeSlug = categoryLocaleSlugs[cat.slug] ?? cat.slug;
+            return (
+              <Link
+                key={cat.slug}
+                href={{
+                  pathname: "/products/[category]",
+                  params: { category: localeSlug },
+                }}
+                className="group relative overflow-hidden rounded-2xl border border-white/15 bg-slate-800/70 p-5 transition duration-500 hover:scale-[1.01] hover:border-orange-500/70"
+              >
+                {cat.image_url ? (
+                  <img
+                    src={cat.image_url}
+                    alt={getLocalizedField(cat.name, locale) || cat.slug}
+                    className="absolute inset-0 z-10 h-full w-full object-cover"
+                  />
+                ) : (
+                  <div className={`absolute inset-0 z-10 ${bannerStyles[index % bannerStyles.length]}`} aria-hidden />
+                )}
+                <div className="absolute inset-0 z-10 bg-slate-950/45" aria-hidden />
+                <div className="absolute inset-x-0 bottom-0 z-10 h-20 bg-gradient-to-t from-slate-950/90 to-transparent" aria-hidden />
+                <div className="relative z-10">
+                  <div className="inline-flex h-10 min-w-10 items-center justify-center rounded-lg border border-orange-500/25 bg-orange-500/10 px-2 text-base text-orange-200">
+                    {"icon" in cat ? cat.icon : "⚙️"}
+                  </div>
+                  <h3 className="mt-4 text-xl font-semibold text-slate-100">
+                    {getLocalizedField(cat.name, locale) || cat.slug}
+                  </h3>
+                  <p className="mt-2 line-clamp-2 text-sm text-slate-300">
+                    {getLocalizedField(cat.description, locale)}
+                  </p>
+                  <div className="mt-4 flex items-center gap-2 text-sm font-semibold text-orange-300">
+                    {t("common.browse")}
+                    <ArrowRight className="h-4 w-4 transition duration-500 group-hover:translate-x-1 group-hover:opacity-100" />
+                  </div>
+                  <p className="mt-3 text-xs text-slate-300/80">
+                    {t("categories.activeProducts", { count: counts[cat.slug] ?? 0 })}
+                  </p>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
       </section>
+
     </div>
   );
 }

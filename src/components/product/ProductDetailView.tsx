@@ -24,7 +24,7 @@ import RFQModalWrapper from "./RFQModalWrapper";
 import type { Product3DSource } from "./Product3DViewer";
 import type {
   ProductSpecification,
-  SizeTable,
+  SizeTableBlock,
 } from "@/types/database";
 
 export type ProductDetailViewProps = {
@@ -56,7 +56,7 @@ export type ProductDetailViewProps = {
   gallery: GalleryItem[];
   model3d: Product3DSource | null;
   specifications: ProductSpecification[];
-  sizeTable: SizeTable;
+  sizeTables: SizeTableBlock[];
   applications: string[];
   highlights: string[];
   compatibleMachines: string[];
@@ -85,7 +85,7 @@ export default function ProductDetailView({
   gallery,
   model3d,
   specifications,
-  sizeTable,
+  sizeTables,
   applications,
   highlights,
   compatibleMachines,
@@ -719,7 +719,7 @@ export default function ProductDetailView({
       )}
 
       {modules.size_table && (
-        <ProductDetailSizeTableSection locale={locale} sizeTable={sizeTable} />
+        <ProductDetailSizeTableSection locale={locale} sizeTables={sizeTables} />
       )}
 
       {modules.applications && applications.length > 0 && (

@@ -532,6 +532,73 @@
       "vacuum-handling-components": "Taş, cam ve kompozit taşıma sistemleri için vantuzlar, vakum pedleri ve contalar.",
       "conveyor-transport-parts": "Ağır hizmet malzeme taşıma için tahrik kasnakları, makaralar ve konveyör elemanları.",
       "marble-machine-spare-parts": "Simec, Breton, Gaspari ve diğer büyük taş makineleri için birebir uyumlu yedek parçalar."
+    },
+    "premium": {
+      "hero": {
+        "badge": "Premium B2B Katalog",
+        "title": "Endüstriyel Yedek Parça Kataloğu",
+        "subtitle": "Mermer silim makineleri için yüksek dayanımlı poliüretan tekerlekler, titreşim sönümleyiciler ve proje bazlı üretim çözümlerini tek merkezde keşfedin.",
+        "searchAria": "SKU veya kategori ara",
+        "searchPlaceholder": "SKU veya Kategori Ara...",
+        "searchCta": "Katalogda Ara"
+      },
+      "common": {
+        "browse": "İncele",
+        "addToQuote": "Teklife Ekle"
+      },
+      "categories": {
+        "eyebrow": "Kategori Vitrini",
+        "title": "Sektöre Özel Çözüm Kategorileri",
+        "activeProducts": "{count} aktif ürün",
+        "transpalet": {
+          "title": "Transpalet Tekerlekleri",
+          "description": "Yüksek yük kapasitesi, kimyasal dayanım ve uzun servis ömrü için premium poliüretan çözümleri."
+        },
+        "takoz": {
+          "title": "Sönümleyici Takozlar",
+          "description": "Şok emilimi ve makine stabilitesi için optimize edilmiş takoz serisi."
+        },
+        "silim": {
+          "title": "Silim Lastikleri",
+          "description": "Yüzey kalitesi ve proses verimliliği odaklı silim performans çözümleri."
+        },
+        "custom": {
+          "eyebrow": "Proje Bazlı Üretim",
+          "title": "Özel İmalat Talebi",
+          "description": "Teknik resim, ölçü ve kullanım şartlarını paylaşın; uygulamanıza özel premium parça üretimini planlayalım.",
+          "cta": "Talep Oluştur"
+        }
+      },
+      "popular": {
+        "eyebrow": "En Çok Talep Edilenler",
+        "title": "Popüler Yedek Parçalar",
+        "parts": {
+          "part1": {
+            "title": "Standart Poliüretan Teker",
+            "category": "Transpalet Tekerlekleri",
+            "imageLabel": "Makro Ürün Görseli",
+            "drawingLabel": "Teknik Ölçü Çizimi"
+          },
+          "part2": {
+            "title": "Titreşim Sönümleyici Takoz",
+            "category": "Sönümleyici Takozlar",
+            "imageLabel": "Malzeme Dokusu",
+            "drawingLabel": "Montaj Teknik Çizimi"
+          },
+          "part3": {
+            "title": "Silim Lastiği Yüksek Dayanım",
+            "category": "Silim Lastikleri",
+            "imageLabel": "Kullanım Sahası",
+            "drawingLabel": "Kesit Ölçü Çizimi"
+          },
+          "part4": {
+            "title": "Özel Profil Parçası",
+            "category": "Özel Çözümler",
+            "imageLabel": "Yüzey ve Form Detayı",
+            "drawingLabel": "Proje Teknik Çizimi"
+          }
+        }
+      }
     }
   },
   "ProductsCategory": {

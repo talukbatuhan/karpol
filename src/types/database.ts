@@ -67,6 +67,12 @@ export interface SizeTable {
 
 export const EMPTY_SIZE_TABLE: SizeTable = { columns: [], rows: [] }
 
+export interface SizeTableBlock {
+  id: string
+  title?: LocalizedField
+  table: SizeTable
+}
+
 export interface ProductGalleryAsset {
   url: string
   alt?: LocalizedField
@@ -198,7 +204,7 @@ export interface Product {
    * Esnek ölçü tablosu (sütun + satır şeması). Geriye uyumluluk için eski
    * `ProductSizeRow[]` formatı da kabul edilir; `normalizeSizeTable` çağrılmalı.
    */
-  size_table?: SizeTable | ProductSizeRow[]
+  size_table?: SizeTable | ProductSizeRow[] | { tables?: unknown[] }
   images: string[]
   gallery?: ProductGalleryAsset[]
   model_3d_url?: string

@@ -19,9 +19,9 @@ import {
   uniqueByUrl,
   isImageUrl,
   getSupabaseJsonGallery,
-  normalizeSizeTable,
+  normalizeSizeTables,
 } from "@/lib/product-utils";
-import { DEFAULT_PRODUCT_MODULES, EMPTY_SIZE_TABLE } from "@/types/database";
+import { DEFAULT_PRODUCT_MODULES } from "@/types/database";
 
 type ProductDetailPageProps = {
   params: Promise<{ category: string; slug: string; locale: string }>;
@@ -199,9 +199,9 @@ export default async function ProductDetailPage({
       (richContent?.sizeTable as unknown) ??
       null
     : null;
-  const sizeTable = sizeTableSource
-    ? normalizeSizeTable(sizeTableSource)
-    : EMPTY_SIZE_TABLE;
+  const sizeTables = sizeTableSource
+    ? normalizeSizeTables(sizeTableSource)
+    : [];
 
   // Applications
   const applications = modules.applications
@@ -304,7 +304,7 @@ export default async function ProductDetailPage({
         gallery={gallery}
         model3d={model3dSource}
         specifications={specifications}
-        sizeTable={sizeTable}
+        sizeTables={sizeTables}
         applications={applications}
         highlights={highlights}
         compatibleMachines={compatibleMachines}

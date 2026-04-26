@@ -3,34 +3,38 @@
 import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { ChevronLeft, ChevronRight, Ruler, Search, X } from "lucide-react";
-import type { SizeTable } from "@/types/database";
+import type { SizeTableBlock } from "@/types/database";
 import { getLocalizedField } from "@/lib/i18n-helpers";
 
 const SIZE_PAGE_SIZE = 10;
 
 type Props = {
   locale: string;
-  sizeTable: SizeTable;
+  sizeTables: SizeTableBlock[];
 };
 
 export default function ProductDetailSizeTableSection({
   locale,
-  sizeTable,
+  sizeTables,
 }: Props) {
   const t = useTranslations("ProductDetail");
   const [sizeSearch, setSizeSearch] = useState("");
   const [sizePage, setSizePage] = useState(1);
+  const [activeTableIndex, setActiveTableIndex] = useState(0);
+
+  const activeTable = sizeTables[activeTableIndex]?.table;
 
   const filteredSizeRows = useMemo(() => {
-    const rows = sizeTable.rows;
+    if (!activeTable) return [];
+    const rows = activeTable.rows;
     const q = sizeSearch.trim().toLowerCase();
     if (!q) return rows;
     return rows.filter((row) =>
-      sizeTable.columns.some((col) =>
+      activeTable.columns.some((col) =>
         (row[col.key] ?? "").toString().toLowerCase().includes(q),
       ),
     );
-  }, [sizeTable.rows, sizeTable.columns, sizeSearch]);
+  }, [activeTable, sizeSearch]);
 
   const sizePageCount = Math.max(
     1,
@@ -41,12 +45,17 @@ export default function ProductDetailSizeTableSection({
     if (sizePage > sizePageCount) setSizePage(1);
   }, [sizePage, sizePageCount]);
 
+  useEffect(() => {
+    setSizeSearch("");
+    setSizePage(1);
+  }, [activeTableIndex]);
+
   const pagedSizeRows = useMemo(() => {
     const start = (sizePage - 1) * SIZE_PAGE_SIZE;
     return filteredSizeRows.slice(start, start + SIZE_PAGE_SIZE);
   }, [filteredSizeRows, sizePage]);
 
-  if (sizeTable.columns.length === 0 || sizeTable.rows.length === 0) {
+  if (!activeTable || activeTable.columns.length === 0 || activeTable.rows.length === 0) {
     return null;
   }
 
@@ -65,7 +74,7 @@ export default function ProductDetailSizeTableSection({
                 {t("sizes")} <em>—</em>
               </h2>
             </div>
-            {sizeTable.rows.length > SIZE_PAGE_SIZE && (
+            {activeTable.rows.length > SIZE_PAGE_SIZE && (
               <div className="pd-size-search">
                 <Search size={14} strokeWidth={1.6} />
                 <input
@@ -95,11 +104,30 @@ export default function ProductDetailSizeTableSection({
             )}
           </div>
           <div className="pd-size-wrap">
+            {sizeTables.length > 1 && (
+              <div className="pd-size-tabs">
+                {sizeTables.map((block, index) => {
+                  const title =
+                    getLocalizedField(block.title, locale) ||
+                    `${t("sizes")} ${index + 1}`;
+                  return (
+                    <button
+                      key={block.id}
+                      type="button"
+                      className={`pd-size-tab ${activeTableIndex === index ? "is-active" : ""}`}
+                      onClick={() => setActiveTableIndex(index)}
+                    >
+                      {title}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
             <div className="pd-size-scroll">
               <table className="pd-size-table">
                 <thead>
                   <tr>
-                    {sizeTable.columns.map((col) => {
+                    {activeTable.columns.map((col) => {
                       const heading =
                         getLocalizedField(col.label, locale) || col.key;
                       return (
@@ -118,7 +146,7 @@ export default function ProductDetailSizeTableSection({
                   {pagedSizeRows.length === 0 ? (
                     <tr>
                       <td
-                        colSpan={sizeTable.columns.length}
+                        colSpan={activeTable.columns.length}
                         className="pd-size-empty"
                       >
                         {t("size.noResults")}
@@ -127,7 +155,7 @@ export default function ProductDetailSizeTableSection({
                   ) : (
                     pagedSizeRows.map((row, i) => (
                       <tr key={(sizePage - 1) * SIZE_PAGE_SIZE + i}>
-                        {sizeTable.columns.map((col, ci) => {
+                        {activeTable.columns.map((col, ci) => {
                           const value = row[col.key];
                           const display =
                             value && value.trim().length > 0 ? value : "—";
