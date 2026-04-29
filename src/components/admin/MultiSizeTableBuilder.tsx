@@ -2,6 +2,7 @@
 
 import { Plus, Trash2 } from 'lucide-react'
 import type { SizeTableBlock } from '@/types/database'
+import { EMPTY_SIZE_TABLE } from '@/types/database'
 import styles from '@/app/admin/admin.module.css'
 import { Input, Label } from '@/components/ui'
 import SizeTableBuilder from '@/components/admin/SizeTableBuilder'
@@ -11,13 +12,10 @@ type Props = {
   onChange: (next: SizeTableBlock[]) => void
 }
 
-const EMPTY_TABLE = { columns: [], rows: [] }
-
 function makeBlock(index: number): SizeTableBlock {
   return {
-    id: `table-${Date.now()}-${index}`,
+    ...EMPTY_SIZE_TABLE,
     title: { tr: `Ölçü Tablosu ${index + 1}`, en: `Size Table ${index + 1}` },
-    table: EMPTY_TABLE,
   }
 }
 
@@ -37,7 +35,7 @@ export default function MultiSizeTableBuilder({ value, onChange }: Props) {
     <div className={styles.formGroup}>
       {blocks.map((block, index) => (
         <div
-          key={block.id}
+          key={index}
           style={{
             border: '1px solid var(--border)',
             borderRadius: 12,
@@ -83,8 +81,8 @@ export default function MultiSizeTableBuilder({ value, onChange }: Props) {
           </div>
 
           <SizeTableBuilder
-            value={block.table}
-            onChange={(table) => updateBlock(index, { table })}
+            value={{ columns: block.columns, rows: block.rows }}
+            onChange={(table) => updateBlock(index, { ...table, title: block.title })}
           />
         </div>
       ))}
