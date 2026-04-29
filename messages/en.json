@@ -605,6 +605,73 @@
       "vacuum-handling-components": "Suction cups, vacuum pads and seals for stone, glass and composite handling systems.",
       "conveyor-transport-parts": "Drive pulleys, idlers and conveyor elements for heavy-duty material transport.",
       "marble-machine-spare-parts": "Direct replacement parts for Simec, Breton, Gaspari and other major stone machinery."
+    },
+    "premium": {
+      "hero": {
+        "badge": "Premium B2B Catalog",
+        "title": "Industrial Spare Parts Catalog",
+        "subtitle": "Discover high-durability polyurethane wheels, vibration dampeners, and project-based manufacturing solutions for marble polishing machinery in one hub.",
+        "searchAria": "Search by SKU or category",
+        "searchPlaceholder": "Search SKU or Category...",
+        "searchCta": "Search Catalog"
+      },
+      "common": {
+        "browse": "Browse",
+        "addToQuote": "Add to Quote"
+      },
+      "categories": {
+        "eyebrow": "Category Showcase",
+        "title": "Industry-Fit Solution Categories",
+        "activeProducts": "{count} active products",
+        "transpalet": {
+          "title": "Pallet Truck Wheels",
+          "description": "Premium polyurethane wheel solutions for high load capacity, chemical resistance, and long service life."
+        },
+        "takoz": {
+          "title": "Damping Blocks",
+          "description": "Optimized damping components for shock absorption and machine stability."
+        },
+        "silim": {
+          "title": "Polishing Rubbers",
+          "description": "Performance-driven polishing compounds focused on surface quality and process efficiency."
+        },
+        "custom": {
+          "eyebrow": "Project-Based Manufacturing",
+          "title": "Custom Manufacturing Request",
+          "description": "Share your technical drawing, dimensions, and operating conditions; we will plan premium production tailored to your application.",
+          "cta": "Create Request"
+        }
+      },
+      "popular": {
+        "eyebrow": "Most Requested",
+        "title": "Popular Spare Parts",
+        "parts": {
+          "part1": {
+            "title": "Standard Polyurethane Wheel",
+            "category": "Pallet Truck Wheels",
+            "imageLabel": "Macro Product View",
+            "drawingLabel": "Technical Dimension Drawing"
+          },
+          "part2": {
+            "title": "Vibration Dampening Block",
+            "category": "Damping Blocks",
+            "imageLabel": "Material Texture",
+            "drawingLabel": "Assembly Technical Drawing"
+          },
+          "part3": {
+            "title": "High-Durability Polishing Rubber",
+            "category": "Polishing Rubbers",
+            "imageLabel": "Application Surface",
+            "drawingLabel": "Section Technical Drawing"
+          },
+          "part4": {
+            "title": "Custom Profile Component",
+            "category": "Custom Solutions",
+            "imageLabel": "Surface and Form Detail",
+            "drawingLabel": "Project Technical Drawing"
+          }
+        }
+      }
     }
   },
   "ProductsCategory": {

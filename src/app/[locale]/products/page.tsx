@@ -41,6 +41,7 @@ export default async function ProductsPage({ params }: ProductsPageProps) {
     <PremiumProductsHub
       counts={counts}
       categoryLocaleSlugs={categoryLocaleSlugs}
+      categories={categoriesRes.data}
     />
   );
 }
