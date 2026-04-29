@@ -3,7 +3,7 @@
 "use no memo";
 
 import { useTranslations } from "next-intl";
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { startTransition, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
@@ -139,7 +139,9 @@ export default function PremiumProductCategory({
   useLayoutEffect(() => {
     if (customFiltersHydrated.current) return;
     customFiltersHydrated.current = true;
-    setCustomFacetFilters(buildInitialCustomFilters(searchParams, filterableCustomDefs));
+    startTransition(() => {
+      setCustomFacetFilters(buildInitialCustomFilters(searchParams, filterableCustomDefs));
+    });
   }, [searchParams, filterableCustomDefs]);
 
   useEffect(() => {
@@ -295,6 +297,14 @@ export default function PremiumProductCategory({
       (entries.length === 1 && entries[0][0] !== "_default");
     return { entries, showHeaders };
   }, [visibleProducts]);
+
+  /** One card image may use fetchpriority to help category LCP (below hero). */
+  const lcpProductSlug = useMemo(() => {
+    if (visibleProducts.length === 0) return null;
+    if (!groupedVisible.showHeaders) return visibleProducts[0].slug;
+    const firstList = groupedVisible.entries[0]?.[1];
+    return firstList?.[0]?.slug ?? visibleProducts[0].slug;
+  }, [visibleProducts, groupedVisible]);
 
   function toggleSet(
     current: Set<string>,
@@ -1041,6 +1051,7 @@ export default function PremiumProductCategory({
                                     fill
                                     sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"
                                     style={{ objectFit: "cover" }}
+                                    priority={p.slug === lcpProductSlug}
                                   />
                                 ) : (
                                   <div className="pp-img-placeholder">
@@ -1107,6 +1118,7 @@ export default function PremiumProductCategory({
                                 fill
                                 sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"
                                 style={{ objectFit: "cover" }}
+                                priority={p.slug === lcpProductSlug}
                               />
                             ) : (
                               <div className="pp-img-placeholder">

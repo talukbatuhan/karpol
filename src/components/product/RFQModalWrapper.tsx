@@ -95,6 +95,16 @@ export default function RFQModalWrapper({
         whatsAppAriaLabel={contactText}
       />
 
+      <button
+        type="button"
+        className="pd-floating-rfq"
+        onClick={() => setRfqOpen(true)}
+        aria-label={buttonText}
+      >
+        {buttonText}
+        <ArrowUpRight size={14} strokeWidth={1.6} aria-hidden />
+      </button>
+
       <style jsx>{`
         .pd-cta-row {
           display: inline-flex;
@@ -106,6 +116,44 @@ export default function RFQModalWrapper({
           .pd-cta-rfq,
           .pd-cta-wa {
             display: none;
+          }
+        }
+
+        .pd-floating-rfq {
+          display: none;
+        }
+        @media (min-width: 768px) {
+          .pd-floating-rfq {
+            display: inline-flex;
+            position: fixed;
+            z-index: var(--z-dock, 30);
+            bottom: max(24px, env(safe-area-inset-bottom));
+            right: max(24px, env(safe-area-inset-right));
+            align-items: center;
+            gap: 8px;
+            min-height: 48px;
+            padding: 12px 20px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 12px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            font-weight: 600;
+            color: #0F1729;
+            background: var(--color-cta, #E8611A);
+            border: 1px solid var(--color-cta, #E8611A);
+            border-radius: 100px;
+            box-shadow: var(--shadow-md, 0 4px 12px rgba(15, 23, 42, 0.12));
+            cursor: pointer;
+            transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+          }
+          .pd-floating-rfq:hover {
+            background: var(--color-cta-hover, #C44E0F);
+            border-color: var(--color-cta-hover, #C44E0F);
+            color: #fff;
+          }
+          .pd-floating-rfq:focus-visible {
+            outline: 2px solid var(--ivory-text-strong, #0F1729);
+            outline-offset: 3px;
           }
         }
         .pd-btn-primary {

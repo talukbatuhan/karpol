@@ -1,7 +1,7 @@
 "use client";
 "use no memo";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { siteConfig } from "@/lib/config";
 import { cn } from "@/lib/cn";
@@ -73,13 +73,15 @@ export default function WhatsAppChatModal({
   const [isSending, setIsSending] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [opened, setOpened] = useState(false);
+  const wasOpenRef = useRef(isOpen);
 
   useEffect(() => {
-    if (!isOpen) {
+    if (wasOpenRef.current && !isOpen) {
       setIsSending(false);
       setErrorMsg(null);
       setOpened(false);
     }
+    wasOpenRef.current = isOpen;
   }, [isOpen]);
 
   const targetNumber = resolveTargetNumber();

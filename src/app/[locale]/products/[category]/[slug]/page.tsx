@@ -19,9 +19,15 @@ import {
   uniqueByUrl,
   isImageUrl,
   getSupabaseJsonGallery,
-  normalizeSizeTable,
+  normalizeProductSpecificationTables,
+  normalizeProductSizeTables,
 } from "@/lib/product-utils";
-import { DEFAULT_PRODUCT_MODULES, EMPTY_SIZE_TABLE } from "@/types/database";
+import { DEFAULT_PRODUCT_MODULES } from "@/types/database";
+import type { AppLocale } from "@/i18n/config";
+import {
+  buildAlternatesLanguages,
+  productsPathSegment,
+} from "@/lib/seo/alternates";
 
 type ProductDetailPageProps = {
   params: Promise<{ category: string; slug: string; locale: string }>;
@@ -58,23 +64,18 @@ export async function generateMetadata({
     const prodSlug = product
       ? getLocalizedSlug(product.slugs, target, product.slug)
       : slug;
-    const productsSegment = target === "tr" ? "urunler" : "products";
+    const productsSegment = productsPathSegment(target);
     return `/${target}/${productsSegment}/${catSlug}/${prodSlug}`;
   };
-
-  const trHref = buildLocaleHref("tr");
-  const enHref = buildLocaleHref("en");
 
   return {
     title: `${title} | KARPOL Engineering`,
     description: desc,
     alternates: {
-      canonical: locale === "tr" ? trHref : enHref,
-      languages: {
-        tr: trHref,
-        en: enHref,
-        "x-default": enHref,
-      },
+      canonical: buildLocaleHref(locale),
+      languages: buildAlternatesLanguages((loc) =>
+        buildLocaleHref(loc as AppLocale),
+      ),
     },
     openGraph: {
       title: `${title} | KARPOL`,
@@ -159,8 +160,8 @@ export default async function ProductDetailPage({
         : null;
 
   // Specs
-  const specsFromProduct = modules.specifications
-    ? (product?.specifications ?? [])
+  const specTablesFromProduct = modules.specifications
+    ? normalizeProductSpecificationTables(product?.specifications ?? null)
     : [];
   const fallbackSpecs = [
     {
@@ -186,12 +187,14 @@ export default async function ProductDetailPage({
     { label: t("spec.sku"), value: product?.sku ?? "" },
   ].filter((s) => s.value);
 
-  const specifications =
-    specsFromProduct.length > 0
-      ? specsFromProduct
-      : fallbackSpecs.length > 0
-        ? fallbackSpecs
-        : (richContent?.specs ?? []);
+  const hasCustomSpecRows = specTablesFromProduct.some((tab) => tab.rows.length > 0);
+  const specificationTables = hasCustomSpecRows
+    ? specTablesFromProduct
+    : fallbackSpecs.length > 0
+      ? [{ rows: fallbackSpecs }]
+      : richContent?.specs?.length
+        ? [{ rows: richContent.specs.map((s) => ({ label: s.label, value: s.value })) }]
+        : [];
 
   // Size table — esnek sütunlar (yeni format) + eski formattan otomatik dönüşüm
   const sizeTableSource = modules.size_table
@@ -199,9 +202,7 @@ export default async function ProductDetailPage({
       (richContent?.sizeTable as unknown) ??
       null
     : null;
-  const sizeTable = sizeTableSource
-    ? normalizeSizeTable(sizeTableSource)
-    : EMPTY_SIZE_TABLE;
+  const sizeTables = sizeTableSource ? normalizeProductSizeTables(sizeTableSource) : [];
 
   // Applications
   const applications = modules.applications
@@ -303,8 +304,8 @@ export default async function ProductDetailPage({
         modules={modules}
         gallery={gallery}
         model3d={model3dSource}
-        specifications={specifications}
-        sizeTable={sizeTable}
+        specificationTables={specificationTables}
+        sizeTables={sizeTables}
         applications={applications}
         highlights={highlights}
         compatibleMachines={compatibleMachines}

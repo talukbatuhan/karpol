@@ -8,9 +8,9 @@ import {
   CheckCircle2,
   ChevronLeft,
   ChevronRight,
-  Download,
   FileText,
   PenTool,
+  Ruler,
   Settings2,
   Sparkles,
   Wrench,
@@ -21,11 +21,13 @@ import ProductVisualsWrapper, {
 } from "./ProductVisualsWrapper";
 import ProductDetailSizeTableSection from "./ProductDetailSizeTableSection";
 import RFQModalWrapper from "./RFQModalWrapper";
+import GatedDatasheetDownload from "./GatedDatasheetDownload";
 import type { Product3DSource } from "./Product3DViewer";
 import type {
-  ProductSpecification,
-  SizeTable,
+  ProductSpecificationTable,
+  SizeTableBlock,
 } from "@/types/database";
+import { getLocalizedField } from "@/lib/i18n-helpers";
 
 export type ProductDetailViewProps = {
   locale: string;
@@ -55,8 +57,8 @@ export type ProductDetailViewProps = {
   };
   gallery: GalleryItem[];
   model3d: Product3DSource | null;
-  specifications: ProductSpecification[];
-  sizeTable: SizeTable;
+  specificationTables: ProductSpecificationTable[];
+  sizeTables: SizeTableBlock[];
   applications: string[];
   highlights: string[];
   compatibleMachines: string[];
@@ -84,8 +86,8 @@ export default function ProductDetailView({
   modules,
   gallery,
   model3d,
-  specifications,
-  sizeTable,
+  specificationTables,
+  sizeTables,
   applications,
   highlights,
   compatibleMachines,
@@ -683,7 +685,8 @@ export default function ProductDetailView({
         </>
       )}
 
-      {modules.specifications && specifications.length > 0 && (
+      {modules.specifications &&
+        specificationTables.some((tab) => tab.rows.length > 0) && (
         <>
           <section className="pd-section lazy-section">
             <div className="pd-container">
@@ -698,28 +701,86 @@ export default function ProductDetailView({
                   </h2>
                 </div>
               </div>
-              <div className="pd-spec-grid">
-                {specifications.map((s, i) => (
-                  <div key={`${s.label}-${i}`} className="pd-spec-cell">
-                    <span className="pd-spec-label">{s.label}</span>
-                    <span className="pd-spec-value">
-                      {s.value}
-                      {s.unit ? <span className="pd-spec-unit">{s.unit}</span> : null}
-                    </span>
-                    {s.test_method ? (
-                      <span className="pd-spec-test">{s.test_method}</span>
-                    ) : null}
-                  </div>
-                ))}
-              </div>
+              {specificationTables
+                .filter((tab) => tab.rows.length > 0)
+                .map((tab, tabIdx) => {
+                  const tableTitle = getLocalizedField(tab.title, locale);
+                  return (
+                    <div
+                      key={`spec-table-${tabIdx}-${tableTitle || "default"}`}
+                      style={tabIdx > 0 ? { marginTop: "2.25rem" } : undefined}
+                    >
+                      {tableTitle ? (
+                        <h3
+                          className="pd-section-title"
+                          style={{
+                            fontSize: "clamp(1.15rem, 2.5vw, 1.45rem)",
+                            marginBottom: "1.1rem",
+                            fontWeight: 500,
+                          }}
+                        >
+                          {tableTitle}
+                        </h3>
+                      ) : null}
+                      <div className="pd-spec-grid">
+                        {tab.rows.map((s, i) => (
+                          <div key={`${tabIdx}-${s.label}-${i}`} className="pd-spec-cell">
+                            <span className="pd-spec-label">{s.label}</span>
+                            <span className="pd-spec-value">
+                              {s.value}
+                              {s.unit ? <span className="pd-spec-unit">{s.unit}</span> : null}
+                            </span>
+                            {s.test_method ? (
+                              <span className="pd-spec-test">{s.test_method}</span>
+                            ) : null}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
             </div>
           </section>
           <div className="pd-section-divider" />
         </>
       )}
 
-      {modules.size_table && (
-        <ProductDetailSizeTableSection locale={locale} sizeTable={sizeTable} />
+      {modules.size_table &&
+        sizeTables.some((b) => b.columns.length > 0 && b.rows.length > 0) && (
+        <>
+          <section className="pd-section lazy-section pd-size-table-section">
+            <div className="pd-container">
+              <div className="pd-section-head">
+                <div>
+                  <div className="pd-section-eyebrow">
+                    <span className="pd-section-eyebrow-line" />
+                    <Ruler size={11} strokeWidth={1.6} />
+                    {t("eyebrow.sizes")}
+                  </div>
+                  <h2 className="pd-section-title">
+                    {t("sizes")} <em>—</em>
+                  </h2>
+                </div>
+              </div>
+              {sizeTables
+                .filter((b) => b.columns.length > 0 && b.rows.length > 0)
+                .map((block, idx) => (
+                  <div
+                    key={`size-block-${idx}-${block.columns.map((c) => c.key).join("-")}`}
+                    style={idx > 0 ? { marginTop: "2.25rem" } : undefined}
+                  >
+                    <ProductDetailSizeTableSection
+                      locale={locale}
+                      embedded
+                      blockTitle={getLocalizedField(block.title, locale)}
+                      sizeTable={{ columns: block.columns, rows: block.rows }}
+                    />
+                  </div>
+                ))}
+            </div>
+          </section>
+          <div className="pd-section-divider" />
+        </>
       )}
 
       {modules.applications && applications.length > 0 && (
@@ -902,24 +963,12 @@ export default function ProductDetailView({
               </div>
               <div className="pd-doc-grid">
                 {datasheets.map((d, i) => (
-                  <a
+                  <GatedDatasheetDownload
                     key={i}
-                    href={d.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="pd-doc-card"
-                  >
-                    <div className="pd-doc-meta">
-                      <div className="pd-doc-icon">
-                        <FileText size={18} strokeWidth={1.6} />
-                      </div>
-                      <span className="pd-doc-title">{d.title}</span>
-                    </div>
-                    <span className="pd-doc-action">
-                      <Download size={11} strokeWidth={1.6} />
-                      PDF
-                    </span>
-                  </a>
+                    title={d.title}
+                    fileUrl={d.url}
+                    catalogLabel={`${productTitle} — ${d.title}`}
+                  />
                 ))}
               </div>
             </div>
@@ -989,6 +1038,7 @@ export default function ProductDetailView({
                         fill
                         sizes="(max-width: 768px) 50vw, 25vw"
                         className="object-cover"
+                        loading="lazy"
                       />
                     ) : (
                       <div className="pd-related-img-empty">

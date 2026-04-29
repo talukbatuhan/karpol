@@ -21,10 +21,23 @@
     "aluminum cnc parts": "Aluminum CNC Parts",
     "engineering plastics": "Engineering Plastics"
   },
+  "SiteFaq": {
+    "q1": "Where does Karpol deliver?",
+    "a1": "We ship industrial components and custom parts worldwide, with Europe, Middle East, and North America as key regions.",
+    "q2": "How do I request a quote?",
+    "a2": "Use the “Get a quote” form on any product page or contact our sales team with your drawing or specifications.",
+    "q3": "What file formats do you accept for custom manufacturing?",
+    "a3": "We commonly work with PDF, DWG, DXF, STEP, and other standard CAD exchange formats for technical review."
+  },
   "MobileActionBar": {
     "navLabel": "Quick actions",
     "requestQuote": "Get a quote",
     "contact": "Contact",
+    "whatsappAria": "WhatsApp support"
+  },
+  "GlobalSiteActionBar": {
+    "defaultProductInterest": "General inquiry — KARPOL",
+    "requestQuoteShort": "Get a quote",
     "whatsappAria": "WhatsApp support"
   },
   "Hero": {
@@ -110,6 +123,20 @@
       "downloads": "Downloadable Resources",
       "cta": "Next Step",
       "related": "Complementary Products"
+    },
+    "gatedDownload": {
+      "title": "Download PDF",
+      "subtitle": "Enter your work email to access “{title}”. We will use it only to follow up on this document request from {path}.",
+      "email": "Work email",
+      "company": "Company (optional)",
+      "privacyConsent": "I accept the processing of my data to receive this file and, if needed, a follow-up from KARPOL (see privacy policy).",
+      "marketingOptIn": "I would like to receive product news and technical updates (optional).",
+      "continue": "Download",
+      "cancel": "Cancel",
+      "sending": "Sending…",
+      "privacyError": "Please confirm the privacy notice to continue.",
+      "submitError": "We could not complete the request. Try again in a moment.",
+      "toastSuccess": "Thank you. Your download is opening."
     }
   },
   "RFQModal": {
@@ -193,6 +220,13 @@
       "plastic": "Engineering Plastics (PE/PA/POM)",
       "metal": "Aluminum / Steel",
       "other": "Other / Unsure"
+    },
+    "defaultMessageBody": "Custom manufacturing RFQ — see attached technical files.",
+    "toast": {
+      "success": "Request sent successfully.",
+      "submitFailed": "Could not send the request. Please try again.",
+      "uploadFailed": "File upload failed.",
+      "tooManyFiles": "Maximum {max} files allowed."
     }
   },
   "Common": {
@@ -465,7 +499,46 @@
     "footerIndustryAll": "Industry solutions",
     "footerIndustryFactory": "Factory & technology",
     "footerIndustryCustom": "Custom manufacturing",
-    "footerIndustryProducts": "Product catalog"
+    "footerIndustryProducts": "Product catalog",
+    "footerProductShowcase": "Product gallery"
+  },
+  "ProductShowcase": {
+    "metadata": {
+      "title": "Product gallery",
+      "description": "Studio photos of KARPOL industrial components: lifting clamps, polyurethane rollers, coated flanges, and engineered parts."
+    },
+    "eyebrow": "Gallery",
+    "title": "Product photography",
+    "description": "Reference imagery of components we manufacture and supply. Each file is hosted on this site with a stable URL you can share or embed.",
+    "pageUrlLabel": "This page:",
+    "directUrlLabel": "Image URL:",
+    "items": {
+      "clampYellow": {
+        "title": "Vertical lifting clamp",
+        "caption": "Heavy-duty clamp with non-marring pads for vertical lifts.",
+        "alt": "Yellow industrial vertical lifting clamp with black rubber gripping pads on white background"
+      },
+      "krpSet": {
+        "title": "KRP lifting clamps & pad",
+        "caption": "Set of metal lifting clamps with replaceable rubber pads — KRP marking visible on the body.",
+        "alt": "Four silver KRP lifting clamps in perspective with one black rubber pad on white background"
+      },
+      "diaphragm": {
+        "title": "Polyurethane diaphragm component",
+        "caption": "Molded PU part with concentric ridges for sealing or motion applications.",
+        "alt": "White oval polyurethane component with concentric ridges on a white background"
+      },
+      "rollers": {
+        "title": "Polyurethane-coated rollers",
+        "caption": "Shafted rollers with blue elastomer coating and metal journals for machinery.",
+        "alt": "Group of blue polyurethane industrial rollers with metal shafts on white background"
+      },
+      "flanges": {
+        "title": "Coated flanges",
+        "caption": "Yellow polyurethane-coated flanges with lined bolt holes.",
+        "alt": "Two yellow polyurethane industrial flanges with metal bolt hole inserts on white background"
+      }
+    }
   },
   "ProductsHub": {
     "metadata": {

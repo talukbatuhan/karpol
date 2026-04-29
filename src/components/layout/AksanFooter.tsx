@@ -15,6 +15,7 @@ export default async function AksanFooter() {
     { href: "/contact", label: t("contactLink") },
     { href: "/catalog", label: t("catalogs") },
     { href: "/knowledge", label: t("knowledge") },
+    { href: "/showcase", label: t("footerProductShowcase") },
   ];
 
   const industryLinks: { href: LinkHref; label: string }[] = [

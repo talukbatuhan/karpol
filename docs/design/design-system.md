@@ -78,7 +78,7 @@ Fontlar `next/font` ile kök layout’ta yüklenir: [**Inter**](https://fonts.go
 
 | Rol | Aile | Not |
 |-----|------|-----|
-| UI / okuma / form | `Inter` / `var(--font-primary)` | Tr / EN / DE / AR metinler |
+| UI / okuma / form | `Inter` / `var(--font-primary)` | TR / EN metinler |
 | Nav / vurgu UI | `Barlow` nerede kullanıldıysa | `var(--font-nav)` |
 | Teknik veri | **Roboto Mono** / `var(--font-mono)` | `tabular-nums` tercih edilir |
 | Görsel başlık (üretim sayfaları) | Cormorant / DM Sans (bileşen özel) | Sadece ilgili Premium bileşenlerde |

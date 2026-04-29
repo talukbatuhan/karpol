@@ -2,7 +2,9 @@
 
 import { useState, useCallback } from "react";
 import styles from "./CustomRFQForm.module.css";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
+import { usePathname } from "@/i18n/navigation";
+import { toast } from "@/components/ui";
 import {
   Upload,
   X,
@@ -21,8 +23,12 @@ import {
   Spinner,
 } from "@/components/ui";
 
+const MAX_ATTACHMENTS = 8;
+
 export default function CustomRFQForm() {
   const t = useTranslations("CustomRFQ");
+  const locale = useLocale();
+  const pathname = usePathname();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
@@ -50,13 +56,25 @@ export default function CustomRFQForm() {
     e.stopPropagation();
     setIsDragging(false);
     if (e.dataTransfer.files?.length > 0) {
-      setFiles((prev) => [...prev, ...Array.from(e.dataTransfer.files)]);
+      setFiles((prev) => {
+        const next = [...prev, ...Array.from(e.dataTransfer.files)];
+        if (next.length > MAX_ATTACHMENTS) {
+          toast.error(t("toast.tooManyFiles", { max: MAX_ATTACHMENTS }));
+        }
+        return next.slice(0, MAX_ATTACHMENTS);
+      });
     }
-  }, []);
+  }, [t]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      setFiles((prev) => [...prev, ...Array.from(e.target.files!)]);
+      setFiles((prev) => {
+        const next = [...prev, ...Array.from(e.target.files!)];
+        if (next.length > MAX_ATTACHMENTS) {
+          toast.error(t("toast.tooManyFiles", { max: MAX_ATTACHMENTS }));
+        }
+        return next.slice(0, MAX_ATTACHMENTS);
+      });
     }
   };
 
@@ -74,20 +92,75 @@ export default function CustomRFQForm() {
     e.preventDefault();
     setIsSubmitting(true);
     const formData = new FormData(e.currentTarget);
+    const fullName = String(formData.get("fullName") || "").trim();
+    const company = String(formData.get("company") || "").trim();
+    const email = String(formData.get("email") || "").trim();
+    const phone = String(formData.get("phone") || "").trim();
+    const material = String(formData.get("material") || "").trim();
+    const hardness = String(formData.get("hardness") || "").trim();
+    const notes = String(formData.get("notes") || "").trim();
+
+    const fileUrls: string[] = [];
+    for (const file of files) {
+      const fd = new FormData();
+      fd.append("file", file);
+      const up = await fetch("/api/rfq/attachments", { method: "POST", body: fd });
+      if (!up.ok) {
+        const err = await up.json().catch(() => ({}));
+        setIsSubmitting(false);
+        toast.error(
+          typeof err.error === "string" ? err.error : t("toast.uploadFailed"),
+        );
+        return;
+      }
+      const data: { url?: string } = await up.json();
+      if (data.url) fileUrls.push(data.url);
+    }
+
+    const lineParts = [
+      notes,
+      material ? `Material: ${material}` : "",
+      hardness ? `Hardness: ${hardness}` : "",
+    ].filter(Boolean);
+    const messageBody =
+      lineParts.length > 0
+        ? lineParts.join("\n\n")
+        : t("defaultMessageBody");
+
     const payload = {
-      fullName: formData.get("fullName"),
-      company: formData.get("company"),
-      email: formData.get("email"),
-      phone: formData.get("phone"),
-      material: formData.get("material"),
-      hardness: formData.get("hardness"),
-      notes: formData.get("notes"),
-      files: files.map((f) => f.name),
+      name: fullName,
+      email,
+      phone: phone || undefined,
+      company: company || undefined,
+      product_interest: "Custom manufacturing (CAD / technical files)",
+      quantity: undefined,
+      material_preference: material || undefined,
+      hardness_requirement: hardness || undefined,
+      message: messageBody,
+      urgency: "standard" as const,
+      file_urls: fileUrls,
+      line_items: [],
+      source_page: pathname,
+      locale,
     };
-    console.log("Custom Manufacturing RFQ:", payload);
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    setIsSubmitting(false);
-    setIsSuccess(true);
+
+    try {
+      const res = await fetch("/api/rfq", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) {
+        const data: { error?: string } = await res.json().catch(() => ({}));
+        throw new Error(data.error || t("toast.submitFailed"));
+      }
+      toast.success(t("toast.success"));
+      setIsSuccess(true);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : t("toast.submitFailed"));
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (isSuccess) {

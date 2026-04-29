@@ -49,8 +49,12 @@ export function QuoteListProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<QuoteListEntry[]>([])
 
   useEffect(() => {
-    setItems(load())
-  }, [])
+    // Defer until after mount to avoid "state update before mount" warnings with
+    // strict concurrent rendering (e.g. Next 16 + nested client trees).
+    queueMicrotask(() => {
+      setItems(load());
+    });
+  }, []);
 
   useEffect(() => {
     if (typeof window === 'undefined') return

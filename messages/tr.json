@@ -21,10 +21,23 @@
     "aluminum cnc parts": "Alüminyum CNC Parçalar",
     "engineering plastics": "Mühendislik Plastikleri"
   },
+  "SiteFaq": {
+    "q1": "Karpol nereye sevkiyat yapıyor?",
+    "a1": "Endüstriyel bileşenleri ve özel parçaları dünya çapında — özellikle Avrupa, Orta Doğu ve Kuzey Amerika bölgelerinde — gönderiyoruz.",
+    "q2": "Nasıl teklif talep ederim?",
+    "a2": "Ürün sayfalarındaki “Teklif iste” formunu kullanın veya çiziminizi veya teknik şartnamenizi satış ekibimize iletin.",
+    "q3": "Özel üretim için hangi dosya formatlarını kabul ediyorsunuz?",
+    "a3": "Teknik inceleme için PDF, DWG, DXF, STEP ve diğer yaygın CAD değişim formatlarını kullanıyoruz."
+  },
   "MobileActionBar": {
     "navLabel": "Hızlı işlemler",
     "requestQuote": "Teklif iste",
     "contact": "İletişim",
+    "whatsappAria": "WhatsApp canlı destek"
+  },
+  "GlobalSiteActionBar": {
+    "defaultProductInterest": "Genel talep — KARPOL",
+    "requestQuoteShort": "Teklif iste",
     "whatsappAria": "WhatsApp canlı destek"
   },
   "Hero": {
@@ -110,6 +123,20 @@
       "downloads": "İndirilebilir Kaynaklar",
       "cta": "Sonraki Adım",
       "related": "Tamamlayıcı Ürünler"
+    },
+    "gatedDownload": {
+      "title": "PDF İndir",
+      "subtitle": "“{title}” dosyasına erişmek için iş e-postanızı girin. Bu talep ({path}) için yalnızca takip amaçlı kullanılır.",
+      "email": "İş e-postası",
+      "company": "Şirket (isteğe bağlı)",
+      "privacyConsent": "Bu dosyayı almak ve gerekiyorsa KARPOL’dan takip için verilerimin işlenmesini kabul ediyorum (gizlilik politikası).",
+      "marketingOptIn": "Ürün haberleri ve teknik güncellemeler almak istiyorum (isteğe bağlı).",
+      "continue": "İndir",
+      "cancel": "Vazgeç",
+      "sending": "Gönderiliyor…",
+      "privacyError": "Devam etmek için gizlilik onayını işaretleyin.",
+      "submitError": "İşlem tamamlanamadı. Lütfen bir süre sonra tekrar deneyin.",
+      "toastSuccess": "Teşekkürler. İndirme açılıyor."
     }
   },
   "RFQModal": {
@@ -193,6 +220,13 @@
       "plastic": "Mühendislik Plastikleri (PE/PA/POM)",
       "metal": "Alüminyum / Çelik",
       "other": "Diğer / Emin Değilim"
+    },
+    "defaultMessageBody": "Özel imalat RFQ — teknik dosyalar ektedir.",
+    "toast": {
+      "success": "Talebiniz gönderildi.",
+      "submitFailed": "Gönderilemedi. Lütfen tekrar deneyin.",
+      "uploadFailed": "Dosya yüklenemedi.",
+      "tooManyFiles": "En fazla {max} dosya yükleyebilirsiniz."
     }
   },
   "Common": {
@@ -465,7 +499,46 @@
     "footerIndustryAll": "Sektör çözümleri",
     "footerIndustryFactory": "Fabrika ve teknoloji",
     "footerIndustryCustom": "Özel üretim",
-    "footerIndustryProducts": "Ürün kataloğu"
+    "footerIndustryProducts": "Ürün kataloğu",
+    "footerProductShowcase": "Ürün görselleri"
+  },
+  "ProductShowcase": {
+    "metadata": {
+      "title": "Ürün görselleri",
+      "description": "KARPOL endüstriyel bileşenlerine ait stüdyo görselleri: taşıma kapmaları, poliüretan rulolar, kaplamalı flanşlar ve özel parçalar."
+    },
+    "eyebrow": "Galeri",
+    "title": "Ürün fotoğrafları",
+    "description": "Ürettiğimiz ve tedarik ettiğimiz bileşenlere ait referans görselleri. Her dosya sitede sabit bir adresle barındırılır; paylaşmak veya bağlamak için kullanabilirsiniz.",
+    "pageUrlLabel": "Bu sayfa:",
+    "directUrlLabel": "Görsel adresi:",
+    "items": {
+      "clampYellow": {
+        "title": "Dikey taşıma kapması",
+        "caption": "Dikey kaldırmalar için yüzey dostu pedli ağır hizmet kapması.",
+        "alt": "Beyaz fon üzerinde siyah kauçuk pedli sarı endüstriyel dikey taşıma kapması"
+      },
+      "krpSet": {
+        "title": "KRP kapma seti ve ped",
+        "caption": "Gövdede KRP işareti görünen metal taşıma kapmaları ve değiştirilebilir lastik ped.",
+        "alt": "Beyaz fonda perspektifte dört adet gümüş KRP taşıma kapması ve siyah lastik ped"
+      },
+      "diaphragm": {
+        "title": "Poliüretan diyafram parça",
+        "caption": "Sızdırmazlık veya hareket uygulamaları için konsantrik hatlı döküm PU parça.",
+        "alt": "Beyaz fonda konsantrik sığır izleri olan oval beyaz poliüretan bileşen"
+      },
+      "rollers": {
+        "title": "Poliüretan kaplı rulolar",
+        "caption": "Mavi elastomer kaplama ve mil bağlantılarıyla makine montajı için şaftlı rulolar.",
+        "alt": "Beyaz fonda metal milli mavi poliüretan endüstriyer rulolar grubu"
+      },
+      "flanges": {
+        "title": "Kaplamalı flanşlar",
+        "caption": "Cıvata delikleri metal iç buju ile kaplı sarı poliüretan kaplamalı flanşlar.",
+        "alt": "Beyaz fonda metal iç bujlu iki sarı poliüretan endüstriyel flanş"
+      }
+    }
   },
   "ProductsHub": {
     "metadata": {

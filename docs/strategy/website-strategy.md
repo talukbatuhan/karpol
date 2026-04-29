@@ -397,7 +397,7 @@ graph TD
 | Element | Implementation |
 |---|---|
 | **URL Structure** | `/products/polyurethane/rollers/conveyor-guide-roller` |
-| **Hreflang Tags** | `en`, `tr`, `de`, `es`, `ar` (key export markets) |
+| **Hreflang Tags** | `en`, `tr` (key markets) |
 | **Schema Markup** | `Organization`, `Product`, `FAQPage`, `BreadcrumbList`, `Article` |
 | **Sitemap** | Auto-generated XML sitemap with product/category/blog pages |
 | **Page Speed** | Target < 2.5s LCP, WebP images, lazy loading, CDN |
@@ -409,8 +409,8 @@ graph TD
 ### 10.4 International SEO
 
 - **Primary language:** English (global reach)
-- **Secondary languages:** Turkish (domestic), German (EU engineering market), Arabic (Middle East/North Africa export)
-- Subdirectory structure: `/en/`, `/tr/`, `/de/`, `/ar/`
+- **Secondary language:** Turkish (domestic and regional)
+- Subdirectory structure: `/en/`, `/tr/`
 - Google Search Console multi-region verification
 - Country-specific landing pages for key markets
 
@@ -559,7 +559,7 @@ quadrantChart
 
 | Tactic | Implementation |
 |---|---|
-| **Multi-language Site** | EN, TR, DE, AR with culturally adapted content |
+| **Multi-language Site** | EN and TR with culturally adapted content |
 | **Export Credibility** | World map showing served regions, container/shipping imagery |
 | **International Standards** | Display ISO, DIN, ASTM test methods and certifications |
 | **Trade Show Presence** | Dedicated page for upcoming exhibitions with booth info |
@@ -610,7 +610,7 @@ gantt
     section Phase 4: Growth
     Blog / Knowledge Base           :d1, after c2, 30d
     SEO Optimization                :d2, after d1, 30d
-    Multi-language (TR, DE, AR)     :d3, after d2, 45d
+    Multi-language (TR)             :d3, after d2, 45d
     Catalog & Download Center       :d4, after b3, 20d
 
     section Phase 5: Launch

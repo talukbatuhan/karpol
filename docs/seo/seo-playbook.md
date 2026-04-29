@@ -9,7 +9,7 @@
 1. Organic traffic: 15,000+ sessions/month within 12 months
 2. Top 10 ranking for 50+ target keywords
 3. Featured snippets for key informational queries
-4. International visibility across EN, TR, DE, AR markets
+4. International visibility across EN and TR markets
 
 ---
 
@@ -28,7 +28,6 @@
 | PTFE gasket manufacturer | EN | Medium | Medium | `/products/ptfe-teflon` | ⬜ Not Started |
 | poliüretan makara | TR | Medium | Low | `/tr/urunler/poliuretan` | ⬜ Not Started |
 | mermer makinesi yedek parça | TR | Medium | Low | `/tr/sektorler/mermer-tas` | ⬜ Not Started |
-| polyurethan rollen hersteller | DE | Low | Low | `/de/produkte/polyurethan` | ⬜ Not Started |
 
 ### Tier 2 — Supporting (Traffic + Authority)
 
@@ -152,16 +151,12 @@
 ```
 karpol.net/en/...     → English (default)
 karpol.net/tr/...     → Turkish
-karpol.net/de/...     → German
-karpol.net/ar/...     → Arabic
 ```
 
 ### Hreflang Tags (Every Page)
 ```html
 <link rel="alternate" hreflang="en" href="https://karpol.net/en/products/polyurethane/" />
 <link rel="alternate" hreflang="tr" href="https://karpol.net/tr/urunler/poliuretan/" />
-<link rel="alternate" hreflang="de" href="https://karpol.net/de/produkte/polyurethan/" />
-<link rel="alternate" hreflang="ar" href="https://karpol.net/ar/منتجات/بولي-يوريثان/" />
 <link rel="alternate" hreflang="x-default" href="https://karpol.net/en/products/polyurethane/" />
 ```
 

@@ -39,6 +39,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }))
   );
 
+  const showcaseAlternates = {
+    languages: {
+      en: `${baseUrl}/en/showcase`,
+      tr: `${baseUrl}/tr/urun-gorselleri`,
+      "x-default": `${baseUrl}/en/showcase`,
+    },
+  };
+  const showcaseRoutes: MetadataRoute.Sitemap = locales.map((locale) => ({
+    url: `${baseUrl}/${locale}${locale === "tr" ? "/urun-gorselleri" : "/showcase"}`,
+    lastModified: new Date().toISOString(),
+    changeFrequency: "monthly" as const,
+    priority: 0.75,
+    alternates: showcaseAlternates,
+  }));
+
   const { data: categories } = await getProductCategories();
   const categoryRoutes: MetadataRoute.Sitemap = categories.flatMap((cat) =>
     locales.map((locale) => ({
@@ -72,5 +87,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }))
   );
 
-  return [...staticRoutes, ...categoryRoutes, ...articleRoutes, ...industryRoutes];
+  return [
+    ...staticRoutes,
+    ...showcaseRoutes,
+    ...categoryRoutes,
+    ...articleRoutes,
+    ...industryRoutes,
+  ];
 }

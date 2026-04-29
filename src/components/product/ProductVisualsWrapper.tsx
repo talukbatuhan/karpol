@@ -114,7 +114,7 @@ export default function ProductVisualsWrapper({
                 src={active.url}
                 alt={active.title || productName}
                 fill
-                priority
+                priority={tab === "gallery" && images.length > 0 && activeIndex === 0}
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 style={{ objectFit: "contain" }}
               />
@@ -139,6 +139,7 @@ export default function ProductVisualsWrapper({
                     alt={img.title || `${i + 1}`}
                     fill
                     sizes="120px"
+                    loading="lazy"
                     style={{ objectFit: "contain" }}
                   />
                 </button>

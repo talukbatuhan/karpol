@@ -70,8 +70,6 @@
 | Schema.org structured data | 🟡 P1 | ⬜ Todo | |
 | Sitemap generation | 🟡 P1 | ⬜ Todo | |
 | Multi-language: Turkish | 🟡 P1 | ⬜ Todo | |
-| Multi-language: German | 🟢 P2 | ⬜ Todo | |
-| Multi-language: Arabic | 🟢 P2 | ⬜ Todo | |
 | Catalog download center | 🟡 P1 | ⬜ Todo | |
 
 ## Phase 5: Launch

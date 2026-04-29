@@ -1,4 +1,4 @@
-import { Barlow, Inter, Roboto_Mono } from "next/font/google";
+import { Barlow, Inter, JetBrains_Mono } from "next/font/google";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { Toaster } from "@/components/ui/toaster";
 import "./globals.css";
@@ -17,8 +17,8 @@ const barlow = Barlow({
   weight: ["400", "500", "600", "700"],
 });
 
-const robotoMono = Roboto_Mono({
-  variable: "--font-roboto-mono",
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-jetbrains-mono",
   subsets: ["latin"],
   display: "swap",
 });
@@ -30,7 +30,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.variable} ${barlow.variable} ${robotoMono.variable}`}>
+      <body className={`${inter.variable} ${barlow.variable} ${jetbrainsMono.variable}`}>
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
           {children}
           <Toaster />

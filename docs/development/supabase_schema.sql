@@ -1,6 +1,6 @@
 -- ============================================
 -- KARPOL — Supabase Database Schema v2.0
--- JSONB-based i18n for EN, TR, DE, AR
+-- JSONB-based i18n for EN, TR
 -- Run in Supabase SQL Editor
 -- ============================================
 

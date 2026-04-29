@@ -16,6 +16,11 @@ import {
   buildPublicCategoryTree,
   buildCategoryAncestorChain,
 } from "@/lib/product-category-utils";
+import type { AppLocale } from "@/i18n/config";
+import {
+  buildAlternatesLanguages,
+  productsPathSegment,
+} from "@/lib/seo/alternates";
 import PremiumProductCategory, {
   type LocalizedProduct,
 } from "@/components/products/PremiumProductCategory";
@@ -60,24 +65,19 @@ export async function generateMetadata({
     const catSlug = categoryData
       ? getLocalizedSlug(categoryData.slugs, target, categoryData.slug)
       : category;
-    const productsSegment = target === "tr" ? "urunler" : "products";
+    const productsSegment = productsPathSegment(target);
     return `/${target}/${productsSegment}/${catSlug}`;
   };
-
-  const trHref = buildLocaleHref("tr");
-  const enHref = buildLocaleHref("en");
 
   return {
     title: `${name} | ${t("metadata.titleSuffix")}`,
     description:
       description ?? `Explore our high-performance ${name} range.`,
     alternates: {
-      canonical: locale === "tr" ? trHref : enHref,
-      languages: {
-        tr: trHref,
-        en: enHref,
-        "x-default": enHref,
-      },
+      canonical: buildLocaleHref(locale),
+      languages: buildAlternatesLanguages((loc) =>
+        buildLocaleHref(loc as AppLocale),
+      ),
     },
   };
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import styles from "./RFQModal.module.css";
 import { useLocale, useTranslations } from "next-intl";
 import {
@@ -33,13 +33,15 @@ export default function RFQModal({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const wasOpenRef = useRef(isOpen);
 
   useEffect(() => {
-    if (!isOpen) {
+    if (wasOpenRef.current && !isOpen) {
       setIsSubmitting(false);
       setIsSuccess(false);
       setErrorMsg(null);
     }
+    wasOpenRef.current = isOpen;
   }, [isOpen]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {

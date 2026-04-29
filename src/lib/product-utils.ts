@@ -1,10 +1,14 @@
 import {
   EMPTY_SIZE_TABLE,
+  LocalizedField,
   Product,
   ProductSizeRow,
+  ProductSpecification,
+  ProductSpecificationTable,
   SizeColumn,
   SizeRow,
   SizeTable,
+  SizeTableBlock,
 } from "@/types/database";
 
 export type GalleryItem = {
@@ -299,4 +303,148 @@ export function normalizeSizeTable(input: unknown): SizeTable {
   }
 
   return EMPTY_SIZE_TABLE;
+}
+
+function isProductSpecificationRow(value: unknown): value is ProductSpecification {
+  if (!value || typeof value !== "object") return false;
+  const o = value as Record<string, unknown>;
+  return typeof o.label === "string" || typeof o.value === "string";
+}
+
+function sanitizeLocalizedTitle(value: unknown): LocalizedField | undefined {
+  if (!value || typeof value !== "object") return undefined;
+  const o = value as Record<string, unknown>;
+  const out: LocalizedField = {};
+  for (const loc of ["tr", "en"] as const) {
+    const v = o[loc];
+    if (typeof v === "string" && v.trim()) out[loc] = v.trim();
+  }
+  return Object.keys(out).length > 0 ? out : undefined;
+}
+
+function normalizeOneSpecTable(value: unknown): ProductSpecificationTable {
+  if (!value || typeof value !== "object") return { rows: [] };
+  const o = value as Record<string, unknown>;
+  const rows = Array.isArray(o.rows)
+    ? o.rows.filter(isProductSpecificationRow).map((r) => ({
+        label: typeof r.label === "string" ? r.label : "",
+        value: typeof r.value === "string" ? r.value : "",
+        unit: typeof r.unit === "string" ? r.unit : undefined,
+        test_method: typeof r.test_method === "string" ? r.test_method : undefined,
+      }))
+    : [];
+  const title = sanitizeLocalizedTitle(o.title);
+  return { ...(title ? { title } : {}), rows };
+}
+
+/**
+ * Ürün `specifications` JSONB alanını çoklu tablo listesine çevirir.
+ * Eski format: düz `ProductSpecification[]` → tek tablo olarak sarar.
+ */
+export function normalizeProductSpecificationTables(
+  raw: unknown,
+): ProductSpecificationTable[] {
+  if (raw == null) return [{ rows: [] }];
+
+  if (typeof raw === "object" && !Array.isArray(raw) && "tables" in raw) {
+    const tables = (raw as { tables: unknown }).tables;
+    if (Array.isArray(tables) && tables.length > 0) {
+      return tables.map(normalizeOneSpecTable);
+    }
+  }
+
+  if (Array.isArray(raw)) {
+    if (raw.length === 0) return [{ rows: [] }];
+    const first = raw[0];
+    if (first && typeof first === "object" && "rows" in first) {
+      return raw.map(normalizeOneSpecTable);
+    }
+    const rows = raw.filter(isProductSpecificationRow) as ProductSpecification[];
+    return [{ rows }];
+  }
+
+  return [{ rows: [] }];
+}
+
+function rowHasContent(r: ProductSpecification): boolean {
+  return !!(
+    r.label?.trim() ||
+    r.value?.trim() ||
+    r.unit?.trim() ||
+    r.test_method?.trim()
+  );
+}
+
+function titleHasContent(t: LocalizedField | undefined): boolean {
+  if (!t) return false;
+  return Object.values(t).some((v) => typeof v === "string" && v.trim().length > 0);
+}
+
+/** Kayıt için JSONB yükü: her zaman `{ tables }` şekli. */
+export function specificationsToDbPayload(
+  tables: ProductSpecificationTable[],
+): { tables: ProductSpecificationTable[] } {
+  const cleaned = tables
+    .map((tab) => {
+      const title = sanitizeLocalizedTitle(tab.title);
+      const rows = tab.rows.filter(rowHasContent);
+      return {
+        ...(title ? { title } : {}),
+        rows,
+      };
+    })
+    .filter((tab) => tab.rows.length > 0 || titleHasContent(tab.title));
+
+  return { tables: cleaned };
+}
+
+function normalizeOneSizeTableBlock(value: unknown): SizeTableBlock {
+  if (!value || typeof value !== "object") return { columns: [], rows: [] };
+  const o = value as Record<string, unknown>;
+  const title = sanitizeLocalizedTitle(o.title);
+  const columns = sanitizeColumns(o.columns);
+  if (columns.length === 0) {
+    return { columns: [], rows: [], ...(title ? { title } : {}) };
+  }
+  const rows = sanitizeRows(o.rows, columns);
+  return { columns, rows, ...(title ? { title } : {}) };
+}
+
+/**
+ * Ürün `size_table` JSONB alanını çoklu ölçü tablosu listesine çevirir.
+ * Eski format: tek `SizeTable` veya `ProductSizeRow[]` → tek blok.
+ */
+export function normalizeProductSizeTables(raw: unknown): SizeTableBlock[] {
+  if (raw == null) return [{ columns: [], rows: [] }];
+
+  if (typeof raw === "object" && raw !== null && !Array.isArray(raw) && "tables" in raw) {
+    const tables = (raw as { tables: unknown }).tables;
+    if (Array.isArray(tables)) {
+      if (tables.length === 0) return [{ columns: [], rows: [] }];
+      return tables.map(normalizeOneSizeTableBlock);
+    }
+  }
+
+  const single = normalizeSizeTable(raw);
+  return [{ ...single }];
+}
+
+/** Kayıt: `{ tables: [...] }` — boş bloklar elenir. */
+export function sizeTablesToDbPayload(blocks: SizeTableBlock[]): { tables: SizeTableBlock[] } {
+  const cleaned = blocks
+    .map((block) => {
+      const title = sanitizeLocalizedTitle(block.title);
+      const core = normalizeSizeTable({
+        columns: block.columns,
+        rows: block.rows,
+      });
+      return { ...core, ...(title ? { title } : {}) };
+    })
+    .filter(
+      (b) =>
+        b.columns.length > 0 &&
+        (b.rows.length > 0 || titleHasContent(b.title)),
+    );
+
+  return { tables: cleaned };
 }

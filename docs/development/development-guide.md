@@ -18,7 +18,7 @@
 | **Analytics** | Google Analytics 4 + Search Console | Conversion tracking |
 | **Forms** | Next.js API Routes + Supabase | RFQ + contact form submissions |
 | **Images** | Next/Image + WebP | Auto-optimization |
-| **i18n** | next-intl | EN, TR, DE, AR |
+| **i18n** | next-intl | EN, TR |
 
 ### Supabase Architecture
 ```
@@ -115,8 +115,6 @@ src/components/ProductCard/
 ```
 /en/products/polyurethane/rollers
 /tr/urunler/poliuretan/makaralar
-/de/produkte/polyurethan/rollen
-/ar/منتجات/بولي-يوريثان/بكرات
 ```
 
 ---
@@ -140,7 +138,7 @@ fix: correct RFQ form validation
 style: update hero section spacing
 content: add vulkolan article
 seo: add schema markup to product pages
-i18n: add German translations for products
+i18n: add localized strings for products
 perf: optimize product image loading
 ```
 

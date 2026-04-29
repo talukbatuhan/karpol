@@ -26,6 +26,8 @@ import { Input, Select, Label } from '@/components/ui'
 interface SizeTableBuilderProps {
   value: SizeTable
   onChange: (next: SizeTable) => void
+  /** Çoklu ölçü tablosu düzeninde üst başlığı kısaltır */
+  embedded?: boolean
 }
 
 type Template = {
@@ -181,6 +183,7 @@ function parsePasteText(text: string): string[][] {
 export default function SizeTableBuilder({
   value,
   onChange,
+  embedded = false,
 }: SizeTableBuilderProps) {
   const columns = value?.columns ?? []
   const rows = value?.rows ?? []
@@ -431,7 +434,7 @@ export default function SizeTableBuilder({
         }}
       >
         <Label className={styles.formLabel} style={{ marginBottom: 0 }}>
-          Ölçü / Boyut Tablosu
+          {embedded ? 'Bu bloktaki ölçü tablosu' : 'Ölçü / Boyut Tablosu'}
         </Label>
         <Select
           className={styles.formSelect}

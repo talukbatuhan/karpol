@@ -76,11 +76,13 @@ export function useThemePreference(
   }, [preference]);
 
   useEffect(() => {
-    const stored = readStored();
-    prefRef.current = stored;
-    setPreferenceState(stored);
-    applyAttribute(stored);
-    setHydrated(true);
+    queueMicrotask(() => {
+      const stored = readStored();
+      prefRef.current = stored;
+      setPreferenceState(stored);
+      applyAttribute(stored);
+      setHydrated(true);
+    });
 
     const onCustom = (e: Event) => {
       const detail = (e as CustomEvent<ThemePreference>).detail;

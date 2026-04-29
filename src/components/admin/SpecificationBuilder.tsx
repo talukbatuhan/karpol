@@ -8,9 +8,15 @@ import { Label, Input, Button } from '@/components/ui'
 interface SpecificationBuilderProps {
   value: ProductSpecification[]
   onChange: (specs: ProductSpecification[]) => void
+  /** Çoklu tablo düzeninde üst başlığı kısaltır */
+  embedded?: boolean
 }
 
-export default function SpecificationBuilder({ value, onChange }: SpecificationBuilderProps) {
+export default function SpecificationBuilder({
+  value,
+  onChange,
+  embedded = false,
+}: SpecificationBuilderProps) {
   const addRow = () => {
     onChange([...value, { label: '', value: '', unit: '', test_method: '' }])
   }
@@ -27,7 +33,9 @@ export default function SpecificationBuilder({ value, onChange }: SpecificationB
 
   return (
     <div className={styles.formGroup}>
-      <Label className={styles.formLabel}>Teknik Özellikler Tablosu</Label>
+      <Label className={styles.formLabel}>
+        {embedded ? 'Özellik satırları' : 'Teknik Özellikler Tablosu'}
+      </Label>
       <div className={styles.dataTable} style={{ marginBottom: 12 }}>
         <table>
           <thead>

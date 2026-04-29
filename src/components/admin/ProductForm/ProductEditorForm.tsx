@@ -8,8 +8,8 @@ import Link from 'next/link'
 import I18nFieldEditor from '@/components/admin/I18nFieldEditor'
 import LocalizedSlugInput from '@/components/admin/LocalizedSlugInput'
 import SkuInput from '@/components/admin/SkuInput'
-import SpecificationBuilder from '@/components/admin/SpecificationBuilder'
-import SizeTableBuilder from '@/components/admin/SizeTableBuilder'
+import SpecificationTablesBuilder from '@/components/admin/SpecificationTablesBuilder'
+import SizeTablesBuilder from '@/components/admin/SizeTablesBuilder'
 import GalleryBuilder from '@/components/admin/GalleryBuilder'
 import TechnicalDrawingBuilder from '@/components/admin/TechnicalDrawingBuilder'
 import Model3DBuilder from '@/components/admin/Model3DBuilder'
@@ -31,8 +31,8 @@ import {
   EMPTY_SIZE_TABLE,
   type LocalizedField,
   type LocalizedArrayField,
-  type ProductSpecification,
-  type SizeTable,
+  type ProductSpecificationTable,
+  type SizeTableBlock,
   type ProductGalleryAsset,
   type ProductTechnicalDrawing,
   type ProductModel3D,
@@ -43,7 +43,10 @@ import {
   type CategoryAttributeDefinition,
   type SupportedLocale,
 } from '@/types/database'
-import { normalizeSizeTable } from '@/lib/product-utils'
+import {
+  normalizeProductSpecificationTables,
+  normalizeProductSizeTables,
+} from '@/lib/product-utils'
 import styles from '@/app/admin/admin.module.css'
 import { Label, Input, Select, Button, FormAlert } from '@/components/ui'
 
@@ -84,8 +87,12 @@ export default function ProductEditorForm({ mode, productId }: ProductEditorForm
   const [categories, setCategories] = useState<ProductCategory[]>([])
   const [attributeDefinitions, setAttributeDefinitions] = useState<CategoryAttributeDefinition[]>([])
   const [modules, setModules] = useState<ProductModules>(DEFAULT_PRODUCT_MODULES)
-  const [specifications, setSpecifications] = useState<ProductSpecification[]>([])
-  const [sizeTable, setSizeTable] = useState<SizeTable>(EMPTY_SIZE_TABLE)
+  const [specificationTables, setSpecificationTables] = useState<ProductSpecificationTable[]>([
+    { rows: [] },
+  ])
+  const [sizeTableBlocks, setSizeTableBlocks] = useState<SizeTableBlock[]>([
+    { ...EMPTY_SIZE_TABLE },
+  ])
   const [gallery, setGallery] = useState<ProductGalleryAsset[]>([])
   const [technicalDrawings, setTechnicalDrawings] = useState<ProductTechnicalDrawing[]>([])
   const [model3d, setModel3d] = useState<ProductModel3D>({})
@@ -193,8 +200,8 @@ export default function ProductEditorForm({ mode, productId }: ProductEditorForm
           structured_attributes: (product.structured_attributes as Record<string, unknown>) || {},
         })
         setModules({ ...DEFAULT_PRODUCT_MODULES, ...(product.modules ?? {}) })
-        setSpecifications(product.specifications || [])
-        setSizeTable(normalizeSizeTable(product.size_table))
+        setSpecificationTables(normalizeProductSpecificationTables(product.specifications))
+        setSizeTableBlocks(normalizeProductSizeTables(product.size_table))
         setGallery(product.gallery || [])
         setTechnicalDrawings(product.technical_drawings || [])
         setModel3d(product.model_3d || {})
@@ -219,8 +226,8 @@ export default function ProductEditorForm({ mode, productId }: ProductEditorForm
     const base = productFormToServerPayload(data, {
       ...(mode === 'edit' && productId ? { id: productId } : {}),
       modules,
-      specifications: modules.specifications ? specifications : [],
-      size_table: modules.size_table ? sizeTable : EMPTY_SIZE_TABLE,
+      specificationTables: modules.specifications ? specificationTables : [{ rows: [] }],
+      sizeTableBlocks: modules.size_table ? sizeTableBlocks : [{ ...EMPTY_SIZE_TABLE }],
       gallery: modules.gallery ? gallery : [],
       technical_drawings: modules.technical_drawing ? technicalDrawings : [],
       model_3d: modules.model_3d ? model3d : {},
@@ -350,11 +357,14 @@ export default function ProductEditorForm({ mode, productId }: ProductEditorForm
               <ModuleToggleBar value={modules} onChange={setModules} />
 
               {modules.specifications && (
-                <SpecificationBuilder value={specifications} onChange={setSpecifications} />
+                <SpecificationTablesBuilder
+                  value={specificationTables}
+                  onChange={setSpecificationTables}
+                />
               )}
 
               {modules.size_table && (
-                <SizeTableBuilder value={sizeTable} onChange={setSizeTable} />
+                <SizeTablesBuilder value={sizeTableBlocks} onChange={setSizeTableBlocks} />
               )}
 
               {modules.gallery && (

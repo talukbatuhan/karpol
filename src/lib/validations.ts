@@ -45,6 +45,14 @@ export const catalogDownloadSchema = z.object({
   locale: z.string().optional(),
   catalog_name: z.string().min(1),
   file_url: z.string().url(),
+  /** GDPR-style marketing / updates opt-in (stored with lead row when supported). */
+  marketing_opt_in: z.boolean().optional(),
+})
+
+export const datasheetLeadSchema = catalogDownloadSchema.extend({
+  privacy_consent: z.boolean().refine((v) => v === true, {
+    message: 'You must accept the privacy notice to continue',
+  }),
 })
 
 export type RFQFormData = z.infer<typeof rfqSchema>

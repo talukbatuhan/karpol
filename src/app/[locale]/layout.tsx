@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 import { NextIntlClientProvider } from "next-intl";
-import { getMessages, setRequestLocale } from "next-intl/server";
+import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
 import {
   ConditionalBreadcrumbs,
   ConditionalFooter,
@@ -36,6 +36,7 @@ export default async function LocaleLayout({
   const { locale } = await params;
   setRequestLocale(locale);
   const messages = await getMessages();
+  const tFaq = await getTranslations({ locale, namespace: "SiteFaq" });
 
   const orgSchema = {
     "@context": "https://schema.org",
@@ -56,6 +57,21 @@ export default async function LocaleLayout({
     },
   };
 
+  const faqPairs = [
+    { q: tFaq("q1"), a: tFaq("a1") },
+    { q: tFaq("q2"), a: tFaq("a2") },
+    { q: tFaq("q3"), a: tFaq("a3") },
+  ] as const;
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqPairs.map((item) => ({
+      "@type": "Question",
+      name: item.q,
+      acceptedAnswer: { "@type": "Answer", text: item.a },
+    })),
+  };
+
   return (
     <NextIntlClientProvider messages={messages}>
       {/*
@@ -69,6 +85,11 @@ export default async function LocaleLayout({
             id="org-schema"
             type="application/ld+json"
             dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }}
+          />
+          <Script
+            id="faq-schema"
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
           />
           <ViewTransitionsProvider />
           <ConditionalHeader />

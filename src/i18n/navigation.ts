@@ -2,7 +2,7 @@ import { createNavigation } from "next-intl/navigation";
 import { defineRouting } from "next-intl/routing";
 import { APP_LOCALES } from "./config";
 
-// TR keeps localized slugs; EN uses canonical paths.
+// TR keeps localized slugs; EN uses canonical URL paths.
 const p = (en: string, tr: string) => ({
   en,
   tr,
@@ -24,6 +24,7 @@ export const routing = defineRouting({
     "/industries": p("/industries", "/sektorler"),
     "/industries/[slug]": p("/industries/[slug]", "/sektorler/[slug]"),
     "/factory-technology": p("/factory-technology", "/fabrika-teknoloji"),
+    "/showcase": p("/showcase", "/urun-gorselleri"),
     "/products/[category]": p("/products/[category]", "/urunler/[category]"),
     "/products/[category]/[slug]": p(
       "/products/[category]/[slug]",

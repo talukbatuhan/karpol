@@ -1,6 +1,11 @@
 import { z } from 'zod'
 import type { CategoryAttributeDefinition, LocalizedField } from '@/types/database'
-import { EMPTY_SIZE_TABLE } from '@/types/database'
+import {
+  EMPTY_SIZE_TABLE,
+  type ProductSpecificationTable,
+  type SizeTableBlock,
+} from '@/types/database'
+import { specificationsToDbPayload, sizeTablesToDbPayload } from '@/lib/product-utils'
 
 const localeKeys: (keyof LocalizedField)[] = ['en', 'tr']
 
@@ -82,8 +87,8 @@ export function productFormToServerPayload(
   extra: {
     id?: string
     modules: import('@/types/database').ProductModules
-    specifications: import('@/types/database').ProductSpecification[]
-    size_table: import('@/types/database').SizeTable
+    specificationTables: ProductSpecificationTable[]
+    sizeTableBlocks: SizeTableBlock[]
     gallery: import('@/types/database').ProductGalleryAsset[]
     technical_drawings: import('@/types/database').ProductTechnicalDrawing[]
     model_3d: import('@/types/database').ProductModel3D
@@ -117,8 +122,12 @@ export function productFormToServerPayload(
     temperature_min: data.temperature_min ? Number(data.temperature_min) : undefined,
     temperature_max: data.temperature_max ? Number(data.temperature_max) : undefined,
     modules: extra.modules,
-    specifications: extra.modules.specifications ? extra.specifications : [],
-    size_table: extra.modules.size_table ? extra.size_table : EMPTY_SIZE_TABLE,
+    specifications: extra.modules.specifications
+      ? specificationsToDbPayload(extra.specificationTables)
+      : [],
+    size_table: extra.modules.size_table
+      ? sizeTablesToDbPayload(extra.sizeTableBlocks)
+      : EMPTY_SIZE_TABLE,
     gallery: extra.modules.gallery ? extra.gallery : [],
     technical_drawings: extra.modules.technical_drawing ? extra.technical_drawings : [],
     model_3d: extra.modules.model_3d ? extra.model_3d : {},

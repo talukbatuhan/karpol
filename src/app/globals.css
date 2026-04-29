@@ -4,13 +4,15 @@
 @tailwind utilities;
 
 :root {
-  /* ─── Color System (Premium v3 — Warm Gold / Cream) ─── */
-  /* Eski endüstriyel turuncu (#E8611A) kaldırıldı; tüm halka açık sayfalar
-     ProductDetailView ile aynı sıcak altın/krem tonlarını kullanır. Admin
-     paneli kendi içinde turuncuyu korur (admin.module.css). */
+  /* ─── Color System (Premium v3 — B2B: grafit hero, fildişi içerik, CTA turuncu) ─── */
+  --color-hero-bg: #1A1A2E;         /* otoriter hero / first screen */
+  --color-hero-bg-alt: #12122A;     /* slightly deeper for gradients */
+  --ivory-canvas: #F5F5F0;         /* okunabilir warm ivory (body bands) */
+  --color-cta: #E8611A;             /* endüstriyel turuncu — primary CTA */
+  --color-cta-hover: #C44E0F;       /* CTA pressed/hover (darker) */
   --color-primary: #0F1729;
   --color-secondary: #1B2540;
-  --color-accent: #C8A85A;          /* warm gold */
+  --color-accent: #C8A85A;          /* warm gold — secondary highlights */
   --color-accent-hover: #B09347;    /* darker gold (hover) */
   --color-accent-light: #F6F1E6;    /* soft cream bg */
   --color-success: #16A34A;
@@ -64,7 +66,8 @@
   --font-primary: var(--font-inter), system-ui, -apple-system, sans-serif;
   /* Navbar: Barlow — crisp, modern UI */
   --font-nav: var(--font-barlow), var(--font-inter), system-ui, sans-serif;
-  --font-mono: var(--font-roboto-mono), monospace;
+  /* SKU, ölçü tabloları, teknik veri */
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
 
   --text-xs: 0.75rem;
   --text-sm: 0.875rem;
@@ -133,11 +136,12 @@
   --duration-fast: 150ms;
   --duration-normal: 300ms;
 
-  /* ─── Layout ─── */
+  /* ─── Layout (desktop section blocks 120px, mobile 80px) ─── */
   --container-max: 1200px;
   --container-padding: 24px;
-  --section-padding: 100px;
-  --section-padding-mobile: 64px;
+  --section-padding: 120px;
+  --section-padding-mobile: 80px;
+  --grid-cols-12: repeat(12, minmax(0, 1fr));
 
   /* ─── Ivory & Navy Theme (public pages, non-home) ─── */
   --ivory-bg: #FFFFFF;
@@ -248,7 +252,7 @@ a {
 }
 
 .section {
-  padding: 72px 0;
+  padding: var(--section-padding) 0;
 }
 
 .eyebrow {
@@ -275,7 +279,7 @@ a {
   line-height: 1.7;
 }
 
-/* RTL support for Arabic */
+/* RTL: reserved for future locales (layout `dir` is set per request) */
 [dir="rtl"] {
   text-align: right;
 }
@@ -293,7 +297,7 @@ a {
   }
 
   .section {
-    padding: 56px 0;
+    padding: var(--section-padding-mobile) 0;
   }
 
   .section-text {
@@ -332,6 +336,19 @@ a {
   ::view-transition-old(root),
   ::view-transition-new(root) {
     animation: none;
+  }
+
+  :root {
+    --ease-spring: linear;
+    --transition: none;
+    --duration-fast: 1ms;
+    --duration-normal: 1ms;
+  }
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
   }
 }
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { startTransition, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 type DocumentWithViewTransition = Document & {
@@ -65,7 +65,9 @@ export default function ViewTransitionsProvider() {
       event.stopPropagation();
 
       doc.startViewTransition!(() => {
-        router.push(dest);
+        startTransition(() => {
+          router.push(dest);
+        });
       });
     };
 

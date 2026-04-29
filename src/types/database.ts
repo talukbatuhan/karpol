@@ -15,6 +15,17 @@ export interface ProductSpecification {
   test_method?: string
 }
 
+/** Bir üründe birden fazla teknik tablo (başlık + satırlar). */
+export interface ProductSpecificationTable {
+  title?: LocalizedField
+  rows: ProductSpecification[]
+}
+
+/** DB’de saklanan şekil: çoklu tablo. Eski kayıtlar düz `ProductSpecification[]` olabilir. */
+export type ProductSpecificationsStored =
+  | ProductSpecification[]
+  | { tables: ProductSpecificationTable[] }
+
 /**
  * @deprecated Eski sabit-şemalı satır. Yeni kayıtlar `SizeTable` kullanır.
  * Geriye uyumluluk için tutuluyor; `normalizeSizeTable` runtime'da otomatik dönüştürür.
@@ -66,6 +77,15 @@ export interface SizeTable {
 }
 
 export const EMPTY_SIZE_TABLE: SizeTable = { columns: [], rows: [] }
+
+/** Ürün üzerinde birden fazla ölçü tablosu; isteğe bağlı çok dilli başlık. */
+export type SizeTableBlock = SizeTable & { title?: LocalizedField }
+
+/** DB’de `size_table` JSONB: çoklu tablo veya eski tek tablo / legacy satırlar. */
+export type ProductSizeTablesStored =
+  | SizeTable
+  | ProductSizeRow[]
+  | { tables: SizeTableBlock[] }
 
 export interface ProductGalleryAsset {
   url: string
@@ -193,12 +213,12 @@ export interface Product {
   dimensions?: Record<string, string>
   applications?: LocalizedArrayField
   compatible_machines: string[]
-  specifications?: ProductSpecification[]
+  specifications?: ProductSpecificationsStored
   /**
-   * Esnek ölçü tablosu (sütun + satır şeması). Geriye uyumluluk için eski
-   * `ProductSizeRow[]` formatı da kabul edilir; `normalizeSizeTable` çağrılmalı.
+   * Esnek ölçü tablosu (sütun + satır). Çoklu tablo: `{ tables: SizeTableBlock[] }`.
+   * Eski tek tablo veya `ProductSizeRow[]` için `normalizeProductSizeTables` kullanın.
    */
-  size_table?: SizeTable | ProductSizeRow[]
+  size_table?: ProductSizeTablesStored
   images: string[]
   gallery?: ProductGalleryAsset[]
   model_3d_url?: string
