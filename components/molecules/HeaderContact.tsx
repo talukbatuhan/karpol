@@ -8,14 +8,20 @@ export function HeaderContact() {
   return (
     <div className="shrink-0 text-right font-sans text-[0.7rem] leading-snug text-navy-950/90 sm:text-xs">
       <p className="font-semibold tracking-wide">{t("companyName")}</p>
-      <p className="mt-0.5 text-navy-800/85">{t("addressLine1")}</p>
-      <p className="mt-0.5 text-navy-800/85">{t("addressLine2")}</p>
-      <a
-        href={t("phoneHref")}
-        className="mt-1 inline-block font-mono text-navy-950 transition-colors hover:text-gold-500"
-      >
-        {t("phone")}
-      </a>
+      <p className="mt-0.5 flex flex-wrap items-center justify-end gap-x-2 gap-y-0.5 text-navy-800/85">
+        <span>
+          {t("addressLine1")}, {t("addressLine2")}
+        </span>
+        <span className="text-gold-500/80" aria-hidden>
+          ·
+        </span>
+        <a
+          href={t("phoneHref")}
+          className="font-mono text-navy-950 transition-colors hover:text-gold-500"
+        >
+          {t("phone")}
+        </a>
+      </p>
     </div>
   );
 }
