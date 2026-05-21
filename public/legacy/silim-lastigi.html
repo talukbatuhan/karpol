@@ -1,0 +1,1518 @@
+<!DOCTYPE html>
+<html lang="tr">
+<script>
+  (function () {
+    if (location.search.indexOf('embed=1') === -1) return;
+    document.documentElement.classList.add('embed-mode');
+    window.__karpolCenterView = function () {
+      var wrapper = document.getElementById('canvas-zoom-wrapper');
+      var canvas = document.getElementById('cnv');
+      if (!wrapper || !canvas) return;
+
+      var cw = canvas.offsetWidth || 760;
+      var ch = canvas.offsetHeight || 560;
+      var availW = wrapper.clientWidth;
+      var availH = wrapper.clientHeight;
+
+      wrapper.scrollLeft = 0;
+      wrapper.scrollTop = 0;
+
+      if (availW < 8 || availH < 8) return;
+
+      var scale = Math.min(1, availW / cw, availH / ch);
+      var scaledW = cw * scale;
+      var scaledH = ch * scale;
+
+      if (typeof zoomScale !== 'undefined') {
+        zoomScale = scale;
+        panX = (availW - scaledW) / 2;
+        panY = (availH - scaledH) / 2;
+        if (typeof applyZoom === 'function') applyZoom();
+      }
+    };
+    function scheduleCenter() {
+      requestAnimationFrame(function () {
+        requestAnimationFrame(window.__karpolCenterView);
+      });
+    }
+    window.addEventListener('load', function () {
+      setTimeout(scheduleCenter, 350);
+    });
+    window.addEventListener('resize', scheduleCenter);
+  })();
+</script>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Karpol — Silim lastiği teknik resim</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400..700;1,14..32,400..700&family=JetBrains+Mono:ital,wght@0,400..600;1,400..600&display=swap');
+
+    :root {
+      --surface-base: #eef2f7;
+      --surface-raised: #f8fafc;
+      --surface-panel: #ffffff;
+      --border-subtle: rgba(15, 23, 42, 0.08);
+      --border-default: rgba(15, 23, 42, 0.16);
+      --border-focus: rgba(2, 132, 199, 0.46);
+      --accent: #0284c7;
+      --accent-dim: rgba(2, 132, 199, 0.12);
+      --accent-glow: rgba(2, 132, 199, 0.16);
+      --accent-pressed: #0369a1;
+      --text-primary: #0f172a;
+      --text-secondary: #334155;
+      --text-muted: #64748b;
+      --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.08);
+      --shadow-sm: 0 6px 18px rgba(15, 23, 42, 0.08);
+      --shadow-md: 0 10px 30px rgba(15, 23, 42, 0.12);
+      --shadow-inset: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+      --radius-sm: 0;
+      --radius-md: 0;
+      --radius-lg: 0;
+      --radius-xl: 0;
+      --space-section: 20px;
+      --space-field: 14px;
+      --sidebar-width: 304px;
+      --header-height: 56px;
+      --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* Karpol sitesi iframe gömümü (?embed=1) — üst başlık gizlenir, PNG/PDF kalır */
+    html.embed-mode {
+      --header-height: 48px;
+    }
+    html.embed-mode .app-header .header-title,
+    html.embed-mode .app-header .hamburger-btn {
+      display: none !important;
+    }
+    html.embed-mode .app-header {
+      justify-content: flex-end;
+      height: var(--header-height);
+      min-height: var(--header-height);
+      padding: 0 16px;
+    }
+    html.embed-mode,
+    html.embed-mode body {
+      height: 100%;
+      overflow: hidden;
+    }
+    html.embed-mode #app {
+      height: 100%;
+      min-height: 0;
+      overflow: hidden;
+    }
+    html.embed-mode .app-shell {
+      height: calc(100vh - var(--header-height));
+      flex: 1;
+      min-height: 0;
+      overflow: hidden;
+    }
+    html.embed-mode .canvas-stage {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      padding: 8px 12px;
+      overflow: hidden;
+      justify-content: stretch;
+      align-items: stretch;
+    }
+    html.embed-mode .canvas-zoom-wrapper {
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+      display: block;
+      overflow: hidden;
+      position: relative;
+    }
+    html.embed-mode .canvas-zoom-inner {
+      margin: 0;
+      display: block;
+      transform-origin: top left;
+    }
+    html.embed-mode canvas#cnv {
+      display: block;
+      margin: 0;
+    }
+    html.embed-mode .canvas-hint {
+      display: none;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+      background: var(--surface-base);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: auto;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    #app { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+
+    .app-header {
+      flex-shrink: 0;
+      height: var(--header-height);
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      background: #ffffff;
+      border-bottom: 1px solid var(--border-subtle);
+      box-shadow: var(--shadow-xs), var(--shadow-inset);
+      position: relative;
+      z-index: 100;
+    }
+    .app-header::after {
+      content: '';
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      opacity: 0.35;
+    }
+    .header-title { display: flex; align-items: center; gap: 12px; min-width: 0; }
+
+    .hamburger-btn {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      gap: 5px;
+      width: 38px;
+      height: 38px;
+      padding: 9px 8px;
+      background: var(--surface-raised);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .hamburger-btn:hover { background: var(--accent-dim); border-color: rgba(34, 211, 238, 0.35); }
+    .hamburger-btn span {
+      display: block;
+      height: 2px;
+      border-radius: 0;
+      background: var(--text-primary);
+      transition: transform 0.22s ease, opacity 0.22s ease;
+    }
+    .hamburger-btn.is-open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .hamburger-btn.is-open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+    .hamburger-btn.is-open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.2);
+      z-index: 50;
+    }
+    .sidebar-overlay.is-visible { display: block; }
+
+    .header-badge {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--surface-base);
+      background: linear-gradient(135deg, #38bdf8 0%, var(--accent-pressed) 100%);
+      padding: 5px 10px;
+      border-radius: 0;
+      box-shadow: 0 0 20px var(--accent-glow);
+      flex-shrink: 0;
+    }
+    .app-header h1 {
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .btn {
+      font-family: var(--font-sans);
+      font-size: 12px;
+      font-weight: 500;
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-default);
+      background: #ffffff;
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, transform 0.12s ease;
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn:hover {
+      background: rgba(34, 211, 238, 0.08);
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 1px var(--accent-dim);
+    }
+    .btn:active { transform: scale(0.98); }
+    .btn--primary {
+      background: linear-gradient(180deg, rgba(2, 132, 199, 0.22) 0%, rgba(3, 105, 161, 0.36) 100%);
+      border-color: rgba(2, 132, 199, 0.42);
+      color: #ffffff;
+      font-weight: 600;
+    }
+    .btn--primary:hover {
+      background: linear-gradient(180deg, rgba(2, 132, 199, 0.3) 0%, rgba(3, 105, 161, 0.52) 100%);
+      border-color: var(--accent);
+      box-shadow: 0 4px 24px var(--accent-glow);
+    }
+
+    .app-shell {
+      display: flex;
+      flex: 1;
+      height: calc(100vh - var(--header-height));
+      overflow: auto;
+      position: relative;
+      min-height: 0;
+    }
+
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--surface-panel);
+      border-right: 1px solid var(--border-subtle);
+      box-shadow: var(--shadow-sm);
+      overflow-y: auto;
+      overflow-x: hidden;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.32s cubic-bezier(0.32, 0.72, 0, 1);
+      z-index: 60;
+      position: relative;
+    }
+    .sidebar::-webkit-scrollbar { width: 6px; }
+    .sidebar::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.2); border-radius: 0; }
+
+    .sidebar__mobile-bar {
+      display: none;
+      padding: 16px 18px 12px;
+      border-bottom: 1px solid var(--border-subtle);
+      align-items: center;
+      justify-content: space-between;
+    }
+    .sidebar__mobile-bar span {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    .sidebar-close-btn {
+      width: 36px;
+      height: 36px;
+      border: none;
+      background: var(--surface-raised);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-secondary);
+      transition: background 0.15s, color 0.15s;
+    }
+    .sidebar-close-btn:hover { background: var(--accent-dim); color: var(--accent); }
+
+    .sidebar-section {
+      padding: var(--space-section) 18px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .sidebar-section:last-child { border-bottom: none; }
+    .sidebar-section-title {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    .field { margin-bottom: var(--space-field); }
+    .field:last-child { margin-bottom: 0; }
+    .field label {
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+      letter-spacing: 0.02em;
+    }
+    .field input {
+      width: 100%;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 500;
+      padding: 10px 12px;
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+      background: #ffffff;
+      color: var(--text-primary);
+      outline: none;
+      transition: border-color 0.18s ease, box-shadow 0.18s ease;
+    }
+    .field input:hover { border-color: rgba(148, 163, 184, 0.28); }
+    .field input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-dim), var(--shadow-inset);
+    }
+    .field--active {
+      background: var(--accent-dim);
+      border-radius: var(--radius-lg);
+      padding: 10px 12px;
+      margin: -4px -12px 10px -12px;
+      border: 1px solid rgba(34, 211, 238, 0.15);
+    }
+    .field--active label { color: var(--accent) !important; }
+    .field--active input { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-dim); }
+    .field-hint {
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--accent);
+      margin-top: 6px;
+      display: none;
+      letter-spacing: 0.02em;
+    }
+    .field--active .field-hint { display: block; }
+    .field input.error { border-color: #e24b4a; }
+    .field-error { font-size: 10px; color: #e24b4a; margin-top: 4px; }
+    .field-unit { font-size: 10px; color: var(--text-muted); margin-left: 4px; font-weight: 500; }
+
+    .field-row {
+      display: flex;
+      align-items: center;
+    }
+
+    .field-row input { flex: 1; }
+
+    .canvas-stage {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 20px;
+      background:
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(34, 211, 238, 0.08), transparent 50%),
+        var(--surface-raised);
+      overflow: hidden;
+      position: relative;
+      min-width: 0;
+    }
+
+    .canvas-zoom-wrapper {
+      flex: 1;
+      width: 100%;
+      overflow: auto;
+      position: relative;
+      display: flex;
+      cursor: grab;
+      border-radius: var(--radius-xl);
+      -webkit-user-select: none;
+      user-select: none;
+      background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+      border: 1px solid var(--border-subtle);
+      box-shadow: var(--shadow-md), var(--shadow-inset);
+    }
+    .canvas-zoom-wrapper:active { cursor: grabbing; }
+
+    .canvas-zoom-inner {
+      transform-origin: center center;
+      transition: transform 0.05s linear;
+      will-change: transform;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: auto;
+      padding: 12px;
+    }
+
+    canvas#cnv {
+      display: block;
+      flex-shrink: 0;
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(2, 132, 199, 0.18);
+      box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.04), 0 24px 64px rgba(15, 23, 42, 0.1);
+    }
+
+    .canvas-hint {
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--text-muted);
+      text-align: center;
+      padding: 8px 12px 0;
+      flex-shrink: 0;
+      letter-spacing: 0.02em;
+    }
+
+    .zoom-controls {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      z-index: 10;
+    }
+    .zoom-btn {
+      width: 40px;
+      height: 40px;
+      background: #ffffff;
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-primary);
+      font-size: 17px;
+      font-weight: 500;
+      transition: background 0.15s, border-color 0.15s, color 0.15s, box-shadow 0.15s;
+      user-select: none;
+      box-shadow: var(--shadow-sm);
+    }
+    .zoom-btn:hover {
+      background: var(--accent-dim);
+      border-color: var(--accent);
+      color: var(--accent);
+      box-shadow: 0 0 24px var(--accent-glow);
+    }
+    .zoom-level {
+      background: #ffffff;
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      padding: 8px 4px;
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      min-width: 40px;
+      user-select: none;
+      letter-spacing: 0.04em;
+    }
+
+    .panel-fab {
+      display: none;
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      z-index: 20;
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(145deg, rgba(2, 132, 199, 0.18), rgba(3, 105, 161, 0.35));
+      border: 1px solid rgba(2, 132, 199, 0.4);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-md), 0 0 32px var(--accent-glow);
+      transition: transform 0.15s, box-shadow 0.15s;
+      color: #ecfeff;
+    }
+    .panel-fab:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md), 0 0 40px rgba(34, 211, 238, 0.35);
+    }
+    .panel-fab:active { transform: scale(0.96); }
+
+    .validation-bar {
+      display: none;
+      width: 100%;
+      max-width: 760px;
+      margin-bottom: 10px;
+      padding: 10px 14px;
+      font-size: 11px;
+      font-weight: 500;
+      color: #991b1b;
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      border-radius: var(--radius-sm);
+    }
+    .validation-bar.show { display: block; }
+
+    .color-row { display: flex; gap: 8px; flex-wrap: wrap; }
+    .color-swatch {
+      width: 28px;
+      height: 28px;
+      border-radius: 0;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: border-color 0.15s, box-shadow 0.15s, transform 0.12s;
+    }
+    .color-swatch:hover { transform: translateY(-1px); }
+    .color-swatch.selected {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px var(--accent-dim);
+    }
+
+    @media (max-width: 768px) {
+      :root { --header-height: 52px; }
+      .hamburger-btn { display: flex; }
+      .panel-fab { display: flex; }
+      .app-header h1 { font-size: 12px; }
+      .btn { font-size: 11px; padding: 7px 12px; }
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        z-index: 200;
+        box-shadow: 8px 0 48px rgba(15, 23, 42, 0.2);
+      }
+      .sidebar.is-collapsed-mobile { transform: translateX(-100%); }
+      .sidebar__mobile-bar { display: flex; }
+      .canvas-stage { padding: 12px; }
+      .canvas-zoom-wrapper { cursor: default; border-radius: 0; }
+      .zoom-controls { bottom: 14px; right: 14px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="sidebar-overlay" class="sidebar-overlay" aria-hidden="true"></div>
+  <div id="app">
+    <header class="app-header" role="banner">
+      <div class="header-title">
+        <button type="button" class="hamburger-btn" id="hamburger-btn" onclick="openSidebar()" title="Parametreler" aria-controls="sidebar" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+        <span class="header-badge">Teknik resim</span>
+        <h1>Flanş & silim lastiği</h1>
+      </div>
+      <div class="header-actions">
+        <button type="button" class="btn" onclick="downloadPNG()">PNG indir</button>
+        <button type="button" class="btn btn--primary" onclick="downloadPDF()">PDF kaydet</button>
+      </div>
+    </header>
+
+    <div class="app-shell">
+      <aside class="sidebar" id="sidebar" aria-label="Tasarım parametreleri">
+        <div class="sidebar__mobile-bar">
+          <span>Parametreler</span>
+          <button type="button" class="sidebar-close-btn" onclick="closeSidebar()" aria-label="Paneli kapat">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">Firma Bilgisi</div>
+          <div class="field">
+            <label for="marka">Marka / firma adı</label>
+            <input type="text" id="marka" value="KARPOL" oninput="update()" onfocus="setActiveField('marka')" onblur="clearActiveField()" autocomplete="organization" style="text-transform:uppercase;">
+            <div class="field-hint">Teknik resimde marka yazıları vurgulanır</div>
+          </div>
+          <div class="field">
+            <label for="kafaSayisi">Kafa sayısı</label>
+            <input type="number" id="kafaSayisi" value="1" min="1" max="99" oninput="update()" onfocus="setActiveField('kafaSayisi')" onblur="clearActiveField()">
+            <div class="field-hint">Alt tabloda kafa sayısı hücresi vurgulanır</div>
+          </div>
+          <div class="field">
+            <label for="hazirlayan">Hazırlayan</label>
+            <input type="text" id="hazirlayan" value="MÜHENDİSLİK" oninput="update()" onfocus="setActiveField('hazirlayan')" onblur="clearActiveField()" autocomplete="name" style="text-transform:uppercase;">
+            <div class="field-hint">Üst başlıkta hazırlayan satırı vurgulanır</div>
+          </div>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">Çap Ölçüleri</div>
+          <div class="field">
+            <label>Dış Çap <span class="field-unit">mm</span></label>
+            <input type="number" id="disCap" value="200" min="10" max="1000" oninput="update()" onfocus="setActiveField('disCap')" onblur="clearActiveField()">
+            <div class="field-hint">Görselde Ø D (dış çap) ölçüsü vurgulanır</div>
+            <div class="field-error" id="err-disCap"></div>
+          </div>
+          <div class="field">
+            <label>Delik Merkez Çapı <span class="field-unit">mm</span></label>
+            <input type="number" id="merkezCapi" value="160" min="10" max="990" oninput="update()" onfocus="setActiveField('merkezCapi')" onblur="clearActiveField()">
+            <div class="field-hint">Görselde PCD (delik merkez çapı) vurgulanır</div>
+            <div class="field-error" id="err-merkezCapi"></div>
+          </div>
+          <div class="field">
+            <label>İç Çap <span class="field-unit">mm</span></label>
+            <input type="number" id="icCap" value="100" min="5" max="980" oninput="update()" onfocus="setActiveField('icCap')" onblur="clearActiveField()">
+            <div class="field-hint">Görselde Ø d (iç çap) ölçüsü vurgulanır</div>
+            <div class="field-error" id="err-icCap"></div>
+          </div>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">Delik & Kalınlık</div>
+          <div class="field">
+            <label>Delik Çapı <span class="field-unit">mm</span></label>
+            <input type="number" id="delikCapi" value="12" min="1" oninput="update()" onfocus="setActiveField('delikCapi')" onblur="clearActiveField()">
+            <div class="field-hint">Görselde delik çapı ölçüsü vurgulanır</div>
+            <div class="field-error" id="err-delikCapi"></div>
+          </div>
+          <div class="field">
+            <label>Delik Adedi</label>
+            <input type="number" id="delikAdeti" value="8" min="1" max="72" oninput="update()" onfocus="setActiveField('delikAdeti')" onblur="clearActiveField()">
+            <div class="field-hint">Görselde delik adedi (×N) vurgulanır</div>
+          </div>
+          <div class="field">
+            <label>Kalınlık <span class="field-unit">mm</span></label>
+            <input type="number" id="kalinlik" value="15" min="1" max="500" oninput="update()" onfocus="setActiveField('kalinlik')" onblur="clearActiveField()">
+            <div class="field-hint">Görselde t (kalınlık) ölçüsü vurgulanır</div>
+          </div>
+          <div class="field">
+            <label for="shoreSertlik">Shore sertlik <span class="field-unit">Shore A</span></label>
+            <input type="number" id="shoreSertlik" value="60" min="1" max="100" oninput="update()" onfocus="setActiveField('shoreSertlik')" onblur="clearActiveField()">
+            <div class="field-hint">Alt tabloda Shore sertlik hücresi vurgulanır</div>
+          </div>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">Renk</div>
+          <div class="color-row" id="colorRow">
+          </div>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">Görünüm</div>
+          <div class="field">
+            <label>Revizyon No</label>
+            <input type="text" id="revNo" value="A" oninput="update()" onfocus="setActiveField('revNo')" onblur="clearActiveField()">
+            <div class="field-hint">Üst başlıkta revizyon satırı vurgulanır</div>
+          </div>
+          <div class="field">
+            <label>Tarih</label>
+            <input type="text" id="tarih" value="" oninput="update()" onfocus="setActiveField('tarih')" onblur="clearActiveField()" placeholder="Otomatik">
+            <div class="field-hint">Üst başlıkta tarih satırı vurgulanır</div>
+          </div>
+        </div>
+      </aside>
+
+      <main class="canvas-stage" role="main">
+        <div class="canvas-zoom-wrapper" id="canvas-zoom-wrapper">
+          <div class="canvas-zoom-inner" id="canvas-zoom-inner">
+            <div class="validation-bar" id="validBar"></div>
+            <canvas id="cnv"></canvas>
+          </div>
+        </div>
+        <p class="canvas-hint">Tekerlek: yakınlaştır · Sürükle: kaydır · Sağ alttaki düğmeler: zoom</p>
+        <button type="button" class="panel-fab" id="panel-fab" onclick="openSidebar()" title="Parametreler paneli">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
+        <div class="zoom-controls">
+          <button type="button" class="zoom-btn" onclick="zoomIn()" title="Yakınlaştır">＋</button>
+          <div class="zoom-level" id="zoom-level">100%</div>
+          <button type="button" class="zoom-btn" onclick="zoomOut()" title="Uzaklaştır">－</button>
+          <button type="button" class="zoom-btn" onclick="zoomReset()" title="Sıfırla" style="font-size:11px;font-family:var(--font-mono);">↺</button>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script>
+  const logo = new Image();
+  logo.crossOrigin = 'anonymous';
+  logo.src = 'https://www.karpol.net/karpol-logo.png';
+  logo.onload = () => draw();
+
+  const COLORS = [
+    { hex: '#C25953', name: 'Kırmızı' },
+    { hex: '#2E5EB5', name: 'Mavi' },
+    { hex: '#1B7A4E', name: 'Yeşil' },
+    { hex: '#E8913A', name: 'Turuncu' },
+    { hex: '#4A4A8A', name: 'Lacivert' },
+    { hex: '#555555', name: 'Gri' },
+    { hex: '#1a1a2e', name: 'Siyah' },
+  ];
+
+  let selectedColor = COLORS[0].hex;
+
+  const CANVAS_LOGICAL_W = 760;
+  const CANVAS_LOGICAL_H = 560;
+  const SHEET_BG = '#ffffff';
+  const INK = '#0f172a';
+  const ACCENT = '#0284c7';
+  const ACCENT_DIM_LINE = '#0ea5e9';
+  const TITLE_H = 50;
+  const FOOTER_H = 132;
+  const FONT_SANS = '600 13px Inter, system-ui, sans-serif';
+  const FONT_MONO_SM = '500 10px "JetBrains Mono", ui-monospace, monospace';
+  const FONT_DIM = '600 13px "JetBrains Mono", ui-monospace, monospace';
+  const FONT_DIM_ACTIVE = '700 14px "JetBrains Mono", ui-monospace, monospace';
+  const DIM_INACTIVE = '#475569';
+  let activeFieldId = null;
+
+  const colorRow = document.getElementById('colorRow');
+  COLORS.forEach(c => {
+    const sw = document.createElement('div');
+    sw.className = 'color-swatch' + (c.hex === selectedColor ? ' selected' : '');
+    sw.style.background = c.hex;
+    sw.title = c.name;
+    sw.onclick = () => {
+      document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
+      sw.classList.add('selected');
+      selectedColor = c.hex;
+      draw();
+    };
+    colorRow.appendChild(sw);
+  });
+
+  function getVal(id) {
+    const el = document.getElementById(id);
+    const n = parseFloat(el.value);
+    return isNaN(n) ? 0 : n;
+  }
+  function getStr(id) { return document.getElementById(id).value.trim().toUpperCase(); }
+
+  function setActiveField(id) {
+    clearActiveField();
+    activeFieldId = id;
+    const el = document.getElementById(id);
+    if (el) {
+      const fieldDiv = el.closest('.field');
+      if (fieldDiv) fieldDiv.classList.add('field--active');
+    }
+    draw();
+  }
+
+  function clearActiveField() {
+    document.querySelectorAll('.field.field--active').forEach(f => f.classList.remove('field--active'));
+    activeFieldId = null;
+    draw();
+  }
+
+  function setErr(id, msg) {
+    const el = document.getElementById('err-' + id);
+    const inp = document.getElementById(id);
+    if (el) el.textContent = msg;
+    if (inp) inp.classList.toggle('error', !!msg);
+  }
+
+  function validate() {
+    const dis = getVal('disCap');
+    const merkez = getVal('merkezCapi');
+    const ic = getVal('icCap');
+    const delikC = getVal('delikCapi');
+
+    let errors = [];
+    setErr('disCap', ''); setErr('merkezCapi', ''); setErr('icCap', ''); setErr('delikCapi', '');
+
+    if (ic >= dis) { setErr('icCap', 'İç çap < dış çap olmalı'); errors.push('İç çap, dış çaptan küçük olmalıdır.'); }
+    if (merkez >= dis) { setErr('merkezCapi', 'Merkez çapı < dış çap olmalı'); errors.push('Delik merkez çapı, dış çaptan küçük olmalıdır.'); }
+    if (merkez <= ic) { setErr('merkezCapi', 'Merkez çapı > iç çap olmalı'); errors.push('Delik merkez çapı, iç çaptan büyük olmalıdır.'); }
+    if (delikC >= (dis - merkez)) { setErr('delikCapi', 'Delik çok büyük'); errors.push('Delik çapı gövdeye sığmıyor.'); }
+
+    const bar = document.getElementById('validBar');
+    if (errors.length) { bar.textContent = '⚠ ' + errors[0]; bar.classList.add('show'); }
+    else { bar.classList.remove('show'); }
+
+    return errors.length === 0;
+  }
+
+  function hexToRgb(hex) {
+    const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+    return [r,g,b];
+  }
+
+  function lighten(hex, pct) {
+    const [r,g,b] = hexToRgb(hex);
+    const mix = v => Math.round(v + (255-v)*pct);
+    return `rgb(${mix(r)},${mix(g)},${mix(b)})`;
+  }
+
+  function darken(hex, pct) {
+    const [r,g,b] = hexToRgb(hex);
+    const mix = v => Math.round(v*(1-pct));
+    return `rgb(${mix(r)},${mix(g)},${mix(b)})`;
+  }
+
+  function drawArrow(ctx, x1, y1, x2, y2, size) {
+    const angle = Math.atan2(y2 - y1, x2 - x1);
+    const len = size || 6;
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x2, y2);
+    ctx.lineTo(x2 - len * Math.cos(angle - 0.35), y2 - len * Math.sin(angle - 0.35));
+    ctx.lineTo(x2 - len * Math.cos(angle + 0.35), y2 - len * Math.sin(angle + 0.35));
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  function drawCadGrid(ctx, y0, h, w) {
+    const step = 20;
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(0, y0, w, h);
+    ctx.clip();
+    for (let x = 0; x <= w; x += step) {
+      ctx.strokeStyle = x % (step * 5) === 0 ? 'rgba(8, 145, 178, 0.09)' : 'rgba(148, 163, 184, 0.05)';
+      ctx.lineWidth = x % (step * 5) === 0 ? 0.6 : 0.35;
+      ctx.beginPath();
+      ctx.moveTo(x, y0);
+      ctx.lineTo(x, y0 + h);
+      ctx.stroke();
+    }
+    for (let y = y0; y <= y0 + h; y += step) {
+      const rel = y - y0;
+      ctx.strokeStyle = rel % (step * 5) === 0 ? 'rgba(8, 145, 178, 0.09)' : 'rgba(148, 163, 184, 0.05)';
+      ctx.lineWidth = rel % (step * 5) === 0 ? 0.6 : 0.35;
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(w, y);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  function drawDimPill(ctx, text, color, font) {
+    ctx.font = font;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.save();
+    ctx.lineWidth = 5;
+    ctx.strokeStyle = '#ffffff';
+    ctx.strokeText(text, 0, 0.8);
+    ctx.strokeText(text, 0, 0.8);
+    ctx.restore();
+    ctx.fillStyle = color;
+    ctx.fillText(text, 0, 0.8);
+  }
+
+  function drawDimAt(ctx, text, x, y, fieldId, rotate, align, baseline) {
+    const isDelik = fieldId === 'delik';
+    const active = isDelik
+      ? (activeFieldId === 'delikCapi' || activeFieldId === 'delikAdeti')
+      : activeFieldId === fieldId;
+    const color = active ? ACCENT : DIM_INACTIVE;
+    const font = active ? FONT_DIM_ACTIVE : FONT_DIM;
+    ctx.save();
+    ctx.translate(x, y);
+    if (rotate) ctx.rotate(rotate);
+    ctx.textAlign = align || 'center';
+    ctx.textBaseline = baseline || 'middle';
+    drawDimPill(ctx, text, color, font);
+    ctx.restore();
+  }
+
+  function fontSizePx(font) {
+    const m = String(font).match(/(\d+(?:\.\d+)?)\s*px/i);
+    return m ? parseFloat(m[1]) : 12;
+  }
+
+  function drawLabelWithHalo(ctx, text, x, y, font, color) {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.font = font;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    const tw = ctx.measureText(text).width;
+    const fSize = fontSizePx(font);
+    const pad = 3;
+    ctx.fillStyle = 'rgba(255,255,255,0.92)';
+    ctx.fillRect(-tw / 2 - pad, -fSize / 2 - pad, tw + pad * 2, fSize + pad * 2);
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = '#ffffff';
+    ctx.strokeText(text, 0, 0);
+    ctx.fillStyle = color;
+    ctx.fillText(text, 0, 0);
+    ctx.restore();
+  }
+
+  function drawFocusRing(ctx, cx, cy, r) {
+    ctx.save();
+    ctx.strokeStyle = 'rgba(2, 132, 199, 0.55)';
+    ctx.lineWidth = 2.5;
+    ctx.setLineDash([]);
+    ctx.beginPath();
+    ctx.arc(cx, cy, r + 3, 0, 2 * Math.PI);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function draw() {
+    const valid = validate();
+    const canvas = document.getElementById('cnv');
+    const ctx = canvas.getContext('2d');
+    const logicalW = CANVAS_LOGICAL_W;
+    const logicalH = CANVAS_LOGICAL_H;
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = logicalW * dpr;
+    canvas.height = logicalH * dpr;
+    canvas.style.width = logicalW + 'px';
+    canvas.style.height = logicalH + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.imageSmoothingEnabled = true;
+    if (ctx.imageSmoothingQuality) ctx.imageSmoothingQuality = 'high';
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+
+    function dimActive(fieldId) { return activeFieldId === fieldId; }
+    function delikActive() { return activeFieldId === 'delikCapi' || activeFieldId === 'delikAdeti'; }
+    function dimColor(fieldId) {
+      if (fieldId === 'delik') return delikActive() ? ACCENT : DIM_INACTIVE;
+      return dimActive(fieldId) ? ACCENT : DIM_INACTIVE;
+    }
+    function dimLW(fieldId) {
+      if (fieldId === 'delik') return delikActive() ? 2.4 : 1.15;
+      return dimActive(fieldId) ? 2.4 : 1.15;
+    }
+    const W = logicalW, H = logicalH;
+    ctx.clearRect(0, 0, W, H);
+
+    const dis = getVal('disCap');
+    const merkez = getVal('merkezCapi');
+    const ic = getVal('icCap');
+    const delikC = getVal('delikCapi');
+    const delikN = Math.max(1, getVal('delikAdeti'));
+    const kalinlik = getVal('kalinlik');
+    const shoreSertlik = getVal('shoreSertlik');
+    const marka = getStr('marka');
+    const kafaSayisi = getVal('kafaSayisi');
+    const revNo = getStr('revNo') || 'A';
+    const hazirlayan = getStr('hazirlayan') || '—';
+    const tarihVal = document.getElementById('tarih').value.trim() || new Date().toLocaleDateString('tr-TR');
+
+    const mainColor = valid ? selectedColor : '#94a3b8';
+    const lightFill = lighten(mainColor, 0.45);
+    const midFill = lighten(mainColor, 0.15);
+    const darkColor = darken(mainColor, 0.28);
+    const matFill = darken(mainColor, 0.12);
+
+    const drawH = H - TITLE_H - FOOTER_H;
+
+    ctx.fillStyle = SHEET_BG;
+    ctx.fillRect(0, 0, W, H);
+
+    const headerGrad = ctx.createLinearGradient(0, 0, W, TITLE_H);
+    headerGrad.addColorStop(0, '#0a0e14');
+    headerGrad.addColorStop(1, '#121a26');
+    ctx.fillStyle = headerGrad;
+    ctx.fillRect(0, 0, W, TITLE_H);
+    ctx.fillStyle = ACCENT_DIM_LINE;
+    ctx.fillRect(0, TITLE_H - 1, W, 2);
+
+    if (logo.complete) {
+      const logoH = 34;
+      const logoW = (logo.width / logo.height) * logoH;
+      ctx.drawImage(logo, 16, (TITLE_H - logoH) / 2, logoW, logoH);
+      ctx.fillStyle = '#f1f5f9';
+      ctx.font = FONT_SANS;
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(marka + ' POLİÜRETAN', 25 + logoW, TITLE_H / 2 + 2);
+    } else {
+      ctx.fillStyle = '#f1f5f9';
+      ctx.font = FONT_SANS;
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(marka + ' POLİÜRETAN', 16, TITLE_H / 2 + 2);
+    }
+
+    ctx.textAlign = 'right';
+    ctx.font = FONT_MONO_SM;
+    ctx.fillStyle = 'rgba(148, 163, 184, 0.9)';
+    ctx.fillText('SİLİM LASTİĞİ TEKNİK RESİM', W - 16, 20);
+    ctx.fillStyle = dimActive('revNo') ? ACCENT : 'rgba(148, 163, 184, 0.9)';
+    ctx.fillText('REV: ' + revNo, W - 16, 34);
+    ctx.fillStyle = dimActive('tarih') ? ACCENT : '#e2e8f0';
+    ctx.fillText('TARİH: ' + tarihVal, W - 16, 42);
+    ctx.fillStyle = dimActive('hazirlayan') ? ACCENT : 'rgba(148, 163, 184, 0.85)';
+    ctx.fillText('HAZIRLAYAN: ' + hazirlayan, W - 16, 50);
+
+    drawCadGrid(ctx, TITLE_H, drawH, W);
+
+    const drawTop = TITLE_H;
+    const midY = drawTop + drawH / 2;
+    const maxR = (dis / 2);
+    const S_available = Math.min((drawH - 60) / dis, 1.6);
+    const S = Math.min(S_available, 1.6);
+
+    const cxFlange = W * 0.36;
+    const cyFlange = midY;
+
+    const cxProfile = W * 0.78;
+    const cyProfile = midY;
+    const profileW = kalinlik * S;
+    const profileH = dis * S;
+
+    const matRubberGrad = ctx.createLinearGradient(cxFlange - maxR * S, 0, cxFlange + maxR * S, 0);
+    matRubberGrad.addColorStop(0, darken(mainColor, 0.22));
+    matRubberGrad.addColorStop(0.2, matFill);
+    matRubberGrad.addColorStop(0.5, midFill);
+    matRubberGrad.addColorStop(0.8, matFill);
+    matRubberGrad.addColorStop(1, darken(mainColor, 0.22));
+
+    ctx.save();
+    ctx.shadowColor = 'rgba(15, 23, 42, 0.12)';
+    ctx.shadowBlur = 8;
+    ctx.shadowOffsetY = 3;
+    ctx.beginPath();
+    ctx.arc(cxFlange, cyFlange, maxR * S, 0, 2 * Math.PI);
+    ctx.fillStyle = matRubberGrad;
+    ctx.fill();
+    ctx.shadowColor = 'transparent';
+    ctx.shadowBlur = 0;
+    ctx.shadowOffsetY = 0;
+    ctx.strokeStyle = dimActive('disCap') ? ACCENT : darkColor;
+    ctx.lineWidth = dimActive('disCap') ? 2.2 : 1.35;
+    ctx.stroke();
+    if (dimActive('disCap')) drawFocusRing(ctx, cxFlange, cyFlange, maxR * S);
+
+    ctx.beginPath();
+    ctx.arc(cxFlange, cyFlange, (ic / 2) * S, 0, 2 * Math.PI);
+    ctx.fillStyle = SHEET_BG;
+    ctx.fill();
+
+    ctx.strokeStyle = dimActive('icCap') ? ACCENT : darkColor;
+    ctx.lineWidth = dimActive('icCap') ? 2.2 : 1.25;
+    ctx.beginPath();
+    ctx.arc(cxFlange, cyFlange, (ic / 2) * S, 0, 2 * Math.PI);
+    ctx.stroke();
+    if (dimActive('icCap')) drawFocusRing(ctx, cxFlange, cyFlange, (ic / 2) * S);
+
+    ctx.setLineDash([6, 4]);
+    ctx.strokeStyle = dimActive('merkezCapi') ? ACCENT : 'rgba(2, 132, 199, 0.75)';
+    ctx.lineWidth = dimActive('merkezCapi') ? 2 : 1;
+    ctx.beginPath();
+    ctx.arc(cxFlange, cyFlange, (merkez / 2) * S, 0, 2 * Math.PI);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    if (dimActive('merkezCapi')) drawFocusRing(ctx, cxFlange, cyFlange, (merkez / 2) * S);
+
+    const rPCD = (merkez / 2) * S;
+    const holeR = (delikC / 2) * S;
+    for (let i = 0; i < delikN; i++) {
+      const angle = (i * 2 * Math.PI / delikN) - Math.PI / 2;
+      const hx = cxFlange + rPCD * Math.cos(angle);
+      const hy = cyFlange + rPCD * Math.sin(angle);
+      const holeGrad = ctx.createRadialGradient(hx - holeR * 0.3, hy - holeR * 0.3, 0, hx, hy, holeR);
+      holeGrad.addColorStop(0, '#f8fafc');
+      holeGrad.addColorStop(1, '#cbd5e1');
+      ctx.beginPath();
+      ctx.arc(hx, hy, holeR, 0, 2 * Math.PI);
+      ctx.fillStyle = holeGrad;
+      ctx.fill();
+      ctx.strokeStyle = delikActive() ? ACCENT : '#475569';
+      ctx.lineWidth = delikActive() ? 2 : 1;
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(hx, hy, 1.2, 0, 2 * Math.PI);
+      ctx.fillStyle = '#64748b';
+      ctx.fill();
+    }
+
+    if (dimActive('marka')) {
+      ctx.save();
+      ctx.strokeStyle = 'rgba(2, 132, 199, 0.35)';
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([4, 3]);
+      ctx.beginPath();
+      ctx.arc(cxFlange, cyFlange, (ic / 2) * S + 8, -Math.PI * 0.85, -Math.PI * 0.15);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.restore();
+    }
+    ctx.restore();
+
+    const profGrad = ctx.createLinearGradient(cxProfile - profileW / 2, 0, cxProfile + profileW / 2, 0);
+    profGrad.addColorStop(0, lightFill);
+    profGrad.addColorStop(0.45, midFill);
+    profGrad.addColorStop(1, darkColor);
+    ctx.fillStyle = profGrad;
+    ctx.strokeStyle = dimActive('kalinlik') ? ACCENT : darkColor;
+    ctx.lineWidth = dimActive('kalinlik') ? 2.2 : 1.35;
+    ctx.beginPath();
+    ctx.rect(cxProfile - profileW / 2, cyProfile - profileH / 2, profileW, profileH);
+    ctx.fill();
+    ctx.stroke();
+    if (dimActive('kalinlik')) {
+      ctx.save();
+      ctx.strokeStyle = 'rgba(2, 132, 199, 0.5)';
+      ctx.lineWidth = 2.5;
+      ctx.strokeRect(cxProfile - profileW / 2 - 3, cyProfile - profileH / 2 - 3, profileW + 6, profileH + 6);
+      ctx.restore();
+    }
+    if (dimActive('disCap')) {
+      ctx.save();
+      ctx.strokeStyle = 'rgba(2, 132, 199, 0.4)';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([5, 4]);
+      ctx.strokeRect(cxProfile - profileW / 2 - 2, cyProfile - profileH / 2 - 2, profileW + 4, profileH + 4);
+      ctx.setLineDash([]);
+      ctx.restore();
+    }
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(cxProfile - profileW / 2, cyProfile - profileH / 2, profileW, profileH);
+    ctx.clip();
+    ctx.strokeStyle = 'rgba(71, 85, 105, 0.3)';
+    ctx.lineWidth = 0.5;
+    for (let lx = cxProfile - profileW / 2 - profileH; lx < cxProfile + profileW / 2 + profileH; lx += 5) {
+      ctx.beginPath();
+      ctx.moveTo(lx, cyProfile - profileH / 2);
+      ctx.lineTo(lx + profileH, cyProfile + profileH / 2);
+      ctx.stroke();
+    }
+    ctx.restore();
+
+    const ext = 10;
+
+    const disDimY = cyFlange + maxR * S + 26;
+    const extLeft = cxFlange - maxR * S;
+    const extRight = cxFlange + maxR * S;
+    ctx.strokeStyle = dimColor('disCap');
+    ctx.fillStyle = dimColor('disCap');
+    ctx.lineWidth = dimLW('disCap');
+    ctx.beginPath(); ctx.moveTo(extLeft, cyFlange); ctx.lineTo(extLeft, disDimY + ext); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(extRight, cyFlange); ctx.lineTo(extRight, disDimY + ext); ctx.stroke();
+    drawArrow(ctx, extLeft + 1, disDimY, cxFlange - 10, disDimY, 6);
+    drawArrow(ctx, extRight - 1, disDimY, cxFlange + 10, disDimY, 6);
+    drawDimAt(ctx, 'Ø' + dis + ' mm (D)', cxFlange, disDimY - 8, 'disCap');
+
+    const icDimX = cxFlange - maxR * S - 38;
+    const icDimY1 = cyFlange - (ic / 2) * S;
+    const icDimY2 = cyFlange + (ic / 2) * S;
+    ctx.strokeStyle = dimColor('icCap');
+    ctx.fillStyle = dimColor('icCap');
+    ctx.lineWidth = dimLW('icCap');
+    ctx.beginPath(); ctx.moveTo(cxFlange, icDimY1); ctx.lineTo(icDimX - ext, icDimY1); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cxFlange, icDimY2); ctx.lineTo(icDimX - ext, icDimY2); ctx.stroke();
+    drawArrow(ctx, icDimX, icDimY1 + 1, icDimX, cyFlange - 6, 5);
+    drawArrow(ctx, icDimX, icDimY2 - 1, icDimX, cyFlange + 6, 5);
+    drawDimAt(ctx, 'Ø' + ic + ' mm (d)', icDimX - 12, cyFlange, 'icCap', -Math.PI / 2);
+
+    const pcdDimX = cxFlange + maxR * S + 32;
+    const pcdY1 = cyFlange - (merkez / 2) * S;
+    const pcdY2 = cyFlange + (merkez / 2) * S;
+    ctx.strokeStyle = dimColor('merkezCapi');
+    ctx.fillStyle = dimColor('merkezCapi');
+    ctx.lineWidth = dimLW('merkezCapi');
+    ctx.setLineDash([4, 3]);
+    ctx.beginPath(); ctx.moveTo(cxFlange, pcdY1); ctx.lineTo(pcdDimX + ext, pcdY1); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cxFlange, pcdY2); ctx.lineTo(pcdDimX + ext, pcdY2); ctx.stroke();
+    ctx.setLineDash([]);
+    drawArrow(ctx, pcdDimX, pcdY1 + 1, pcdDimX, cyFlange - 6, 5);
+    drawArrow(ctx, pcdDimX, pcdY2 - 1, pcdDimX, cyFlange + 6, 5);
+    drawDimAt(ctx, 'Ø' + merkez + ' mm (PCD)', pcdDimX + 12, cyFlange, 'merkezCapi', Math.PI / 2);
+
+    const topHoleAngle = -Math.PI / 2;
+    const topHoleX = cxFlange + (merkez / 2) * S * Math.cos(topHoleAngle);
+    const topHoleY = cyFlange + (merkez / 2) * S * Math.sin(topHoleAngle);
+    ctx.strokeStyle = dimColor('delik');
+    ctx.fillStyle = dimColor('delik');
+    ctx.lineWidth = dimLW('delik');
+    ctx.beginPath();
+    ctx.moveTo(topHoleX, topHoleY - holeR - 4);
+    ctx.lineTo(topHoleX - 48, topHoleY - holeR - 20);
+    ctx.stroke();
+    if (delikActive()) drawFocusRing(ctx, topHoleX, topHoleY, holeR);
+    drawDimAt(ctx, 'Ø' + delikC + ' × ' + delikN, topHoleX - 50, topHoleY - holeR - 22, 'delik', 0, 'right', 'bottom');
+
+    const kDimY = cyProfile - profileH / 2 - 20;
+    ctx.strokeStyle = dimColor('kalinlik');
+    ctx.fillStyle = dimColor('kalinlik');
+    ctx.lineWidth = dimLW('kalinlik');
+    ctx.beginPath(); ctx.moveTo(cxProfile - profileW / 2, cyProfile - profileH / 2); ctx.lineTo(cxProfile - profileW / 2, kDimY - ext); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cxProfile + profileW / 2, cyProfile - profileH / 2); ctx.lineTo(cxProfile + profileW / 2, kDimY - ext); ctx.stroke();
+    drawArrow(ctx, cxProfile - profileW / 2 + 1, kDimY, cxProfile - 6, kDimY, 5);
+    drawArrow(ctx, cxProfile + profileW / 2 - 1, kDimY, cxProfile + 6, kDimY, 5);
+    drawDimAt(ctx, kalinlik + ' mm (t)', cxProfile, kDimY - 8, 'kalinlik');
+
+    ctx.strokeStyle = 'rgba(8, 145, 178, 0.22)';
+    ctx.lineWidth = 0.5;
+    ctx.setLineDash([3, 5]);
+    ctx.beginPath();
+    ctx.moveTo(cxFlange, cyFlange - maxR * S - 8);
+    ctx.lineTo(cxFlange, cyFlange + maxR * S + 8);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(cxFlange - maxR * S - 8, cyFlange);
+    ctx.lineTo(cxFlange + maxR * S + 8, cyFlange);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    const FY = H - FOOTER_H;
+    ctx.fillStyle = ACCENT_DIM_LINE;
+    ctx.fillRect(0, FY - 1, W, 1);
+    ctx.fillStyle = '#eef2f7';
+    ctx.fillRect(0, FY, W, FOOTER_H);
+
+    const COL = 5;
+    const fields = [
+      { key: 'marka', label: 'MAKİNE MARKA', value: marka },
+      { key: 'kafaSayisi', label: 'KAFA SAYISI', value: kafaSayisi + ' ADET' },
+      { key: 'delikAdeti', label: 'DELİK ADEDİ', value: delikN + ' ADET' },
+      { key: 'disCap', label: 'Ø DIŞ ÇAP', value: dis + ' mm' },
+      { key: 'icCap', label: 'Ø İÇ ÇAP', value: ic + ' mm' },
+      { key: 'merkezCapi', label: 'Ø MERKEZ ÇAPI', value: merkez + ' mm' },
+      { key: 'delikCapi', label: 'Ø DELİK ÇAPI', value: delikC + ' mm' },
+      { key: 'kalinlik', label: 'KALINLIK', value: kalinlik + ' mm' },
+      { key: 'shoreSertlik', label: 'SHORE SERTLİK', value: shoreSertlik + ' Shore A' },
+      { key: 'revNo', label: 'REVİZYON', value: revNo },
+      { key: 'hazirlayan', label: 'HAZIRLAYAN', value: hazirlayan },
+    ];
+
+    const colW = W / COL;
+    const rowH = 44;
+    fields.forEach((f, idx) => {
+      const col = idx % COL;
+      const row = Math.floor(idx / COL);
+      const fx = col * colW;
+      const fy = FY + row * rowH;
+      const cellActive = dimActive(f.key);
+
+      ctx.strokeStyle = cellActive ? ACCENT : 'rgba(148, 163, 184, 0.35)';
+      ctx.lineWidth = cellActive ? 2 : 1;
+      ctx.strokeRect(fx, fy, colW, rowH);
+      if (cellActive) {
+        ctx.fillStyle = 'rgba(2, 132, 199, 0.08)';
+        ctx.fillRect(fx, fy, colW, rowH);
+      }
+
+      ctx.fillStyle = '#64748b';
+      ctx.font = '500 9px "JetBrains Mono", ui-monospace, monospace';
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(f.label, fx + 10, fy + 14);
+
+      ctx.fillStyle = cellActive ? ACCENT : INK;
+      ctx.font = cellActive ? '600 12px "JetBrains Mono", ui-monospace, monospace' : '600 12px "JetBrains Mono", ui-monospace, monospace';
+      ctx.fillText(f.value, fx + 10, fy + 32);
+    });
+
+    ctx.fillStyle = '#64748b';
+    ctx.font = 'italic 500 11px Inter, system-ui, sans-serif';
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'alphabetic';
+    ctx.fillText('Karpol Poliüretan — Ürün değil, çözüm üretiyoruz.', W - 16, H - 20);
+  }
+
+  function update() { draw(); }
+
+  let zoomScale = 1;
+  let panX = 0, panY = 0;
+  let isPanning = false;
+  let panStartX = 0, panStartY = 0;
+  let panStartOffsetX = 0, panStartOffsetY = 0;
+  const MIN_ZOOM = 0.25;
+  const MAX_ZOOM = 4;
+
+  function applyZoom() {
+    const inner = document.getElementById('canvas-zoom-inner');
+    if (inner) {
+      inner.style.transform = `translate(${panX}px, ${panY}px) scale(${zoomScale})`;
+    }
+    const levelEl = document.getElementById('zoom-level');
+    if (levelEl) levelEl.textContent = Math.round(zoomScale * 100) + '%';
+  }
+
+  function zoomIn() {
+    zoomScale = Math.min(MAX_ZOOM, parseFloat((zoomScale * 1.25).toFixed(3)));
+    applyZoom();
+  }
+
+  function zoomOut() {
+    zoomScale = Math.max(MIN_ZOOM, parseFloat((zoomScale / 1.25).toFixed(3)));
+    applyZoom();
+  }
+
+  function zoomReset() {
+    zoomScale = 1;
+    panX = 0;
+    panY = 0;
+    applyZoom();
+  }
+
+  const zoomWrapper = document.getElementById('canvas-zoom-wrapper');
+  const zoomInner = document.getElementById('canvas-zoom-inner');
+  const zoomCanvas = document.getElementById('cnv');
+
+  zoomWrapper.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    const delta = e.deltaY > 0 ? 0.9 : 1.1;
+    zoomScale = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, parseFloat((zoomScale * delta).toFixed(3))));
+    applyZoom();
+  }, { passive: false });
+
+  zoomWrapper.addEventListener('mousedown', (e) => {
+    if (e.button !== 0) return;
+    const t = e.target;
+    if (t !== zoomWrapper && t !== zoomInner && t !== zoomCanvas) return;
+    isPanning = true;
+    panStartX = e.clientX;
+    panStartY = e.clientY;
+    panStartOffsetX = panX;
+    panStartOffsetY = panY;
+    zoomWrapper.style.cursor = 'grabbing';
+  });
+
+  window.addEventListener('mousemove', (e) => {
+    if (!isPanning) return;
+    panX = panStartOffsetX + (e.clientX - panStartX);
+    panY = panStartOffsetY + (e.clientY - panStartY);
+    applyZoom();
+  });
+
+  window.addEventListener('mouseup', () => {
+    if (isPanning) {
+      isPanning = false;
+      zoomWrapper.style.cursor = 'grab';
+    }
+  });
+
+  let lastTouchDist = null;
+
+  zoomWrapper.addEventListener('touchstart', (e) => {
+    const t = e.target;
+    const isCanvasArea = t === zoomWrapper || t === zoomInner || t === zoomCanvas;
+    if (!isCanvasArea) return;
+    if (e.touches.length === 2) {
+      const dx = e.touches[0].clientX - e.touches[1].clientX;
+      const dy = e.touches[0].clientY - e.touches[1].clientY;
+      lastTouchDist = Math.sqrt(dx * dx + dy * dy);
+    } else if (e.touches.length === 1) {
+      isPanning = true;
+      panStartX = e.touches[0].clientX;
+      panStartY = e.touches[0].clientY;
+      panStartOffsetX = panX;
+      panStartOffsetY = panY;
+    }
+  }, { passive: true });
+
+  zoomWrapper.addEventListener('touchmove', (e) => {
+    if (e.touches.length === 2) {
+      e.preventDefault();
+      const dx = e.touches[0].clientX - e.touches[1].clientX;
+      const dy = e.touches[0].clientY - e.touches[1].clientY;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (lastTouchDist) {
+        const ratio = dist / lastTouchDist;
+        zoomScale = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, parseFloat((zoomScale * ratio).toFixed(3))));
+        applyZoom();
+      }
+      lastTouchDist = dist;
+    } else if (e.touches.length === 1 && isPanning) {
+      panX = panStartOffsetX + (e.touches[0].clientX - panStartX);
+      panY = panStartOffsetY + (e.touches[0].clientY - panStartY);
+      applyZoom();
+    }
+  }, { passive: false });
+
+  zoomWrapper.addEventListener('touchend', (e) => {
+    if (e.touches.length < 2) lastTouchDist = null;
+    if (e.touches.length === 0) isPanning = false;
+  });
+
+  function openSidebar() {
+    const sb = document.getElementById('sidebar');
+    const ov = document.getElementById('sidebar-overlay');
+    const hb = document.getElementById('hamburger-btn');
+    sb.classList.remove('is-collapsed-mobile');
+    ov.classList.add('is-visible');
+    ov.setAttribute('aria-hidden', 'false');
+    if (hb) { hb.classList.add('is-open'); hb.setAttribute('aria-expanded', 'true'); }
+    document.body.style.overflow = 'hidden';
+    ov._handler = (e) => {
+      if (!sb.contains(e.target)) closeSidebar();
+    };
+    ov.addEventListener('pointerdown', ov._handler);
+  }
+
+  function closeSidebar() {
+    const sb = document.getElementById('sidebar');
+    const ov = document.getElementById('sidebar-overlay');
+    const hb = document.getElementById('hamburger-btn');
+    if (document.activeElement && sb.contains(document.activeElement)) {
+      document.activeElement.blur();
+    }
+    sb.classList.add('is-collapsed-mobile');
+    ov.classList.remove('is-visible');
+    ov.setAttribute('aria-hidden', 'true');
+    if (hb) { hb.classList.remove('is-open'); hb.setAttribute('aria-expanded', 'false'); }
+    document.body.style.overflow = '';
+    if (ov._handler) {
+      ov.removeEventListener('pointerdown', ov._handler);
+      ov._handler = null;
+    }
+  }
+
+  function initMobileSidebar() {
+    if (window.innerWidth <= 768) {
+      document.getElementById('sidebar').classList.add('is-collapsed-mobile');
+    }
+  }
+
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 768) {
+      document.getElementById('sidebar').classList.remove('is-collapsed-mobile');
+      const ov = document.getElementById('sidebar-overlay');
+      ov.classList.remove('is-visible');
+      ov.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      const hb = document.getElementById('hamburger-btn');
+      if (hb) { hb.classList.remove('is-open'); hb.setAttribute('aria-expanded', 'false'); }
+    }
+  });
+
+  function downloadPNG() {
+    const canvas = document.getElementById('cnv');
+    const link = document.createElement('a');
+    const marka = getStr('marka');
+    link.download = marka + '-silim-lastigi.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  }
+
+  function downloadPDF() {
+    const c = document.getElementById('cnv');
+    const w = window.open(URL.createObjectURL(new Blob(
+      [`<!DOCTYPE html><html><body style="margin:0"><img style="width:760px;height:560px" src="${c.toDataURL('image/png')}"></body></html>`],
+      { type: 'text/html' }
+    )));
+    if (w) w.onload = () => w.print();
+  }
+
+  if (document.documentElement.classList.contains('embed-mode') && typeof draw === 'function') {
+    var __embedDrawSilim = draw;
+    draw = function () {
+      __embedDrawSilim();
+      if (window.__karpolCenterView) window.__karpolCenterView();
+    };
+  }
+
+  if (document.documentElement.classList.contains('embed-mode') && typeof zoomReset === 'function') {
+    var __embedZoomResetSilim = zoomReset;
+    zoomReset = function () {
+      __embedZoomResetSilim();
+      if (window.__karpolCenterView) window.__karpolCenterView();
+    };
+  }
+
+  initMobileSidebar();
+  draw();
+  applyZoom();
+  </script>
+</body>
+</html>
