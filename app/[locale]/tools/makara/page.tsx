@@ -27,13 +27,13 @@ export default async function MakaraToolPage({ params }: Props) {
   ];
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col">
+    <div className="flex min-h-0 flex-1 flex-col overflow-hidden touch-none">
       <ToolChrome
         title={t("title")}
         backLabel={tCommon("backToHub")}
         backHref="/tools"
       />
-      <div className="relative min-h-0 flex-1">
+      <div className="relative min-h-0 flex-1 overflow-hidden touch-none">
         <MakaraToolLoader
           labels={{
             selectTitle: tM("selectTitle"),

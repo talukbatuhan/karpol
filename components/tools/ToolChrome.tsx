@@ -1,6 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import { Link } from "@/i18n/routing";
+import {
+  HeaderMenuButton,
+  HeaderMobileNav,
+} from "@/components/molecules/HeaderMobileNav";
 
 type ToolChromeProps = {
   title: string;
@@ -11,20 +16,33 @@ type ToolChromeProps = {
 export function ToolChrome({
   title,
   backLabel,
-  backHref = "/products",
+  backHref = "/tools",
 }: ToolChromeProps) {
+  const [menuOpen, setMenuOpen] = useState(false);
+
   return (
-    <div className="flex shrink-0 items-center justify-between border-b border-navy-800 bg-navy-950 px-4 py-3 md:px-6">
-      <Link
-        href={backHref}
-        className="font-mono text-xs uppercase tracking-widest text-gold-300 transition-colors hover:text-gold-500"
-      >
-        ← {backLabel}
-      </Link>
-      <h1 className="font-display text-sm font-bold uppercase tracking-wide text-ivory-50 md:text-base">
-        {title}
-      </h1>
-      <span className="w-16" aria-hidden />
-    </div>
+    <>
+      <div className="relative z-30 flex shrink-0 items-center gap-3 border-b border-navy-800 bg-navy-950 px-4 py-3 md:px-6">
+        <Link
+          href={backHref}
+          className="min-w-0 shrink-0 font-mono text-xs uppercase tracking-widest text-gold-300 transition-colors hover:text-gold-500"
+        >
+          ← {backLabel}
+        </Link>
+
+        <h1 className="min-w-0 flex-1 truncate text-center font-display text-sm font-bold uppercase tracking-wide text-ivory-50 md:text-base">
+          {title}
+        </h1>
+
+        <div className="flex shrink-0 justify-end lg:w-16">
+          <HeaderMenuButton
+            open={menuOpen}
+            onToggle={() => setMenuOpen((value) => !value)}
+          />
+        </div>
+      </div>
+
+      <HeaderMobileNav open={menuOpen} onClose={() => setMenuOpen(false)} />
+    </>
   );
 }

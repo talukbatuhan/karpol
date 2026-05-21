@@ -43,7 +43,7 @@
 </script>
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <title>Karpol — Silim lastiği teknik resim</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400..700;1,14..32,400..700&family=JetBrains+Mono:ital,wght@0,400..600;1,400..600&display=swap');
@@ -84,20 +84,29 @@
     html.embed-mode {
       --header-height: 48px;
     }
-    html.embed-mode .app-header .header-title,
-    html.embed-mode .app-header .hamburger-btn {
+    html.embed-mode .app-header .header-title {
       display: none !important;
     }
     html.embed-mode .app-header {
-      justify-content: flex-end;
+      justify-content: stretch;
       height: var(--header-height);
       min-height: var(--header-height);
-      padding: 0 16px;
+      padding: 0 12px;
+    }
+    html.embed-mode .header-actions {
+      width: 100%;
+    }
+    html.embed-mode .header-actions .hamburger-btn {
+      display: flex !important;
+    }
+    html.embed-mode .panel-fab {
+      display: none !important;
     }
     html.embed-mode,
     html.embed-mode body {
       height: 100%;
       overflow: hidden;
+      touch-action: none;
     }
     html.embed-mode #app {
       height: 100%;
@@ -180,7 +189,7 @@
     }
     .header-title { display: flex; align-items: center; gap: 12px; min-width: 0; }
 
-    .hamburger-btn {
+    .header-actions .hamburger-btn {
       display: none;
       flex-direction: column;
       justify-content: center;
@@ -241,8 +250,15 @@
 
     .header-actions {
       display: flex;
+      align-items: center;
       gap: 8px;
       flex-shrink: 0;
+    }
+    .header-actions__exports {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-left: auto;
     }
 
     .btn {
@@ -572,8 +588,7 @@
 
     @media (max-width: 768px) {
       :root { --header-height: 52px; }
-      .hamburger-btn { display: flex; }
-      .panel-fab { display: flex; }
+      .header-actions .hamburger-btn { display: flex; }
       .app-header h1 { font-size: 12px; }
       .btn { font-size: 11px; padding: 7px 12px; }
       .sidebar {
@@ -597,15 +612,17 @@
   <div id="app">
     <header class="app-header" role="banner">
       <div class="header-title">
-        <button type="button" class="hamburger-btn" id="hamburger-btn" onclick="openSidebar()" title="Parametreler" aria-controls="sidebar" aria-expanded="false">
-          <span></span><span></span><span></span>
-        </button>
         <span class="header-badge">Teknik resim</span>
         <h1>Flanş & silim lastiği</h1>
       </div>
       <div class="header-actions">
-        <button type="button" class="btn" onclick="downloadPNG()">PNG indir</button>
-        <button type="button" class="btn btn--primary" onclick="downloadPDF()">PDF kaydet</button>
+        <button type="button" class="hamburger-btn" id="hamburger-btn" onclick="openSidebar()" title="Parametreler" aria-controls="sidebar" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+        <div class="header-actions__exports">
+          <button type="button" class="btn" onclick="downloadPNG()">PNG indir</button>
+          <button type="button" class="btn btn--primary" onclick="downloadPDF()">PDF kaydet</button>
+        </div>
       </div>
     </header>
 
@@ -712,11 +729,6 @@
           </div>
         </div>
         <p class="canvas-hint">Tekerlek: yakınlaştır · Sürükle: kaydır · Sağ alttaki düğmeler: zoom</p>
-        <button type="button" class="panel-fab" id="panel-fab" onclick="openSidebar()" title="Parametreler paneli">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
-          </svg>
-        </button>
         <div class="zoom-controls">
           <button type="button" class="zoom-btn" onclick="zoomIn()" title="Yakınlaştır">＋</button>
           <div class="zoom-level" id="zoom-level">100%</div>

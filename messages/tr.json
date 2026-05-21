@@ -36,7 +36,10 @@
     "products": "Ürünler",
     "tools": "Araçlar",
     "contact": "İletişim",
-    "ecatalog": "E-Katalog"
+    "ecatalog": "E-Katalog",
+    "menuTitle": "Menü",
+    "menuOpen": "Menüyü aç",
+    "menuClose": "Menüyü kapat"
   },
   "catalogPage": {
     "title": "E-Katalog",

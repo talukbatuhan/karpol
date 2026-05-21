@@ -1,11 +1,10 @@
+import type { Viewport } from "next";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { Syne, DM_Sans, JetBrains_Mono } from "next/font/google";
 import { routing } from "@/i18n/routing";
-import { Header } from "@/components/organisms/Header";
-import { Footer } from "@/components/organisms/Footer";
-import { PageTransition } from "@/components/motion/PageTransition";
+import { SiteShell } from "@/components/layout/SiteShell";
 
 const syne = Syne({
   variable: "--font-syne",
@@ -34,6 +33,13 @@ export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+};
+
 export default async function LocaleLayout({ children, params }: Props) {
   const { locale } = await params;
 
@@ -51,11 +57,7 @@ export default async function LocaleLayout({ children, params }: Props) {
     >
       <body className="min-h-full flex flex-col bg-ivory-50 text-navy-950">
         <NextIntlClientProvider messages={messages}>
-          <Header />
-          <main className="flex min-h-0 flex-1 flex-col">
-            <PageTransition>{children}</PageTransition>
-          </main>
-          <Footer />
+          <SiteShell>{children}</SiteShell>
         </NextIntlClientProvider>
       </body>
     </html>

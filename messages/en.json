@@ -36,7 +36,10 @@
     "products": "Products",
     "tools": "Tools",
     "contact": "Contact",
-    "ecatalog": "E-Catalog"
+    "ecatalog": "E-Catalog",
+    "menuTitle": "Menu",
+    "menuOpen": "Open menu",
+    "menuClose": "Close menu"
   },
   "catalogPage": {
     "title": "E-Catalog",

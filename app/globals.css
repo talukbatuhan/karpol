@@ -36,4 +36,20 @@
       scroll-behavior: auto;
     }
   }
+
+  html.tools-workspace {
+    --site-header-height: 0px;
+  }
+
+  html.tools-workspace,
+  html.tools-workspace body {
+    overflow: hidden;
+    height: 100%;
+    overscroll-behavior: none;
+  }
+
+  html.tools-workspace main {
+    overflow: hidden;
+    min-height: 0;
+  }
 }

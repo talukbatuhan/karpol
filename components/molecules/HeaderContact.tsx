@@ -2,13 +2,19 @@
 
 import { useTranslations } from "next-intl";
 
-export function HeaderContact() {
+type HeaderContactProps = {
+  className?: string;
+};
+
+export function HeaderContact({ className = "" }: HeaderContactProps) {
   const t = useTranslations("header");
 
   return (
-    <div className="shrink-0 text-right font-sans text-[0.7rem] leading-snug text-navy-950/90 sm:text-xs">
+    <div
+      className={`shrink-0 font-sans text-[0.7rem] leading-snug text-navy-950/90 sm:text-xs ${className}`}
+    >
       <p className="font-semibold tracking-wide">{t("companyName")}</p>
-      <p className="mt-0.5 flex flex-wrap items-center justify-end gap-x-2 gap-y-0.5 text-navy-800/85">
+      <p className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-navy-800/85">
         <span>
           {t("addressLine1")}, {t("addressLine2")}
         </span>

@@ -1,27 +1,26 @@
-# Karpol Poliüretan — Sinematik Web
+<p align="center">
+  <img src="https://www.karpol.net/karpol-logo.png" alt="Karpol Poliüretan" width="220" />
+</p>
 
-Minimalist Industrial tasarım: keskin köşeler, Navy / Gold / Ivory paleti, Framer Motion scroll animasyonları.
+<h1 align="center">Karpol Poliüretan</h1>
 
-## Kurulum
+<p align="center">
+  <strong>Ürün değil, çözüm üretiyoruz; tecrübemizi satıyoruz.</strong>
+</p>
 
-```bash
-npm install
-npm run dev
-```
+<p align="center">
+  <a href="https://www.karpol.net">www.karpol.net</a>
+</p>
 
-- Türkçe: [http://localhost:3000/tr](http://localhost:3000/tr)
-- English: [http://localhost:3000/en](http://localhost:3000/en)
+---
 
-## Yapı
+**KARPOL Poliüretan Ltd. Şti.** — Kauçuk ve poliüretan kaplama alanında B2B üretim ortağınız.
 
-- `app/[locale]/` — next-intl rotaları
-- `components/{atoms,molecules,organisms,motion}/`
-- `lib/motion/variants.ts` — sinematik easing `[0.65, 0, 0.35, 1]`
-- `messages/{tr,en}.json`
-- `docs/PLAN.md` — uygulama planı özeti
+Çeyrek asırlık saha birikimini kurumsal üretim disipliniyle birleştirerek; ölçüye, yüke ve işletme koşullarına uygun, sahada doğrulanmış çözümler sunuyoruz.
 
-## Tasarım kısıtları
+**İletişim**
 
-- `border-radius: 0` (Tailwind + global CSS)
-- `container` sınıfı yok — 12 kolon grid
-- View Transitions: `next-view-transitions` (`app/layout.tsx`)
+- **Web:** [karpol.net](https://www.karpol.net)
+- **E-posta:** karpolpolyurethane@gmail.com
+- **Telefon:** +90 549 665 25 60
+- **Adres:** Bozburun Mahallesi, 7151 Sokak No:13/1 — Merkezefendi / Denizli, Türkiye

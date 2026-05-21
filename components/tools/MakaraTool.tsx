@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useMediaQuery } from "@/lib/hooks/use-media-query";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import {
@@ -35,8 +36,14 @@ function getContainerSize(container: HTMLElement) {
   };
 }
 
+const MOBILE_DRAWER_MQ = "(max-width: 768px)";
+
 export function MakaraTool({ labels }: { labels: MakaraToolLabels }) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const drawerRef = useRef<HTMLDivElement>(null);
+  const fabRef = useRef<HTMLButtonElement>(null);
+  const isMobile = useMediaQuery(MOBILE_DRAWER_MQ);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const labelElsRef = useRef<Record<AxisLabel, HTMLDivElement | null>>({
     x: null,
     y: null,
@@ -366,30 +373,108 @@ export function MakaraTool({ labels }: { labels: MakaraToolLabels }) {
     setSelection(value);
   };
 
-  return (
-    <div
-      ref={containerRef}
-      className="relative h-full w-full overflow-hidden bg-ivory-50"
-    >
-      <div className="pointer-events-none absolute left-5 top-5 z-10 w-[min(320px,calc(100%-2.5rem))] border border-navy-800 bg-ivory-50 p-5">
+  useEffect(() => {
+    if (!isMobile) setDrawerOpen(false);
+  }, [isMobile]);
+
+  useEffect(() => {
+    if (!isMobile || !drawerOpen) return;
+
+    const onPointerDown = (event: PointerEvent) => {
+      const target = event.target as Node;
+      if (drawerRef.current?.contains(target)) return;
+      if (fabRef.current?.contains(target)) return;
+      setDrawerOpen(false);
+    };
+
+    document.addEventListener("pointerdown", onPointerDown);
+    return () => document.removeEventListener("pointerdown", onPointerDown);
+  }, [isMobile, drawerOpen]);
+
+  const selectPanelBody = (
+    <>
+      {!isMobile ? (
         <h3 className="border-b-2 border-navy-800/10 pb-2 font-display text-base font-bold text-navy-950">
           {labels.selectTitle}
         </h3>
-        <select
-          value={selection}
-          onChange={(e) => handleSelect(e.target.value)}
-          className="pointer-events-auto mt-4 w-full cursor-pointer border border-navy-800 bg-ivory-100 px-3 py-2 font-sans text-sm text-navy-950 outline-none focus:border-gold-500"
-        >
-          {labels.options.map((opt, i) => (
-            <option key={opt} value={String(i)}>
-              {opt}
-            </option>
-          ))}
-        </select>
-        <p className="mt-3 font-sans text-[11px] leading-relaxed text-navy-800/70">
-          {labels.hint}
-        </p>
+      ) : null}
+      <select
+        value={selection}
+        onChange={(e) => handleSelect(e.target.value)}
+        className="mt-4 w-full cursor-pointer border border-navy-800 bg-ivory-100 px-3 py-2 font-sans text-sm text-navy-950 outline-none focus:border-gold-500"
+      >
+        {labels.options.map((opt, i) => (
+          <option key={opt} value={String(i)}>
+            {opt}
+          </option>
+        ))}
+      </select>
+      <p className="mt-3 font-sans text-[11px] leading-relaxed text-navy-800/70">
+        {labels.hint}
+      </p>
+    </>
+  );
+
+  return (
+    <div
+      ref={containerRef}
+      className="relative h-full w-full touch-none overflow-hidden bg-ivory-50"
+    >
+      {isMobile && drawerOpen ? (
+        <button
+          type="button"
+          className="fixed inset-0 z-30 bg-navy-950/55"
+          aria-label={labels.selectTitle}
+          onClick={() => setDrawerOpen(false)}
+        />
+      ) : null}
+
+      <div
+        id="makara-select-drawer"
+        ref={drawerRef}
+        className={
+          isMobile
+            ? `fixed inset-y-0 left-0 z-40 flex w-full max-w-[min(100%,320px)] flex-col border-r border-navy-800 bg-ivory-50 p-5 shadow-[8px_0_24px_rgba(6,14,26,0.18)] transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${
+                drawerOpen ? "translate-x-0" : "-translate-x-full pointer-events-none"
+              }`
+            : "pointer-events-none absolute left-5 top-5 z-10 w-[min(320px,calc(100%-2.5rem))] border border-navy-800 bg-ivory-50 p-5"
+        }
+        aria-hidden={isMobile && !drawerOpen}
+      >
+        {isMobile ? (
+          <div className="mb-4 flex items-center justify-between gap-3 border-b border-navy-800/10 pb-3">
+            <span className="font-mono text-[10px] uppercase tracking-widest text-navy-800/80">
+              {labels.selectTitle}
+            </span>
+            <button
+              type="button"
+              onClick={() => setDrawerOpen(false)}
+              className="border border-navy-800 px-2.5 py-1 font-mono text-xs text-navy-950 transition-colors hover:border-gold-500 hover:text-gold-500"
+              aria-label={labels.selectTitle}
+            >
+              ×
+            </button>
+          </div>
+        ) : null}
+        <div className={isMobile ? "" : "pointer-events-none [&_select]:pointer-events-auto"}>
+          {selectPanelBody}
+        </div>
       </div>
+
+      {isMobile ? (
+        <button
+          ref={fabRef}
+          type="button"
+          onClick={() => setDrawerOpen(true)}
+          aria-expanded={drawerOpen}
+          aria-controls="makara-select-drawer"
+          className={`fixed bottom-5 left-5 z-20 border border-gold-500 bg-navy-950 px-4 py-2.5 font-mono text-[10px] uppercase tracking-widest text-gold-500 shadow-md transition-opacity hover:bg-gold-500 hover:text-navy-950 ${
+            drawerOpen ? "pointer-events-none opacity-0" : "opacity-100"
+          }`}
+        >
+          {labels.selectTitle}
+        </button>
+      ) : null}
 
       <div className="pointer-events-none absolute bottom-5 right-5 z-10 w-[min(320px,calc(100%-2.5rem))] border border-navy-800 bg-ivory-50 p-5">
         <h3 className="border-b-2 border-navy-800/10 pb-2 font-display text-base font-bold text-navy-950">

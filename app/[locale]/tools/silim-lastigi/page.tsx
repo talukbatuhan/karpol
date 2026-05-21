@@ -30,13 +30,13 @@ export default async function SilimLastigiPage({ params }: Props) {
   const tCommon = await getTranslations("toolsCommon");
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col">
+    <div className="flex min-h-0 flex-1 flex-col overflow-hidden touch-none">
       <ToolChrome
         title={t("title")}
         backLabel={tCommon("backToHub")}
         backHref="/tools"
       />
-      <div className="flex min-h-0 flex-1 flex-col">
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden touch-none">
         <LegacyToolEmbed title={t("title")} src={tool.legacySrc} />
       </div>
     </div>
