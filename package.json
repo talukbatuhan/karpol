@@ -9,7 +9,10 @@
     "start": "next start",
     "lint": "eslint",
     "test:e2e": "playwright test",
-    "test:e2e:ui": "playwright test --ui"
+    "test:e2e:ui": "playwright test --ui",
+    "supabase:login": "supabase login",
+    "supabase:link": "supabase link --project-ref lmfulxcsowlcezqxoand",
+    "supabase:push": "supabase db push --linked"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

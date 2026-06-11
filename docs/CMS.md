@@ -15,6 +15,38 @@ supabase db reset
 
 Migration dosyaları: `supabase/migrations/`.
 
+### Uzak proje (supabase.com) — `PGRST205` / tablo yok hatası
+
+`.env.local` içindeki URL uzak bir projeye işaret ediyorsa migration'lar o projede **henüz çalıştırılmamış** demektir (`public.products` bulunamıyor).
+
+**Yöntem 1 — CLI (önerilen)**
+
+```bash
+npm run supabase:login
+npm run supabase:link
+# İstendiğinde: Dashboard → Project Settings → Database → Database password
+npm run supabase:push
+```
+
+**Yöntem 2 — Sadece veritabanı şifresi**
+
+Dashboard → **Project Settings → Database** → Connection string (URI) kopyalayın:
+
+```bash
+npx supabase db push --db-url "postgresql://postgres:SIFRENIZ@db.lmfulxcsowlcezqxoand.supabase.co:5432/postgres"
+```
+
+**Yöntem 3 — SQL Editor**
+
+Dashboard → **SQL** → sırayla çalıştırın:
+
+1. `supabase/migrations/20260521000001_init_cms.sql`
+2. `supabase/migrations/20260521000002_storage.sql`
+3. `supabase/migrations/20260521000003_seed_products.sql`
+4. `supabase/migrations/20260522000004_categories.sql`
+
+Sonra `npm run dev` yeniden başlatın ve `/tr/products` sayfasını kontrol edin.
+
 ## İlk admin
 
 1. `/admin/login` üzerinden kayıt olun (Auth signup açık).
