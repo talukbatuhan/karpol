@@ -1,5 +1,6 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import type { Metadata } from "next";
+import { buildStaticPageMetadata } from "@/lib/seo/page-metadata";
 import { PageShell } from "@/components/organisms/PageShell";
 import { ContactForm } from "@/components/organisms/ContactForm";
 
@@ -7,8 +8,7 @@ type Props = { params: Promise<{ locale: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "contact" });
-  return { title: `${t("title")} | Karpol` };
+  return buildStaticPageMetadata(locale, "contact");
 }
 
 export default async function ContactPage({ params }: Props) {

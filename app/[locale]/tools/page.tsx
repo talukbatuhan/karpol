@@ -1,5 +1,6 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import type { Metadata } from "next";
+import { buildStaticPageMetadata } from "@/lib/seo/page-metadata";
 import { PageShell } from "@/components/organisms/PageShell";
 import { PageHeader } from "@/components/organisms/PageHeader";
 import { ToolCard } from "@/components/molecules/ToolCard";
@@ -9,8 +10,7 @@ type Props = { params: Promise<{ locale: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "toolsHub" });
-  return { title: `${t("title")} | Karpol` };
+  return buildStaticPageMetadata(locale, "tools");
 }
 
 export default async function ToolsHubPage({ params }: Props) {

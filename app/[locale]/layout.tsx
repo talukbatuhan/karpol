@@ -2,27 +2,9 @@ import type { Viewport } from "next";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
-import { Syne, DM_Sans, JetBrains_Mono } from "next/font/google";
 import { routing } from "@/i18n/routing";
+import { LocaleHtmlLang } from "@/components/layout/LocaleHtmlLang";
 import { SiteShell } from "@/components/layout/SiteShell";
-
-const syne = Syne({
-  variable: "--font-syne",
-  subsets: ["latin"],
-  weight: ["400", "600", "700", "800"],
-});
-
-const dmSans = DM_Sans({
-  variable: "--font-dm-sans",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  variable: "--font-jetbrains-mono",
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-});
 
 type Props = {
   children: React.ReactNode;
@@ -51,15 +33,9 @@ export default async function LocaleLayout({ children, params }: Props) {
   const messages = await getMessages();
 
   return (
-    <html
-      lang={locale}
-      className={`${syne.variable} ${dmSans.variable} ${jetbrainsMono.variable} h-full`}
-    >
-      <body className="min-h-full flex flex-col bg-ivory-50 text-navy-950">
-        <NextIntlClientProvider messages={messages}>
-          <SiteShell>{children}</SiteShell>
-        </NextIntlClientProvider>
-      </body>
-    </html>
+    <NextIntlClientProvider messages={messages}>
+      <LocaleHtmlLang locale={locale} />
+      <SiteShell>{children}</SiteShell>
+    </NextIntlClientProvider>
   );
 }

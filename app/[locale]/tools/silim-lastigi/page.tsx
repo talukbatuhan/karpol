@@ -2,6 +2,7 @@ import { setRequestLocale } from "next-intl/server";
 import { getTranslations } from "next-intl/server";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { buildStaticPageMetadata } from "@/lib/seo/page-metadata";
 import { ToolChrome } from "@/components/tools/ToolChrome";
 import { LegacyToolEmbed } from "@/components/tools/LegacyToolEmbed";
 import { getTool } from "@/lib/tools";
@@ -12,11 +13,7 @@ const TOOL_ID = "silim-lastigi" as const;
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
-  const t = await getTranslations({
-    locale,
-    namespace: "tools.silimLastigi",
-  });
-  return { title: `${t("title")} | Karpol` };
+  return buildStaticPageMetadata(locale, "toolSilim");
 }
 
 export default async function SilimLastigiPage({ params }: Props) {

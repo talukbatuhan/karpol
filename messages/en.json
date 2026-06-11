@@ -3,6 +3,46 @@
     "title": "Karpol Polyurethane",
     "description": "We deliver solutions, not just products — backed by experience."
   },
+  "seo": {
+    "pages": {
+      "home": {
+        "title": "Karpol Polyurethane | Industrial Polyurethane and Rubber Solutions",
+        "description": "25 years of experience in marble machinery, conveyor systems and industrial polyurethane-rubber solutions. Your B2B manufacturing partner based in Denizli, Türkiye."
+      },
+      "about": {
+        "title": "About us | Karpol Polyurethane",
+        "description": "Karpol Polyurethane: 25 years in the industry, polyurethane and rubber coating expertise, marble machinery spare parts and conveyor roller manufacturing."
+      },
+      "products": {
+        "title": "Products | Karpol Polyurethane",
+        "description": "Rollers, grinding strips, vibration dampers and custom polyurethane-rubber parts. Technical specs and engineering tools in one click."
+      },
+      "contact": {
+        "title": "Contact | Karpol Polyurethane",
+        "description": "Quotes, dimensions and material consulting for your project. Merkezefendi, Denizli — karpolpolyurethane@gmail.com, +90 549 665 25 60."
+      },
+      "catalog": {
+        "title": "E-Catalog | Karpol Polyurethane",
+        "description": "Browse or download our PDF catalogs for general products, marble machinery, conveyor rollers and rubber solutions."
+      },
+      "tools": {
+        "title": "Engineering Tools | Karpol Polyurethane",
+        "description": "3D roller box visualiser, rubber vibration damper drawings and grinding strip design editor — all in one hub."
+      },
+      "toolMakara": {
+        "title": "3D Roller Box Visualiser | Karpol",
+        "description": "Select box size, shipping weight and volume calculations, 3D preview with X/Y/Z dimension labels."
+      },
+      "toolKaucuk": {
+        "title": "Rubber Vibration Damper Technical Drawing | Karpol",
+        "description": "Damper type selection, parameter panel, technical drawing preview and PNG/PDF export."
+      },
+      "toolSilim": {
+        "title": "Grinding Strip Technical Design Editor | Karpol",
+        "description": "Flange and grinding strip dimensions, technical drawing preview, PNG and PDF export."
+      }
+    }
+  },
   "brand": {
     "name": "Karpol Polyurethane",
     "slogan": "We deliver solutions, not just products — backed by experience.",

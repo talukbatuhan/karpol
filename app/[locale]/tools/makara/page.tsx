@@ -1,6 +1,7 @@
 import { setRequestLocale } from "next-intl/server";
 import { getTranslations } from "next-intl/server";
 import type { Metadata } from "next";
+import { buildStaticPageMetadata } from "@/lib/seo/page-metadata";
 import { ToolChrome } from "@/components/tools/ToolChrome";
 import { MakaraToolLoader } from "@/components/tools/MakaraToolLoader";
 
@@ -8,8 +9,7 @@ type Props = { params: Promise<{ locale: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "tools.makara" });
-  return { title: `${t("title")} | Karpol` };
+  return buildStaticPageMetadata(locale, "toolMakara");
 }
 
 export default async function MakaraToolPage({ params }: Props) {

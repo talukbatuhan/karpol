@@ -1,25 +1,32 @@
 import Link from "next/link";
+import GoBackButton from "../components/GoBackButton"; // İstemci bileşeniniz
 
 export default function RootNotFound() {
+  // <html> ve <body> etiketlerini sildik!
   return (
-    <html lang="tr">
-      <body className="flex min-h-dvh items-center justify-center bg-[#faf8f3] font-sans text-[#060e1a] antialiased">
-        <div className="max-w-lg border border-[#0b1f3a] bg-[#f5f0e6] p-10 text-center">
-          <p className="font-mono text-xs uppercase tracking-[0.3em] text-[#c9a227]">
-            404
-          </p>
-          <h1 className="mt-6 font-bold text-2xl">Sayfa bulunamadı</h1>
-          <p className="mt-3 text-sm opacity-80">
-            Aradığınız sayfa mevcut değil veya taşınmış olabilir.
-          </p>
-          <Link
-            href="/tr"
-            className="mt-8 inline-block border border-[#c9a227] bg-[#060e1a] px-8 py-3 font-mono text-xs uppercase tracking-widest text-[#c9a227]"
-          >
-            Ana sayfaya dön
-          </Link>
-        </div>
-      </body>
-    </html>
+    <div className="flex min-h-[60vh] flex-col items-center justify-center p-6 text-center">
+      <span className="font-mono text-sm font-bold tracking-[0.5em] text-[#c9a227]">
+        ERROR 404
+      </span>
+      
+      <h1 className="mt-4 text-4xl font-extrabold tracking-tight md:text-5xl">
+        Sayfa Bulunamadı
+      </h1>
+      
+      <p className="mt-6 max-w-md text-base leading-relaxed opacity-75">
+        Üzgünüz, aradığınız sayfa silinmiş veya adresi değiştirilmiş olabilir.
+      </p>
+
+      <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:justify-center">
+        <Link
+          href="/"
+          className="inline-flex items-center justify-center border border-[#060e1a] bg-[#060e1a] px-8 py-4 font-mono text-xs uppercase tracking-widest text-[#faf8f3] transition-all hover:bg-[#1a2b45]"
+        >
+          Ana Sayfaya Dön
+        </Link>
+        
+        <GoBackButton />
+      </div>
+    </div>
   );
 }

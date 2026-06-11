@@ -3,6 +3,46 @@
     "title": "Karpol Poliüretan",
     "description": "Ürün değil, çözüm üretiyoruz; tecrübemizi satıyoruz."
   },
+  "seo": {
+    "pages": {
+      "home": {
+        "title": "Karpol Poliüretan | Endüstriyel Poliüretan ve Kauçuk Çözümleri",
+        "description": "25 yıllık tecrübe ile mermer makineleri, konveyör sistemleri ve endüstriyel poliüretan-kauçuk çözümleri. Denizli merkezli B2B üretim ortağınız."
+      },
+      "about": {
+        "title": "Hakkımızda | Karpol Poliüretan",
+        "description": "Karpol Poliüretan: 25 yıllık sektör deneyimi, poliüretan ve kauçuk kaplama uzmanlığı, mermer makineleri yedek parça ve konveyör makara üretimi."
+      },
+      "products": {
+        "title": "Ürünler | Karpol Poliüretan",
+        "description": "Makara, silim lastiği, vibrasyon damperleri ve ölçüye özel poliüretan-kauçuk ürünleri. Teknik detaylar ve mühendislik araçlarına tek tık."
+      },
+      "contact": {
+        "title": "İletişim | Karpol Poliüretan",
+        "description": "Projeniz için teklif, ölçü ve malzeme danışmanlığı. Denizli Merkezefendi — karpolpolyurethane@gmail.com, +90 549 665 25 60."
+      },
+      "catalog": {
+        "title": "E-Katalog | Karpol Poliüretan",
+        "description": "Genel ürün, mermer makineleri, konveyör-makara ve kauçuk ürün kataloglarımızı PDF olarak görüntüleyin veya indirin."
+      },
+      "tools": {
+        "title": "Mühendislik Araçları | Karpol Poliüretan",
+        "description": "3D makara görselleştirici, kauçuk titreşim takozları ve silim lastiği teknik çizim düzenleyicileri — tek merkezden erişin."
+      },
+      "toolMakara": {
+        "title": "3D Makara Kutusu Görselleştirici | Karpol",
+        "description": "Makara kutu boyutu seçimi, sevkiyat ağırlığı ve hacim hesapları, X/Y/Z ölçü etiketleri ile 3D önizleme."
+      },
+      "toolKaucuk": {
+        "title": "Kauçuk Titreşim Takozları Teknik Resim | Karpol",
+        "description": "Takoz tipi seçimi, parametre paneli, teknik çizim önizleme ve PNG/PDF dışa aktarma aracı."
+      },
+      "toolSilim": {
+        "title": "Silim Lastiği Teknik Tasarım Düzenleyici | Karpol",
+        "description": "Flanş ve silim lastiği ölçüleri, teknik resim önizleme, PNG ve PDF dışa aktarma."
+      }
+    }
+  },
   "brand": {
     "name": "Karpol Poliüretan",
     "slogan": "Ürün değil, çözüm üretiyoruz; tecrübemizi satıyoruz.",

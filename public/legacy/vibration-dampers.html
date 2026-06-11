@@ -1749,16 +1749,41 @@ ctx.fillStyle = mColor; drawMetalPlate(ctx, cx - pD/2, cy - pK/2, pD, 3*S, cnf.m
     document.getElementById('zoom-level').textContent = Math.round(zoomScale * 100) + '%';
   }
 
-  function zoomIn() {
-    zoomScale = Math.min(MAX_ZOOM, parseFloat((zoomScale * 1.25).toFixed(3)));
+  function zoomAtClientPoint(clientX, clientY, newScale) {
+    const wrap = document.getElementById('canvas-zoom-wrapper');
+    const rect = wrap.getBoundingClientRect();
+    const focalX = clientX - rect.left;
+    const focalY = clientY - rect.top;
+    const clamped = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, parseFloat(newScale.toFixed(3))));
+    const ratio = clamped / zoomScale;
+    panX = focalX - (focalX - panX) * ratio;
+    panY = focalY - (focalY - panY) * ratio;
+    zoomScale = clamped;
     applyZoom();
+  }
+
+  function zoomAtDrawingCenter(newScale) {
+    const wrap = document.getElementById('canvas-zoom-wrapper');
+    const cnv = document.getElementById('cnv');
+    if (!wrap || !cnv) return;
+    const cw = cnv.offsetWidth || 760;
+    const ch = cnv.offsetHeight || 560;
+    const rect = wrap.getBoundingClientRect();
+    const centerX = rect.left + panX + (cw * zoomScale) / 2;
+    const centerY = rect.top + panY + (ch * zoomScale) / 2;
+    zoomAtClientPoint(centerX, centerY, newScale);
+  }
+
+  function zoomIn() {
+    zoomAtDrawingCenter(zoomScale * 1.25);
   }
   function zoomOut() {
-    zoomScale = Math.max(MIN_ZOOM, parseFloat((zoomScale / 1.25).toFixed(3)));
-    applyZoom();
+    zoomAtDrawingCenter(zoomScale / 1.25);
   }
   function zoomReset() {
-    zoomScale = 1; panX = 0; panY = 0;
+    zoomScale = 1;
+    panX = 0;
+    panY = 0;
     applyZoom();
   }
 
@@ -1766,8 +1791,7 @@ ctx.fillStyle = mColor; drawMetalPlate(ctx, cx - pD/2, cy - pK/2, pD, 3*S, cnf.m
   document.getElementById('canvas-zoom-wrapper').addEventListener('wheel', (e) => {
     e.preventDefault();
     const delta = e.deltaY > 0 ? 0.9 : 1.1;
-    zoomScale = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, parseFloat((zoomScale * delta).toFixed(3))));
-    applyZoom();
+    zoomAtClientPoint(e.clientX, e.clientY, zoomScale * delta);
   }, { passive: false });
 
   // Mouse pan
@@ -1826,8 +1850,7 @@ ctx.fillStyle = mColor; drawMetalPlate(ctx, cx - pD/2, cy - pK/2, pD, 3*S, cnf.m
       const dist = Math.sqrt(dx*dx + dy*dy);
       if (lastTouchDist) {
         const ratio = dist / lastTouchDist;
-        zoomScale = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, parseFloat((zoomScale * ratio).toFixed(3))));
-        applyZoom();
+        zoomAtDrawingCenter(zoomScale * ratio);
       }
       lastTouchDist = dist;
     } else if (e.touches.length === 1 && isPanning) {

@@ -1,34 +1,16 @@
-export const productSlugs = ["makara", "damper", "silim"] as const;
+/**
+ * Public products facade — reads published rows from Supabase.
+ */
+export {
+  getPublishedProducts,
+  getPublishedProductBySlug,
+  getPublishedProductSlugs,
+} from "@/lib/products-db";
 
-export type ProductSlug = (typeof productSlugs)[number];
+export type { ProductPublicView as ProductView } from "@/lib/types/product";
 
-export type ProductMeta = {
-  slug: ProductSlug;
-  toolHref?:
-    | "/tools/makara"
-    | "/tools/kaucuk-titresim-takozlari"
-    | "/tools/silim-lastigi";
-  messageKey: ProductSlug;
-};
-
-export const products: ProductMeta[] = [
-  {
-    slug: "makara",
-    messageKey: "makara",
-    toolHref: "/tools/makara",
-  },
-  {
-    slug: "damper",
-    messageKey: "damper",
-    toolHref: "/tools/kaucuk-titresim-takozlari",
-  },
-  {
-    slug: "silim",
-    messageKey: "silim",
-    toolHref: "/tools/silim-lastigi",
-  },
-];
-
-export function getProduct(slug: string): ProductMeta | undefined {
-  return products.find((p) => p.slug === slug);
+/** @deprecated Use getPublishedProductSlugs — kept for gradual migration */
+export async function getProductSlugs(): Promise<string[]> {
+  const { getPublishedProductSlugs } = await import("@/lib/products-db");
+  return getPublishedProductSlugs();
 }

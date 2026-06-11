@@ -1,5 +1,6 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import type { Metadata } from "next";
+import { buildStaticPageMetadata } from "@/lib/seo/page-metadata";
 import { PageShell } from "@/components/organisms/PageShell";
 import { PageHeader } from "@/components/organisms/PageHeader";
 import { CatalogCard } from "@/components/molecules/CatalogCard";
@@ -10,8 +11,7 @@ type Props = { params: Promise<{ locale: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "catalogPage" });
-  return { title: `${t("title")} | Karpol` };
+  return buildStaticPageMetadata(locale, "catalog");
 }
 
 export default async function CatalogPage({ params }: Props) {
