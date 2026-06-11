@@ -13,7 +13,20 @@ const TOOL_ID = "kaucuk-titresim-takozlari" as const;
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
-  return buildStaticPageMetadata(locale, "toolKaucuk");
+  const metadata = buildStaticPageMetadata(locale, "toolKaucuk");
+
+  return {
+    ...metadata,
+    manifest: "/manifest-takoz.json",
+    appleWebApp: {
+      capable: true,
+      title: "Karpol Takoz",
+      statusBarStyle: "black-translucent",
+    },
+    icons: {
+      apple: "/icons/takoz-icon-192.png",
+    },
+  };
 }
 
 export default async function KaucukTitresimTakozlariPage({ params }: Props) {
