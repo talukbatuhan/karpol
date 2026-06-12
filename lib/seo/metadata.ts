@@ -10,6 +10,8 @@ export type BuildPageMetadataInput = {
   description: string;
   image?: string;
   noIndex?: boolean;
+  /** true ise canonical /{path} — locale öneki eklenmez (ör. /hasankara) */
+  localeFree?: boolean;
 };
 
 function localePath(locale: string, path: string): string {
@@ -24,7 +26,9 @@ function toOpenGraphLocale(locale: string): string {
 export function buildPageMetadata(input: BuildPageMetadataInput): Metadata {
   const siteUrl = getSiteUrl();
   const path = input.path === "" ? "/" : input.path;
-  const canonical = `${siteUrl}${localePath(input.locale, path)}`;
+  const canonical = input.localeFree
+    ? `${siteUrl}${path.startsWith("/") ? path : `/${path}`}`
+    : `${siteUrl}${localePath(input.locale, path)}`;
 
   const imagePath = input.image ?? DEFAULT_OG_IMAGE;
   const imageUrl = imagePath.startsWith("http")
@@ -32,10 +36,15 @@ export function buildPageMetadata(input: BuildPageMetadataInput): Metadata {
     : `${siteUrl}${imagePath.startsWith("/") ? imagePath : `/${imagePath}`}`;
 
   const languages: Record<string, string> = {};
-  for (const loc of routing.locales) {
-    languages[loc] = `${siteUrl}${localePath(loc, path)}`;
+  if (input.localeFree) {
+    languages["x-default"] = canonical;
+  } else {
+    for (const loc of routing.locales) {
+      languages[loc] = `${siteUrl}${localePath(loc, path)}`;
+    }
+    languages["x-default"] =
+      `${siteUrl}${localePath(routing.defaultLocale, path)}`;
   }
-  languages["x-default"] = `${siteUrl}${localePath(routing.defaultLocale, path)}`;
 
   const siteName =
     input.locale === "tr" ? "Karpol Poliüretan" : "Karpol Polyurethane";

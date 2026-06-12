@@ -223,6 +223,23 @@
       "description": "Flange and grinding rubber dimensions, drawing preview, PNG/PDF export."
     }
   },
+  "ecard": {
+    "metaTitle": "{name} | {company} — Digital Business Card",
+    "metaDescription": "{name} — {title}, {company}. Quick contact via WhatsApp, phone, and email; save to contacts with vCard.",
+    "whatsapp": "Contact via WhatsApp",
+    "phone": "Call",
+    "email": "Send Email",
+    "website": "Website",
+    "catalog": "E-Catalog",
+    "directions": "Get Directions",
+    "vcard": "Save to Contacts (vCard)",
+    "qrLabel": "Share via QR Code",
+    "qrHint": "Scan this code to open the digital business card instantly.",
+    "socialTitle": "Social Media",
+    "notFoundTitle": "Business card not found",
+    "notFoundDescription": "The digital business card you are looking for does not exist or may have been removed.",
+    "notFoundAction": "Back to home"
+  },
   "toolsMakara": {
     "selectTitle": "Box size selection",
     "dataTitle": "Shipping and storage data",

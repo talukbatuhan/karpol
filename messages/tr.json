@@ -223,6 +223,23 @@
       "description": "Flanş ve silim lastiği ölçüleri, teknik resim önizleme, PNG/PDF dışa aktarma."
     }
   },
+  "ecard": {
+    "metaTitle": "{name} | {company} — Dijital Kartvizit",
+    "metaDescription": "{name} — {title}, {company}. WhatsApp, telefon ve e-posta ile hızlı iletişim; vCard ile rehbere kaydedin.",
+    "whatsapp": "WhatsApp ile İletişime Geç",
+    "phone": "Telefon ile Ara",
+    "email": "E-posta Gönder",
+    "website": "Web Sitesi",
+    "catalog": "E-Katalog",
+    "directions": "Yol Tarifi Al",
+    "vcard": "Rehbere Kaydet (vCard)",
+    "qrLabel": "QR Kod ile Paylaş",
+    "qrHint": "Bu kodu tarayarak dijital kartvizite anında ulaşabilirsiniz.",
+    "socialTitle": "Sosyal Medya",
+    "notFoundTitle": "Kartvizit bulunamadı",
+    "notFoundDescription": "Aradığınız dijital kartvizit mevcut değil veya kaldırılmış olabilir.",
+    "notFoundAction": "Ana sayfaya dön"
+  },
   "toolsMakara": {
     "selectTitle": "Kutu Boyutu Seçimi",
     "dataTitle": "Sevkiyat ve Depolama Verileri",
