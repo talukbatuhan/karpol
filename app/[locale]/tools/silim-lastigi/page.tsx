@@ -13,7 +13,20 @@ const TOOL_ID = "silim-lastigi" as const;
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
-  return buildStaticPageMetadata(locale, "toolSilim");
+  const metadata = buildStaticPageMetadata(locale, "toolSilim");
+
+  return {
+    ...metadata,
+    manifest: "/manifest-silim.json",
+    appleWebApp: {
+      capable: true,
+      title: "Karpol Silim",
+      statusBarStyle: "black-translucent",
+    },
+    icons: {
+      apple: "/icons/silim-icon-192.png",
+    },
+  };
 }
 
 export default async function SilimLastigiPage({ params }: Props) {

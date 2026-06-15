@@ -1,0 +1,21 @@
+{
+  "name": "Karpol Silim Lastiği Teknik Tasarım",
+  "short_name": "Silim Lastiği",
+  "description": "Karpol flanş ve silim lastiği teknik resim düzenleyicisi",
+  "start_url": "/tools/silim-lastigi?embed=1",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0284c7",
+  "icons": [
+    {
+      "src": "/icons/silim-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/silim-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

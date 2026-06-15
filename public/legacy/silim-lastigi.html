@@ -38,7 +38,12 @@
     window.addEventListener('load', function () {
       setTimeout(scheduleCenter, 350);
     });
-    window.addEventListener('resize', scheduleCenter);
+
+    // Resize durumunda beyazlıkları engellemek için önce draw() ile boyutu güncelle
+    window.addEventListener('resize', function () {
+      if (typeof draw === 'function') draw();
+      scheduleCenter();
+    });
   })();
 </script>
 <head>
@@ -124,7 +129,7 @@
       display: flex;
       flex-direction: column;
       min-height: 0;
-      padding: 8px 12px;
+      padding: 8px 12px 72px;
       overflow: hidden;
       justify-content: stretch;
       align-items: stretch;
@@ -159,8 +164,9 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      overflow: auto;
+      overflow: hidden;
       -webkit-font-smoothing: antialiased;
+      overscroll-behavior: none;
     }
 
     #app { display: flex; flex-direction: column; flex: 1; min-height: 0; }
@@ -299,7 +305,7 @@
       display: flex;
       flex: 1;
       height: calc(100vh - var(--header-height));
-      overflow: auto;
+      overflow: hidden;
       position: relative;
       min-height: 0;
     }
@@ -440,13 +446,15 @@
     .canvas-zoom-wrapper {
       flex: 1;
       width: 100%;
-      overflow: auto;
+      overflow: hidden;
       position: relative;
       display: flex;
       cursor: grab;
       border-radius: var(--radius-xl);
       -webkit-user-select: none;
       user-select: none;
+      touch-action: none;
+      -webkit-touch-callout: none;
       background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
       border: 1px solid var(--border-subtle);
       box-shadow: var(--shadow-md), var(--shadow-inset);
@@ -454,25 +462,25 @@
     .canvas-zoom-wrapper:active { cursor: grabbing; }
 
     .canvas-zoom-inner {
-      transform-origin: center center;
-      transition: transform 0.05s linear;
+      transform-origin: 0 0;
+      transition: transform 0s;
       will-change: transform;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin: auto;
-      padding: 12px;
+      padding: 0;
+      margin: 0;
+      display: block;
     }
 
     canvas#cnv {
       display: block;
       flex-shrink: 0;
-      max-width: 100%;
-      max-height: 100%;
-      object-fit: contain;
+      max-width: none;
+      max-height: none;
       border-radius: var(--radius-lg);
       border: 1px solid rgba(2, 132, 199, 0.18);
-      box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.04), 0 24px 64px rgba(15, 23, 42, 0.1);
+      box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.4),
+        0 24px 64px rgba(0, 0, 0, 0.55),
+        0 0 80px rgba(34, 211, 238, 0.04);
     }
 
     .canvas-hint {
@@ -601,8 +609,8 @@
       }
       .sidebar.is-collapsed-mobile { transform: translateX(-100%); }
       .sidebar__mobile-bar { display: flex; }
-      .canvas-stage { padding: 12px; }
-      .canvas-zoom-wrapper { cursor: default; border-radius: 0; }
+      .canvas-stage { padding: 8px; }
+      .canvas-zoom-wrapper { cursor: default; border-radius: 0; border: none; }
       .zoom-controls { bottom: 14px; right: 14px; }
     }
   </style>
@@ -757,8 +765,6 @@
 
   let selectedColor = COLORS[0].hex;
 
-  const CANVAS_LOGICAL_W = 760;
-  const CANVAS_LOGICAL_H = 560;
   const SHEET_BG = '#ffffff';
   const INK = '#0f172a';
   const ACCENT = '#0284c7';
@@ -917,7 +923,12 @@
       ? (activeFieldId === 'delikCapi' || activeFieldId === 'delikAdeti')
       : activeFieldId === fieldId;
     const color = active ? ACCENT : DIM_INACTIVE;
-    const font = active ? FONT_DIM_ACTIVE : FONT_DIM;
+    const W = (document.getElementById('cnv') && document.getElementById('cnv').offsetWidth) || 760;
+    const compact = W < 560;
+    const narrow = W < 420;
+    const font = active
+      ? (narrow ? '700 10px "JetBrains Mono", ui-monospace, monospace' : compact ? '700 11px "JetBrains Mono", ui-monospace, monospace' : FONT_DIM_ACTIVE)
+      : (narrow ? '600 9px "JetBrains Mono", ui-monospace, monospace' : compact ? '600 10px "JetBrains Mono", ui-monospace, monospace' : FONT_DIM);
     ctx.save();
     ctx.translate(x, y);
     if (rotate) ctx.rotate(rotate);
@@ -966,8 +977,9 @@
     const valid = validate();
     const canvas = document.getElementById('cnv');
     const ctx = canvas.getContext('2d');
-    const logicalW = CANVAS_LOGICAL_W;
-    const logicalH = CANVAS_LOGICAL_H;
+    const wrapEl = document.getElementById('canvas-zoom-wrapper');
+    const logicalW = (wrapEl && wrapEl.clientWidth > 100) ? wrapEl.clientWidth : 760;
+    const logicalH = (wrapEl && wrapEl.clientHeight > 100) ? wrapEl.clientHeight : 560;
     const dpr = window.devicePixelRatio || 1;
     canvas.width = logicalW * dpr;
     canvas.height = logicalH * dpr;
@@ -1012,6 +1024,15 @@
     const matFill = darken(mainColor, 0.12);
 
     const drawH = H - TITLE_H - FOOTER_H;
+    const isNarrow = W < 420;
+    const isCompact = W < 560;
+    const sidePad = isNarrow ? 8 : isCompact ? 12 : 18;
+    const dimOutLeft = isNarrow ? 22 : isCompact ? 28 : 38;
+    const dimOutRight = isNarrow ? 18 : isCompact ? 24 : 32;
+    const viewGap = isNarrow ? 26 : isCompact ? 36 : 48;
+    const holeLeadX = isNarrow ? 28 : isCompact ? 38 : 48;
+    const holeLeadY = isNarrow ? 12 : isCompact ? 16 : 22;
+    const disDimGap = isNarrow ? 16 : isCompact ? 20 : 26;
 
     ctx.fillStyle = SHEET_BG;
     ctx.fillRect(0, 0, W, H);
@@ -1025,45 +1046,74 @@
     ctx.fillRect(0, TITLE_H - 1, W, 2);
 
     if (logo.complete) {
-      const logoH = 34;
+      const logoH = isNarrow ? 24 : isCompact ? 28 : 34;
       const logoW = (logo.width / logo.height) * logoH;
-      ctx.drawImage(logo, 16, (TITLE_H - logoH) / 2, logoW, logoH);
+      ctx.drawImage(logo, isNarrow ? 10 : 16, (TITLE_H - logoH) / 2, logoW, logoH);
       ctx.fillStyle = '#f1f5f9';
-      ctx.font = FONT_SANS;
+      ctx.font = isNarrow ? '600 11px Inter, system-ui, sans-serif' : isCompact ? '600 12px Inter, system-ui, sans-serif' : FONT_SANS;
       ctx.textAlign = 'left';
       ctx.textBaseline = 'middle';
-      ctx.fillText(marka + ' POLİÜRETAN', 25 + logoW, TITLE_H / 2 + 2);
+      const titleText = isNarrow ? marka : marka + ' POLİÜRETAN';
+      const titleX = (isNarrow ? 10 : 16) + logoW + (isNarrow ? 6 : 9);
+      const maxTitleW = W * (isCompact ? 0.42 : 0.5) - titleX;
+      let displayTitle = titleText;
+      while (ctx.measureText(displayTitle).width > maxTitleW && displayTitle.length > 4) {
+        displayTitle = displayTitle.slice(0, -2) + '…';
+      }
+      ctx.fillText(displayTitle, titleX, TITLE_H / 2 + 2);
     } else {
       ctx.fillStyle = '#f1f5f9';
-      ctx.font = FONT_SANS;
+      ctx.font = isNarrow ? '600 11px Inter, system-ui, sans-serif' : FONT_SANS;
       ctx.textAlign = 'left';
       ctx.textBaseline = 'middle';
-      ctx.fillText(marka + ' POLİÜRETAN', 16, TITLE_H / 2 + 2);
+      ctx.fillText(isNarrow ? marka : marka + ' POLİÜRETAN', isNarrow ? 10 : 16, TITLE_H / 2 + 2);
     }
 
     ctx.textAlign = 'right';
-    ctx.font = FONT_MONO_SM;
-    ctx.fillStyle = 'rgba(148, 163, 184, 0.9)';
-    ctx.fillText('SİLİM LASTİĞİ TEKNİK RESİM', W - 16, 20);
-    ctx.fillStyle = dimActive('revNo') ? ACCENT : 'rgba(148, 163, 184, 0.9)';
-    ctx.fillText('REV: ' + revNo, W - 16, 34);
-    ctx.fillStyle = dimActive('tarih') ? ACCENT : '#e2e8f0';
-    ctx.fillText('TARİH: ' + tarihVal, W - 16, 42);
-    ctx.fillStyle = dimActive('hazirlayan') ? ACCENT : 'rgba(148, 163, 184, 0.85)';
-    ctx.fillText('HAZIRLAYAN: ' + hazirlayan, W - 16, 50);
+    ctx.font = isNarrow ? '500 8px "JetBrains Mono", ui-monospace, monospace' : isCompact ? '500 9px "JetBrains Mono", ui-monospace, monospace' : FONT_MONO_SM;
+    const headerRight = W - (isNarrow ? 10 : 16);
+    if (isNarrow) {
+      ctx.fillStyle = 'rgba(148, 163, 184, 0.9)';
+      ctx.fillText('SİLİM LASTİĞİ', headerRight, 16);
+      ctx.fillStyle = dimActive('revNo') ? ACCENT : 'rgba(148, 163, 184, 0.9)';
+      ctx.fillText('REV ' + revNo, headerRight, 28);
+      ctx.fillStyle = dimActive('tarih') ? ACCENT : '#e2e8f0';
+      ctx.fillText(tarihVal, headerRight, 40);
+    } else if (isCompact) {
+      ctx.fillStyle = 'rgba(148, 163, 184, 0.9)';
+      ctx.fillText('SİLİM LASTİĞİ TEKNİK RESİM', headerRight, 18);
+      ctx.fillStyle = dimActive('revNo') ? ACCENT : 'rgba(148, 163, 184, 0.9)';
+      ctx.fillText('REV: ' + revNo + '  ·  ' + tarihVal, headerRight, 32);
+      ctx.fillStyle = dimActive('hazirlayan') ? ACCENT : 'rgba(148, 163, 184, 0.85)';
+      ctx.fillText('HAZIRLAYAN: ' + hazirlayan, headerRight, 44);
+    } else {
+      ctx.fillStyle = 'rgba(148, 163, 184, 0.9)';
+      ctx.fillText('SİLİM LASTİĞİ TEKNİK RESİM', headerRight, 20);
+      ctx.fillStyle = dimActive('revNo') ? ACCENT : 'rgba(148, 163, 184, 0.9)';
+      ctx.fillText('REV: ' + revNo, headerRight, 34);
+      ctx.fillStyle = dimActive('tarih') ? ACCENT : '#e2e8f0';
+      ctx.fillText('TARİH: ' + tarihVal, headerRight, 42);
+      ctx.fillStyle = dimActive('hazirlayan') ? ACCENT : 'rgba(148, 163, 184, 0.85)';
+      ctx.fillText('HAZIRLAYAN: ' + hazirlayan, headerRight, 50);
+    }
 
     drawCadGrid(ctx, TITLE_H, drawH, W);
 
     const drawTop = TITLE_H;
     const midY = drawTop + drawH / 2;
-    const maxR = (dis / 2);
-    const S_available = Math.min((drawH - 60) / dis, 1.6);
-    const S = Math.min(S_available, 1.6);
+    const maxR = dis / 2;
 
-    const cxFlange = W * 0.36;
+    let S = (drawH - (isCompact ? 76 : 64)) / dis;
+    const widthDenom = dimOutLeft * 2 + dis + viewGap + kalinlik + dimOutRight;
+    const maxSFromWidth = (W - sidePad * 2) / widthDenom;
+    S = Math.min(S, maxSFromWidth, isCompact ? 1.05 : 1.6);
+    S = Math.max(S, 0.28);
+
+    const compositionW = dimOutLeft * 2 + dis * S + viewGap + kalinlik * S + dimOutRight;
+    const blockStart = Math.max(sidePad, (W - compositionW) / 2);
+    const cxFlange = blockStart + dimOutLeft + (dis * S) / 2;
     const cyFlange = midY;
-
-    const cxProfile = W * 0.78;
+    const cxProfile = blockStart + dimOutLeft + dis * S + viewGap + (kalinlik * S) / 2;
     const cyProfile = midY;
     const profileW = kalinlik * S;
     const profileH = dis * S;
@@ -1189,9 +1239,9 @@
     }
     ctx.restore();
 
-    const ext = 10;
+    const ext = isNarrow ? 6 : isCompact ? 8 : 10;
 
-    const disDimY = cyFlange + maxR * S + 26;
+    const disDimY = cyFlange + maxR * S + disDimGap;
     const extLeft = cxFlange - maxR * S;
     const extRight = cxFlange + maxR * S;
     ctx.strokeStyle = dimColor('disCap');
@@ -1199,11 +1249,11 @@
     ctx.lineWidth = dimLW('disCap');
     ctx.beginPath(); ctx.moveTo(extLeft, cyFlange); ctx.lineTo(extLeft, disDimY + ext); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(extRight, cyFlange); ctx.lineTo(extRight, disDimY + ext); ctx.stroke();
-    drawArrow(ctx, extLeft + 1, disDimY, cxFlange - 10, disDimY, 6);
-    drawArrow(ctx, extRight - 1, disDimY, cxFlange + 10, disDimY, 6);
-    drawDimAt(ctx, 'Ø' + dis + ' mm (D)', cxFlange, disDimY - 8, 'disCap');
+    drawArrow(ctx, extLeft + 1, disDimY, cxFlange - (isNarrow ? 6 : 10), disDimY, isNarrow ? 4 : 6);
+    drawArrow(ctx, extRight - 1, disDimY, cxFlange + (isNarrow ? 6 : 10), disDimY, isNarrow ? 4 : 6);
+    drawDimAt(ctx, 'Ø' + dis + ' mm (D)', cxFlange, disDimY - (isNarrow ? 5 : 8), 'disCap');
 
-    const icDimX = cxFlange - maxR * S - 38;
+    const icDimX = cxFlange - maxR * S - dimOutLeft;
     const icDimY1 = cyFlange - (ic / 2) * S;
     const icDimY2 = cyFlange + (ic / 2) * S;
     ctx.strokeStyle = dimColor('icCap');
@@ -1211,11 +1261,11 @@
     ctx.lineWidth = dimLW('icCap');
     ctx.beginPath(); ctx.moveTo(cxFlange, icDimY1); ctx.lineTo(icDimX - ext, icDimY1); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(cxFlange, icDimY2); ctx.lineTo(icDimX - ext, icDimY2); ctx.stroke();
-    drawArrow(ctx, icDimX, icDimY1 + 1, icDimX, cyFlange - 6, 5);
-    drawArrow(ctx, icDimX, icDimY2 - 1, icDimX, cyFlange + 6, 5);
-    drawDimAt(ctx, 'Ø' + ic + ' mm (d)', icDimX - 12, cyFlange, 'icCap', -Math.PI / 2);
+    drawArrow(ctx, icDimX, icDimY1 + 1, icDimX, cyFlange - 6, isNarrow ? 4 : 5);
+    drawArrow(ctx, icDimX, icDimY2 - 1, icDimX, cyFlange + 6, isNarrow ? 4 : 5);
+    drawDimAt(ctx, 'Ø' + ic + ' mm (d)', icDimX - (isNarrow ? 8 : 12), cyFlange, 'icCap', -Math.PI / 2);
 
-    const pcdDimX = cxFlange + maxR * S + 32;
+    const pcdDimX = cxFlange + maxR * S + Math.min(dimOutRight, viewGap * 0.42);
     const pcdY1 = cyFlange - (merkez / 2) * S;
     const pcdY2 = cyFlange + (merkez / 2) * S;
     ctx.strokeStyle = dimColor('merkezCapi');
@@ -1225,9 +1275,9 @@
     ctx.beginPath(); ctx.moveTo(cxFlange, pcdY1); ctx.lineTo(pcdDimX + ext, pcdY1); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(cxFlange, pcdY2); ctx.lineTo(pcdDimX + ext, pcdY2); ctx.stroke();
     ctx.setLineDash([]);
-    drawArrow(ctx, pcdDimX, pcdY1 + 1, pcdDimX, cyFlange - 6, 5);
-    drawArrow(ctx, pcdDimX, pcdY2 - 1, pcdDimX, cyFlange + 6, 5);
-    drawDimAt(ctx, 'Ø' + merkez + ' mm (PCD)', pcdDimX + 12, cyFlange, 'merkezCapi', Math.PI / 2);
+    drawArrow(ctx, pcdDimX, pcdY1 + 1, pcdDimX, cyFlange - 6, isNarrow ? 4 : 5);
+    drawArrow(ctx, pcdDimX, pcdY2 - 1, pcdDimX, cyFlange + 6, isNarrow ? 4 : 5);
+    drawDimAt(ctx, 'Ø' + merkez + ' mm (PCD)', pcdDimX + (isNarrow ? 8 : 12), cyFlange, 'merkezCapi', Math.PI / 2);
 
     const topHoleAngle = -Math.PI / 2;
     const topHoleX = cxFlange + (merkez / 2) * S * Math.cos(topHoleAngle);
@@ -1237,12 +1287,21 @@
     ctx.lineWidth = dimLW('delik');
     ctx.beginPath();
     ctx.moveTo(topHoleX, topHoleY - holeR - 4);
-    ctx.lineTo(topHoleX - 48, topHoleY - holeR - 20);
+    ctx.lineTo(topHoleX - holeLeadX, topHoleY - holeR - holeLeadY);
     ctx.stroke();
     if (delikActive()) drawFocusRing(ctx, topHoleX, topHoleY, holeR);
-    drawDimAt(ctx, 'Ø' + delikC + ' × ' + delikN, topHoleX - 50, topHoleY - holeR - 22, 'delik', 0, 'right', 'bottom');
+    drawDimAt(
+      ctx,
+      'Ø' + delikC + ' × ' + delikN,
+      topHoleX - holeLeadX + (isNarrow ? 4 : 0),
+      topHoleY - holeR - holeLeadY - (isNarrow ? 2 : 4),
+      'delik',
+      0,
+      'right',
+      'bottom'
+    );
 
-    const kDimY = cyProfile - profileH / 2 - 20;
+    const kDimY = cyProfile - profileH / 2 - (isNarrow ? 14 : isCompact ? 17 : 20);
     ctx.strokeStyle = dimColor('kalinlik');
     ctx.fillStyle = dimColor('kalinlik');
     ctx.lineWidth = dimLW('kalinlik');
@@ -1271,7 +1330,8 @@
     ctx.fillStyle = '#eef2f7';
     ctx.fillRect(0, FY, W, FOOTER_H);
 
-    const COL = 5;
+    const COL = isCompact ? 4 : 5;
+    const rowH = isNarrow ? 36 : isCompact ? 40 : 44;
     const fields = [
       { key: 'marka', label: 'MAKİNE MARKA', value: marka },
       { key: 'kafaSayisi', label: 'KAFA SAYISI', value: kafaSayisi + ' ADET' },
@@ -1287,7 +1347,6 @@
     ];
 
     const colW = W / COL;
-    const rowH = 44;
     fields.forEach((f, idx) => {
       const col = idx % COL;
       const row = Math.floor(idx / COL);
@@ -1428,7 +1487,9 @@
     const t = e.target;
     const isCanvasArea = t === zoomWrapper || t === zoomInner || t === zoomCanvas;
     if (!isCanvasArea) return;
+
     if (e.touches.length === 2) {
+      isPanning = false;
       const dx = e.touches[0].clientX - e.touches[1].clientX;
       const dy = e.touches[0].clientY - e.touches[1].clientY;
       lastTouchDist = Math.sqrt(dx * dx + dy * dy);
@@ -1449,12 +1510,28 @@
       const dx = e.touches[0].clientX - e.touches[1].clientX;
       const dy = e.touches[0].clientY - e.touches[1].clientY;
       const dist = Math.sqrt(dx * dx + dy * dy);
+      const midX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+      const midY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+
       if (lastTouchDist) {
         const ratio = dist / lastTouchDist;
-        zoomAtDrawingCenter(zoomScale * ratio);
+        const rect = zoomWrapper.getBoundingClientRect();
+        const focalX = midX - rect.left;
+        const focalY = midY - rect.top;
+        const clamped = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, zoomScale * ratio));
+        const actualRatio = clamped / zoomScale;
+
+        panX = focalX - (focalX - panX) * actualRatio + (midX - lastTouchMidX);
+        panY = focalY - (focalY - panY) * actualRatio + (midY - lastTouchMidY);
+        zoomScale = clamped;
+        applyZoom();
       }
+
       lastTouchDist = dist;
+      lastTouchMidX = midX;
+      lastTouchMidY = midY;
     } else if (e.touches.length === 1 && isPanning) {
+      e.preventDefault();
       panX = panStartOffsetX + (e.touches[0].clientX - panStartX);
       panY = panStartOffsetY + (e.touches[0].clientY - panStartY);
       applyZoom();
@@ -1506,6 +1583,12 @@
   }
 
   window.addEventListener('resize', () => {
+    if (typeof draw === 'function') draw();
+    if (typeof window.__karpolCenterView === 'function') {
+      requestAnimationFrame(function () {
+        requestAnimationFrame(window.__karpolCenterView);
+      });
+    }
     if (window.innerWidth > 768) {
       document.getElementById('sidebar').classList.remove('is-collapsed-mobile');
       const ov = document.getElementById('sidebar-overlay');
