@@ -610,8 +610,18 @@
       .sidebar.is-collapsed-mobile { transform: translateX(-100%); }
       .sidebar__mobile-bar { display: flex; }
       .canvas-stage { padding: 8px; }
-      .canvas-zoom-wrapper { cursor: default; border-radius: 0; border: none; }
-      .zoom-controls { bottom: 14px; right: 14px; }
+      .canvas-zoom-wrapper {
+        flex: 0 0 auto;
+        height: min(calc(100dvh - var(--header-height) - 88px), calc((100vw - 16px) * 1.62));
+        cursor: default;
+        border-radius: 0;
+        border: none;
+      }
+      html.embed-mode .canvas-zoom-wrapper {
+        flex: 1;
+        height: 100%;
+      }
+      .zoom-controls { display: none; }
     }
   </style>
 </head>
@@ -938,6 +948,15 @@
     ctx.restore();
   }
 
+  function fitTextToWidth(ctx, text, maxW) {
+    if (ctx.measureText(text).width <= maxW) return text;
+    let out = String(text);
+    while (out.length > 2 && ctx.measureText(out + '...').width > maxW) {
+      out = out.slice(0, -1);
+    }
+    return out.length > 2 ? out + '...' : out;
+  }
+
   function fontSizePx(font) {
     const m = String(font).match(/(\d+(?:\.\d+)?)\s*px/i);
     return m ? parseFloat(m[1]) : 12;
@@ -979,7 +998,11 @@
     const ctx = canvas.getContext('2d');
     const wrapEl = document.getElementById('canvas-zoom-wrapper');
     const logicalW = (wrapEl && wrapEl.clientWidth > 100) ? wrapEl.clientWidth : 760;
-    const logicalH = (wrapEl && wrapEl.clientHeight > 100) ? wrapEl.clientHeight : 560;
+    let logicalH = (wrapEl && wrapEl.clientHeight > 100) ? wrapEl.clientHeight : 560;
+    const isEmbedMode = document.documentElement.classList.contains('embed-mode');
+    if (!isEmbedMode && logicalW < 420) {
+      logicalH = Math.min(logicalH, Math.max(560, Math.round(logicalW * 1.62)));
+    }
     const dpr = window.devicePixelRatio || 1;
     canvas.width = logicalW * dpr;
     canvas.height = logicalH * dpr;
@@ -1023,9 +1046,10 @@
     const darkColor = darken(mainColor, 0.28);
     const matFill = darken(mainColor, 0.12);
 
-    const drawH = H - TITLE_H - FOOTER_H;
     const isNarrow = W < 420;
     const isCompact = W < 560;
+    const footerH = isNarrow ? 184 : isCompact ? 156 : FOOTER_H;
+    const drawH = H - TITLE_H - footerH;
     const sidePad = isNarrow ? 8 : isCompact ? 12 : 18;
     const dimOutLeft = isNarrow ? 22 : isCompact ? 28 : 38;
     const dimOutRight = isNarrow ? 18 : isCompact ? 24 : 32;
@@ -1100,13 +1124,15 @@
     drawCadGrid(ctx, TITLE_H, drawH, W);
 
     const drawTop = TITLE_H;
-    const midY = drawTop + drawH / 2;
+    const visualBiasY = isNarrow ? Math.min(32, drawH * 0.07) : isCompact ? Math.min(16, drawH * 0.04) : 0;
+    const midY = drawTop + drawH / 2 + visualBiasY;
     const maxR = dis / 2;
 
     let S = (drawH - (isCompact ? 76 : 64)) / dis;
     const widthDenom = dimOutLeft * 2 + dis + viewGap + kalinlik + dimOutRight;
     const maxSFromWidth = (W - sidePad * 2) / widthDenom;
-    S = Math.min(S, maxSFromWidth, isCompact ? 1.05 : 1.6);
+    const maxScale = isNarrow ? 1.24 : isCompact ? 1.32 : 1.85;
+    S = Math.min(S, maxSFromWidth, maxScale);
     S = Math.max(S, 0.28);
 
     const compositionW = dimOutLeft * 2 + dis * S + viewGap + kalinlik * S + dimOutRight;
@@ -1253,17 +1279,20 @@
     drawArrow(ctx, extRight - 1, disDimY, cxFlange + (isNarrow ? 6 : 10), disDimY, isNarrow ? 4 : 6);
     drawDimAt(ctx, 'Ø' + dis + ' mm (D)', cxFlange, disDimY - (isNarrow ? 5 : 8), 'disCap');
 
-    const icDimX = cxFlange - maxR * S - dimOutLeft;
+    const icDimX = isNarrow
+      ? Math.max(sidePad + 24, cxFlange - (ic / 2) * S - 14)
+      : cxFlange - maxR * S - dimOutLeft;
     const icDimY1 = cyFlange - (ic / 2) * S;
     const icDimY2 = cyFlange + (ic / 2) * S;
     ctx.strokeStyle = dimColor('icCap');
     ctx.fillStyle = dimColor('icCap');
     ctx.lineWidth = dimLW('icCap');
-    ctx.beginPath(); ctx.moveTo(cxFlange, icDimY1); ctx.lineTo(icDimX - ext, icDimY1); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(cxFlange, icDimY2); ctx.lineTo(icDimX - ext, icDimY2); ctx.stroke();
+    const icExtX = isNarrow ? icDimX + ext : icDimX - ext;
+    ctx.beginPath(); ctx.moveTo(cxFlange, icDimY1); ctx.lineTo(icExtX, icDimY1); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cxFlange, icDimY2); ctx.lineTo(icExtX, icDimY2); ctx.stroke();
     drawArrow(ctx, icDimX, icDimY1 + 1, icDimX, cyFlange - 6, isNarrow ? 4 : 5);
     drawArrow(ctx, icDimX, icDimY2 - 1, icDimX, cyFlange + 6, isNarrow ? 4 : 5);
-    drawDimAt(ctx, 'Ø' + ic + ' mm (d)', icDimX - (isNarrow ? 8 : 12), cyFlange, 'icCap', -Math.PI / 2);
+    drawDimAt(ctx, 'Ø' + ic + ' mm (d)', icDimX - (isNarrow ? 6 : 12), cyFlange, 'icCap', -Math.PI / 2);
 
     const pcdDimX = cxFlange + maxR * S + Math.min(dimOutRight, viewGap * 0.42);
     const pcdY1 = cyFlange - (merkez / 2) * S;
@@ -1324,14 +1353,14 @@
     ctx.stroke();
     ctx.setLineDash([]);
 
-    const FY = H - FOOTER_H;
+    const FY = H - footerH;
     ctx.fillStyle = ACCENT_DIM_LINE;
     ctx.fillRect(0, FY - 1, W, 1);
     ctx.fillStyle = '#eef2f7';
-    ctx.fillRect(0, FY, W, FOOTER_H);
+    ctx.fillRect(0, FY, W, footerH);
 
-    const COL = isCompact ? 4 : 5;
-    const rowH = isNarrow ? 36 : isCompact ? 40 : 44;
+    const COL = isNarrow ? 3 : isCompact ? 4 : 5;
+    const rowH = isNarrow ? 36 : isCompact ? 38 : 44;
     const fields = [
       { key: 'marka', label: 'MAKİNE MARKA', value: marka },
       { key: 'kafaSayisi', label: 'KAFA SAYISI', value: kafaSayisi + ' ADET' },
@@ -1362,22 +1391,32 @@
         ctx.fillRect(fx, fy, colW, rowH);
       }
 
+      const padX = isNarrow ? 6 : 10;
+      const labelY = isNarrow ? 11 : isCompact ? 13 : 14;
+      const valueY = isNarrow ? 27 : isCompact ? 30 : 32;
+      const textMaxW = colW - padX * 2;
+
       ctx.fillStyle = '#64748b';
-      ctx.font = '500 9px "JetBrains Mono", ui-monospace, monospace';
+      ctx.font = isNarrow
+        ? '500 7.5px "JetBrains Mono", ui-monospace, monospace'
+        : isCompact ? '500 8px "JetBrains Mono", ui-monospace, monospace' : '500 9px "JetBrains Mono", ui-monospace, monospace';
       ctx.textAlign = 'left';
       ctx.textBaseline = 'middle';
-      ctx.fillText(f.label, fx + 10, fy + 14);
+      ctx.fillText(fitTextToWidth(ctx, f.label, textMaxW), fx + padX, fy + labelY);
 
       ctx.fillStyle = cellActive ? ACCENT : INK;
-      ctx.font = cellActive ? '600 12px "JetBrains Mono", ui-monospace, monospace' : '600 12px "JetBrains Mono", ui-monospace, monospace';
-      ctx.fillText(f.value, fx + 10, fy + 32);
+      ctx.font = isNarrow
+        ? '600 9.5px "JetBrains Mono", ui-monospace, monospace'
+        : isCompact ? '600 10.5px "JetBrains Mono", ui-monospace, monospace' : '600 12px "JetBrains Mono", ui-monospace, monospace';
+      ctx.fillText(fitTextToWidth(ctx, f.value, textMaxW), fx + padX, fy + valueY);
     });
 
     ctx.fillStyle = '#64748b';
-    ctx.font = 'italic 500 11px Inter, system-ui, sans-serif';
+    ctx.font = isNarrow ? 'italic 500 9px Inter, system-ui, sans-serif' : 'italic 500 11px Inter, system-ui, sans-serif';
     ctx.textAlign = 'right';
     ctx.textBaseline = 'alphabetic';
-    ctx.fillText('Karpol Poliüretan — Ürün değil, çözüm üretiyoruz.', W - 16, H - 20);
+    const footerText = 'Karpol Poliüretan — Ürün değil, çözüm üretiyoruz.';
+    ctx.fillText(fitTextToWidth(ctx, footerText, W - 24), W - 12, H - 10);
   }
 
   function update() { draw(); }
