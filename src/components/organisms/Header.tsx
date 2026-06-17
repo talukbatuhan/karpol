@@ -248,12 +248,12 @@ export function Header({ minimal: minimalProp }: HeaderProps = {}) {
       >
         <div
           ref={topBandRef}
-          className="mx-auto flex w-full max-w-[1440px] flex-wrap items-start justify-between gap-x-4 gap-y-3 py-2.5 pl-6 pr-6 md:gap-x-6 md:pr-10"
+          className="mx-auto flex w-full max-w-[1440px] flex-col items-start gap-2.5 py-2.5 pl-6 pr-6 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between sm:gap-x-4 sm:gap-y-3 md:gap-x-6 md:pr-10"
         >
-          <div className="flex min-w-0 flex-1 items-center gap-3 md:gap-4">
+          <div className="flex w-full min-w-0 flex-col items-start gap-2 sm:flex-1 sm:flex-row sm:items-center sm:gap-3 md:gap-4">
             <Link
               href="/"
-              className="hidden shrink-0 items-center sm:flex"
+              className="flex shrink-0 items-center"
               aria-label={tBrand("name")}
             >
               <img
@@ -263,14 +263,14 @@ export function Header({ minimal: minimalProp }: HeaderProps = {}) {
                 height={510}
                 decoding="async"
                 fetchPriority="high"
-                className="h-9 w-auto bg-transparent object-contain drop-shadow-md transition-[filter] duration-200 hover:brightness-110 md:h-10"
+                className="h-8 w-auto bg-transparent object-contain drop-shadow-md transition-[filter] duration-200 hover:brightness-110 sm:h-9 md:h-10"
               />
             </Link>
-            <p className="hidden min-w-0 flex-1 font-sans text-sm leading-snug text-navy-950/85 sm:block md:text-[0.9375rem]">
+            <p className="min-w-0 font-sans text-xs leading-snug text-navy-950/85 sm:flex-1 sm:text-sm md:text-[0.9375rem]">
               {tBrand("headerSlogan")}
             </p>
           </div>
-          <HeaderContact className="text-right [&_p]:justify-end" />
+          <HeaderContact className="hidden w-full text-left sm:block sm:w-auto sm:text-right sm:[&_p]:justify-end" />
         </div>
       </div>
 
@@ -278,21 +278,27 @@ export function Header({ minimal: minimalProp }: HeaderProps = {}) {
         ref={navInnerRef}
         className="mx-auto grid w-full max-w-[1440px] grid-cols-12 items-center gap-3 py-3 pl-6 pr-6 md:gap-4 md:pr-10"
       >
-        <div className="col-span-12 flex items-center justify-between gap-3 lg:hidden">
-          <Link
-            href="/"
-            className="flex shrink-0 items-center"
-            aria-label={tBrand("name")}
-          >
-            <img
-              src="/karpol-logo-nav.png"
-              alt=""
-              width={2025}
-              height={510}
-              decoding="async"
-              className="h-8 w-auto object-contain"
-            />
-          </Link>
+        <div
+          className={`col-span-12 flex items-center gap-3 lg:hidden ${
+            isTopCollapsed ? "justify-between" : "justify-end"
+          }`}
+        >
+          {isTopCollapsed ? (
+            <Link
+              href="/"
+              className="flex shrink-0 items-center"
+              aria-label={tBrand("name")}
+            >
+              <img
+                src="/karpol-logo-nav.png"
+                alt=""
+                width={2025}
+                height={510}
+                decoding="async"
+                className="h-8 w-auto object-contain"
+              />
+            </Link>
+          ) : null}
           <HeaderMenuButton
             open={menuOpen}
             onToggle={() => setMenuOpen((value) => !value)}
