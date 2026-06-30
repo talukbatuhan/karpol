@@ -8,6 +8,15 @@ export interface ProportionalProductImageProps {
   className?: string;
 }
 
+/** Vercel Image Optimization (/_next/image) harici URL'lerde 402 verebilir; doğrudan sun. */
+function isExternallyHosted(src: string): boolean {
+  return (
+    src.startsWith("http://") ||
+    src.startsWith("https://") ||
+    src.includes("supabase.co")
+  );
+}
+
 export function ProportionalProductImage({
   src,
   alt,
@@ -23,6 +32,7 @@ export function ProportionalProductImage({
       height={0}
       sizes={sizes}
       priority={priority}
+      unoptimized={isExternallyHosted(src)}
       className={`block h-auto w-full max-w-full ${className}`}
       style={{ width: "100%", height: "auto" }}
     />
