@@ -1,4 +1,7 @@
-import Image from "next/image";
+"use client";
+
+import Image, { type ImageProps } from "next/image";
+import { cn } from "@/lib/utils";
 
 export interface ProportionalProductImageProps {
   src: string;
@@ -6,6 +9,8 @@ export interface ProportionalProductImageProps {
   priority?: boolean;
   sizes?: string;
   className?: string;
+  fill?: boolean;
+  onLoad?: ImageProps["onLoad"];
 }
 
 /** Vercel Image Optimization (/_next/image) harici URL'lerde 402 verebilir; doğrudan sun. */
@@ -23,18 +28,27 @@ export function ProportionalProductImage({
   priority = false,
   sizes = "100vw",
   className = "",
+  fill = false,
+  onLoad,
 }: ProportionalProductImageProps) {
   return (
     <Image
       src={src}
       alt={alt}
-      width={0}
-      height={0}
+      width={fill ? undefined : 0}
+      height={fill ? undefined : 0}
+      fill={fill}
       sizes={sizes}
       priority={priority}
       unoptimized={isExternallyHosted(src)}
-      className={`block h-auto w-full max-w-full ${className}`}
-      style={{ width: "100%", height: "auto" }}
+      onLoad={onLoad}
+      className={cn(
+        fill
+          ? "object-contain"
+          : "block h-auto w-full max-w-full",
+        className,
+      )}
+      style={fill ? undefined : { width: "100%", height: "auto" }}
     />
   );
 }

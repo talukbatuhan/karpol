@@ -1,7 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/routing";
 import type {
@@ -19,8 +19,49 @@ type CatalogPage = {
   links: EcatalogLinkPublicView[];
 };
 
+type ImageRect = {
+  left: number;
+  top: number;
+  width: number;
+  height: number;
+};
+
 export interface EcatalogBookReaderProps {
   catalog: EcatalogPublicView;
+}
+
+function getObjectContainRect(
+  containerWidth: number,
+  containerHeight: number,
+  imageWidth: number,
+  imageHeight: number,
+): ImageRect {
+  if (!containerWidth || !containerHeight || !imageWidth || !imageHeight) {
+    return { left: 0, top: 0, width: containerWidth, height: containerHeight };
+  }
+
+  const imageAspect = imageWidth / imageHeight;
+  const containerAspect = containerWidth / containerHeight;
+
+  if (imageAspect > containerAspect) {
+    const width = containerWidth;
+    const height = containerWidth / imageAspect;
+    return {
+      left: 0,
+      top: (containerHeight - height) / 2,
+      width,
+      height,
+    };
+  }
+
+  const height = containerHeight;
+  const width = containerHeight * imageAspect;
+  return {
+    left: (containerWidth - width) / 2,
+    top: 0,
+    width,
+    height,
+  };
 }
 
 function EcatalogProductHotspot({
@@ -87,40 +128,120 @@ function EcatalogPageSurface({
   page,
   goToProductLabel,
   goToProductHint,
-  fillViewport = false,
+  maximized = false,
+  backControl,
+  pageIndicator,
 }: {
   page: CatalogPage;
   goToProductLabel: string;
   goToProductHint: string;
-  fillViewport?: boolean;
+  maximized?: boolean;
+  backControl?: ReactNode;
+  pageIndicator?: ReactNode;
 }) {
+  const frameRef = useRef<HTMLDivElement>(null);
+  const [naturalSize, setNaturalSize] = useState<{
+    width: number;
+    height: number;
+  } | null>(null);
+  const [overlayRect, setOverlayRect] = useState<ImageRect | null>(null);
+
+  const updateOverlayRect = useCallback(() => {
+    const frame = frameRef.current;
+    if (!frame || !naturalSize) return;
+
+    setOverlayRect(
+      getObjectContainRect(
+        frame.clientWidth,
+        frame.clientHeight,
+        naturalSize.width,
+        naturalSize.height,
+      ),
+    );
+  }, [naturalSize]);
+
+  useLayoutEffect(() => {
+    updateOverlayRect();
+    const frame = frameRef.current;
+    if (!frame) return;
+
+    const observer = new ResizeObserver(updateOverlayRect);
+    observer.observe(frame);
+    return () => observer.disconnect();
+  }, [updateOverlayRect]);
+
+  useEffect(() => {
+    setNaturalSize(null);
+    setOverlayRect(null);
+  }, [page.image]);
+
   return (
     <div
+      ref={frameRef}
       className={cn(
-        "relative w-full bg-ivory-100",
-        fillViewport
-          ? "flex h-full min-h-0 items-center justify-center"
-          : "aspect-[3/4]",
+        "relative aspect-[3/4] bg-ivory-100",
+        maximized ? "h-full w-auto max-w-full shrink-0" : "w-full",
       )}
     >
       <ProportionalProductImage
         src={page.image}
         alt=""
-        sizes={fillViewport ? "100vw" : "(max-width: 1024px) 100vw, 50vw"}
-        className={
-          fillViewport
-            ? "max-h-full max-w-full object-contain"
-            : "h-full w-full object-contain"
-        }
+        fill
+        sizes={maximized ? "100vw" : "(max-width: 1024px) 100vw, 50vw"}
+        onLoad={(event) => {
+          const img = event.currentTarget;
+          setNaturalSize({
+            width: img.naturalWidth,
+            height: img.naturalHeight,
+          });
+        }}
       />
-      {page.links.map((link) => (
-        <EcatalogProductHotspot
-          key={link.id}
-          link={link}
-          goToProductLabel={goToProductLabel}
-          goToProductHint={goToProductHint}
-        />
-      ))}
+      {overlayRect ? (
+        <div
+          className="absolute z-10"
+          style={{
+            left: overlayRect.left,
+            top: overlayRect.top,
+            width: overlayRect.width,
+            height: overlayRect.height,
+          }}
+        >
+          {page.links.map((link) => (
+            <EcatalogProductHotspot
+              key={link.id}
+              link={link}
+              goToProductLabel={goToProductLabel}
+              goToProductHint={goToProductHint}
+            />
+          ))}
+        </div>
+      ) : null}
+      {backControl ? (
+        <div
+          className="absolute z-20"
+          style={
+            overlayRect
+              ? overlayRect.top >= 36
+                ? {
+                    left: overlayRect.left + 8,
+                    top: overlayRect.top - 6,
+                    transform: "translateY(-100%)",
+                  }
+                : {
+                    left: overlayRect.left + 8,
+                    top: overlayRect.top + 8,
+                  }
+              : { left: 8, top: 8 }
+          }
+        >
+          {backControl}
+        </div>
+      ) : null}
+      {pageIndicator ? (
+        <div className="absolute bottom-2 left-1/2 z-20 -translate-x-1/2">
+          {pageIndicator}
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -200,28 +321,8 @@ export function EcatalogBookReader({ catalog }: EcatalogBookReaderProps) {
   if (!isDesktop) {
     return (
       <div className="col-span-12">
-        <div className="fixed inset-0 z-40 flex h-[100dvh] flex-col bg-[#1a1208]">
-          <header className="flex shrink-0 items-center gap-2 border-b border-navy-800 bg-navy-900 px-3 py-2.5">
-            <Link
-              href="/e-katalog"
-              className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-widest text-gold-300"
-              aria-label={t("backToCatalogs")}
-            >
-              <X className="h-4 w-4 shrink-0" aria-hidden />
-              <span className="max-w-[40vw] truncate">{t("backToCatalogs")}</span>
-            </Link>
-            <div className="min-w-0 flex-1 text-center">
-              <p className="truncate font-display text-sm font-bold text-ivory-50">
-                {catalog.title}
-              </p>
-              <p className="font-mono text-[9px] uppercase tracking-widest text-gold-400/90">
-                {pageLabel}
-              </p>
-            </div>
-            <span className="w-8 shrink-0" aria-hidden />
-          </header>
-
-          <div className="relative flex min-h-0 flex-1 items-center">
+        <div className="fixed inset-0 z-40 flex h-[100dvh] flex-col bg-ivory-50">
+          <div className="relative min-h-0 flex-1">
             <Button
               type="button"
               variant="outline"
@@ -229,17 +330,35 @@ export function EcatalogBookReader({ catalog }: EcatalogBookReaderProps) {
               disabled={safeIndex <= 0}
               onClick={goPrev}
               aria-label={t("previousPage")}
-              className={cn("absolute left-2 z-20", navButtonClass)}
+              className={cn(
+                "absolute left-2 top-1/2 z-20 -translate-y-1/2",
+                navButtonClass,
+              )}
             >
               <ChevronLeft className="h-5 w-5" aria-hidden />
             </Button>
 
-            <div className="h-full min-h-0 w-full px-12">
+            <div className="flex h-full min-h-0 w-full items-center justify-center px-3">
               {mobilePage ? (
                 <EcatalogPageSurface
                   page={mobilePage}
-                  fillViewport
+                  maximized
                   {...hotspotLabels}
+                  backControl={
+                    <Link
+                      href="/e-katalog"
+                      className="inline-flex items-center gap-1.5 rounded-sm border border-navy-800/15 bg-ivory-100/95 px-2.5 py-1.5 font-mono text-[10px] uppercase tracking-widest text-navy-800 shadow-sm backdrop-blur-sm"
+                      aria-label={t("backToCatalogs")}
+                    >
+                      <ArrowLeft className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                      <span>{t("backToCatalogs")}</span>
+                    </Link>
+                  }
+                  pageIndicator={
+                    <p className="text-center font-mono text-[9px] uppercase tracking-widest text-navy-800/60">
+                      {pageLabel}
+                    </p>
+                  }
                 />
               ) : null}
             </div>
@@ -251,7 +370,10 @@ export function EcatalogBookReader({ catalog }: EcatalogBookReaderProps) {
               disabled={safeIndex >= maxIndex}
               onClick={goNext}
               aria-label={t("nextPage")}
-              className={cn("absolute right-2 z-20", navButtonClass)}
+              className={cn(
+                "absolute right-2 top-1/2 z-20 -translate-y-1/2",
+                navButtonClass,
+              )}
             >
               <ChevronRight className="h-5 w-5" aria-hidden />
             </Button>

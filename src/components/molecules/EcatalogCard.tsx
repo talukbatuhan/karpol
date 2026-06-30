@@ -47,8 +47,9 @@ export function EcatalogCard({
           <ProportionalProductImage
             src={coverImage}
             alt=""
+            fill
             sizes="(max-width: 768px) 50vw, 25vw"
-            className="h-full w-full object-cover"
+            className="object-cover"
           />
         ) : (
           <div className="flex h-full items-center justify-center bg-gradient-to-br from-navy-900 to-navy-950">
