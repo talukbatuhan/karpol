@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/routing";
 import type {
@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { ProportionalProductImage } from "@/components/molecules/ProportionalProductImage";
 import { EcatalogHotspotIcon } from "@/components/ecatalog/EcatalogHotspotMarker";
 import { useMediaQuery } from "@/hooks/use-media-query";
+import { cn } from "@/lib/utils";
 
 type CatalogPage = {
   image: string;
@@ -86,18 +87,31 @@ function EcatalogPageSurface({
   page,
   goToProductLabel,
   goToProductHint,
+  fillViewport = false,
 }: {
   page: CatalogPage;
   goToProductLabel: string;
   goToProductHint: string;
+  fillViewport?: boolean;
 }) {
   return (
-    <div className="relative aspect-[3/4] w-full bg-ivory-100">
+    <div
+      className={cn(
+        "relative w-full bg-ivory-100",
+        fillViewport
+          ? "flex h-full min-h-0 items-center justify-center"
+          : "aspect-[3/4]",
+      )}
+    >
       <ProportionalProductImage
         src={page.image}
         alt=""
-        sizes="(max-width: 1024px) 100vw, 50vw"
-        className="h-full w-full object-contain"
+        sizes={fillViewport ? "100vw" : "(max-width: 1024px) 100vw, 50vw"}
+        className={
+          fillViewport
+            ? "max-h-full max-w-full object-contain"
+            : "h-full w-full object-contain"
+        }
       />
       {page.links.map((link) => (
         <EcatalogProductHotspot
@@ -180,6 +194,73 @@ export function EcatalogBookReader({ catalog }: EcatalogBookReaderProps) {
     goToProductHint: t("goToProductHint"),
   };
 
+  const navButtonClass =
+    "h-10 w-10 shrink-0 border-navy-800/30 bg-ivory-50/95 text-navy-950 hover:border-gold-500 hover:bg-ivory-100 hover:text-navy-950 disabled:opacity-40";
+
+  if (!isDesktop) {
+    return (
+      <div className="col-span-12">
+        <div className="fixed inset-0 z-40 flex h-[100dvh] flex-col bg-[#1a1208]">
+          <header className="flex shrink-0 items-center gap-2 border-b border-navy-800 bg-navy-900 px-3 py-2.5">
+            <Link
+              href="/e-katalog"
+              className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-widest text-gold-300"
+              aria-label={t("backToCatalogs")}
+            >
+              <X className="h-4 w-4 shrink-0" aria-hidden />
+              <span className="max-w-[40vw] truncate">{t("backToCatalogs")}</span>
+            </Link>
+            <div className="min-w-0 flex-1 text-center">
+              <p className="truncate font-display text-sm font-bold text-ivory-50">
+                {catalog.title}
+              </p>
+              <p className="font-mono text-[9px] uppercase tracking-widest text-gold-400/90">
+                {pageLabel}
+              </p>
+            </div>
+            <span className="w-8 shrink-0" aria-hidden />
+          </header>
+
+          <div className="relative flex min-h-0 flex-1 items-center">
+            <Button
+              type="button"
+              variant="outline"
+              size="icon"
+              disabled={safeIndex <= 0}
+              onClick={goPrev}
+              aria-label={t("previousPage")}
+              className={cn("absolute left-2 z-20", navButtonClass)}
+            >
+              <ChevronLeft className="h-5 w-5" aria-hidden />
+            </Button>
+
+            <div className="h-full min-h-0 w-full px-12">
+              {mobilePage ? (
+                <EcatalogPageSurface
+                  page={mobilePage}
+                  fillViewport
+                  {...hotspotLabels}
+                />
+              ) : null}
+            </div>
+
+            <Button
+              type="button"
+              variant="outline"
+              size="icon"
+              disabled={safeIndex >= maxIndex}
+              onClick={goNext}
+              aria-label={t("nextPage")}
+              className={cn("absolute right-2 z-20", navButtonClass)}
+            >
+              <ChevronRight className="h-5 w-5" aria-hidden />
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="col-span-12 space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -202,7 +283,7 @@ export function EcatalogBookReader({ catalog }: EcatalogBookReaderProps) {
           disabled={safeIndex <= 0}
           onClick={goPrev}
           aria-label={t("previousPage")}
-          className="h-10 w-10 shrink-0 border-navy-800/30 bg-ivory-50 text-navy-950 hover:border-gold-500 hover:bg-ivory-100 hover:text-navy-950 disabled:opacity-40"
+          className={navButtonClass}
         >
           <ChevronLeft className="h-5 w-5" aria-hidden />
         </Button>
@@ -220,29 +301,18 @@ export function EcatalogBookReader({ catalog }: EcatalogBookReaderProps) {
           </div>
 
           <div className="bg-[#1a1208] p-3 md:p-6">
-            {isDesktop && leftPage ? (
-              <div
-                className={`grid gap-px bg-navy-800/50 ${
-                  rightPage ? "grid-cols-2" : "grid-cols-1"
-                }`}
-              >
-                <EcatalogPageSurface
-                  page={leftPage}
-                  {...hotspotLabels}
-                />
-                {rightPage ? (
-                  <EcatalogPageSurface
-                    page={rightPage}
-                    {...hotspotLabels}
-                  />
-                ) : null}
-              </div>
-            ) : mobilePage ? (
-              <EcatalogPageSurface
-                page={mobilePage}
-                {...hotspotLabels}
-              />
-            ) : null}
+            <div
+              className={`grid gap-px bg-navy-800/50 ${
+                rightPage ? "grid-cols-2" : "grid-cols-1"
+              }`}
+            >
+              {leftPage ? (
+                <EcatalogPageSurface page={leftPage} {...hotspotLabels} />
+              ) : null}
+              {rightPage ? (
+                <EcatalogPageSurface page={rightPage} {...hotspotLabels} />
+              ) : null}
+            </div>
           </div>
         </div>
 
@@ -253,7 +323,7 @@ export function EcatalogBookReader({ catalog }: EcatalogBookReaderProps) {
           disabled={safeIndex >= maxIndex}
           onClick={goNext}
           aria-label={t("nextPage")}
-          className="h-10 w-10 shrink-0 border-navy-800/30 bg-ivory-50 text-navy-950 hover:border-gold-500 hover:bg-ivory-100 hover:text-navy-950 disabled:opacity-40"
+          className={navButtonClass}
         >
           <ChevronRight className="h-5 w-5" aria-hidden />
         </Button>

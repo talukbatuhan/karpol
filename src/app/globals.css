@@ -96,6 +96,23 @@
     overflow: hidden;
     min-height: 0;
   }
+
+  html.ecatalog-reader-fullscreen {
+    --site-header-height: 0px;
+  }
+
+  html.ecatalog-reader-fullscreen,
+  html.ecatalog-reader-fullscreen body {
+    overflow: hidden;
+    height: 100%;
+    overscroll-behavior: none;
+  }
+
+  html.ecatalog-reader-fullscreen main {
+    overflow: hidden;
+    min-height: 0;
+  }
+
   * {
     @apply border-border outline-ring/50;
   }

@@ -27,7 +27,7 @@ export default async function EcatalogReaderPage({ params }: Props) {
   if (!catalog) notFound();
 
   return (
-    <PageShell>
+    <PageShell className="max-lg:!max-w-none max-lg:!p-0 max-lg:!py-0 [&>div]:max-lg:!block [&>div]:max-lg:!gap-0">
       <EcatalogBookReader catalog={catalog} />
     </PageShell>
   );
