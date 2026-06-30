@@ -1,54 +1,34 @@
-# Supabase — Uzak şema senkronizasyonu
+# Supabase — Şema kurulumu
 
-## Durum
+Migration dosyaları yalnızca şema ve altyapı içerir; örnek ürün veya kategori verisi eklenmez.
 
-Kod tabanı **yeni şemayı** bekler (`categories` tablosu, `products.category_id`).
+## Dosyalar
 
-Uzak proje (`lmfulxcsowlcezqxoand`) şu an **eski şemada**:
+| Dosya | İçerik |
+|-------|--------|
+| `20260521000001_init_cms.sql` | `profiles`, `categories`, `products`, RLS, trigger'lar |
+| `20260521000002_storage.sql` | `product-images` / `product-files` bucket'ları ve storage RLS |
 
-- `products.category` enum (`tip_bt`, `makara`, …)
-- `categories` tablosu yok
-- `contact_submissions` tablosu var (kodda henüz kullanılmıyor)
-
-Bu yüzden `npm run types:gen` çıktısı build'i kırar. `database.types.ts` repodaki migration'lara göre tutulur.
-
-## Hedef
-
-Uzak DB'yi `supabase/migrations/` ile hizalamak.
-
-## Adımlar (Supabase Dashboard veya CLI)
-
-### 1. Mevcut migration'ları "uygulandı" işaretle
-
-İlk üç migration uzakta zaten kısmen var. CLI ile:
+## Uzak projeye uygulama
 
 ```bash
-npx supabase migration repair --status applied 20260521000001
-npx supabase migration repair --status applied 20260521000002
-npx supabase migration repair --status applied 20260521000003
-```
-
-### 2. Kategoriler migration'ını uygula
-
-```bash
+npm run supabase:login
+npm run supabase:link
 npm run supabase:push
 ```
 
-Yalnızca `20260522000004_categories.sql` çalışmalı. Hata alırsanız SQL'i Dashboard → SQL Editor'den manuel çalıştırın.
+Boş yeni proje için tüm migration'lar sırayla çalışır.
 
-### 3. Tipleri yeniden üret
+## Doğrulama
+
+1. `/admin/login` ile kayıt olun; SQL ile `profiles.role = 'admin'` yapın.
+2. `/admin/categories` — en az bir kategori ekleyin.
+3. `/admin/products` — ürün oluşturup yayınlayın.
+4. `/tr/products` — yayınlanmış ürünler listelenir.
+
+## Tipler
 
 ```bash
 npm run types:gen
 npm run build
 ```
-
-## Doğrulama
-
-- Admin → Kategoriler sayfası açılır
-- Ürün eklerken kategori seçimi çalışır
-- `/tr/products` yayınlanmış ürünleri listeler
-
-## Not
-
-`db push` sırasında `product_status already exists` hatası = init migration zaten uygulanmış; `migration repair` gerekir.

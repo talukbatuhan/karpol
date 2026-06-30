@@ -20,9 +20,22 @@ test.describe("Admin product CRUD", () => {
     await page.getByRole("button", { name: /Giriş/i }).click();
     await expect(page).toHaveURL(/\/admin\/?$/);
 
+    const service = getServiceClient();
+    const catSlug = `e2e-cat-${Date.now()}`;
+    const { data: category } = await service
+      .from("categories")
+      .insert({
+        slug: catSlug,
+        name_tr: "E2E Kategori",
+        name_en: "E2E Category",
+      })
+      .select("id")
+      .single();
+    expect(category?.id).toBeTruthy();
+
     await page.goto("/admin/products/new");
     await page.locator('input[name="slug"]').fill(slug);
-    await page.locator('select[name="category_id"]').selectOption({ index: 0 });
+    await page.locator('select[name="category_id"]').selectOption(category!.id);
     await page.locator('select[name="status"]').selectOption("published");
     await page.locator('input[name="title_tr"]').fill(titleTr);
     await page.locator('input[name="title_en"]').fill(`E2E Product ${slug}`);
@@ -38,7 +51,6 @@ test.describe("Admin product CRUD", () => {
       timeout: 15_000,
     });
 
-    const service = getServiceClient();
     const { data: rows } = await service
       .from("products")
       .select("id")
@@ -46,5 +58,6 @@ test.describe("Admin product CRUD", () => {
     if (rows?.[0]?.id) {
       await service.from("products").delete().eq("id", rows[0].id);
     }
+    await service.from("categories").delete().eq("slug", catSlug);
   });
 });

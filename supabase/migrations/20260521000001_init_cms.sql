@@ -1,12 +1,24 @@
--- Enums
+-- Core CMS schema (no seed data)
+
 create type public.product_status as enum ('draft', 'published');
-create type public.product_category as enum (
-  'tip_bt',
-  'tip_ct',
-  'tip_yt',
-  'makara',
-  'silim'
+
+-- Categories (admin-managed hierarchy)
+create table public.categories (
+  id uuid primary key default gen_random_uuid(),
+  slug text not null unique,
+  name_tr text not null,
+  name_en text not null,
+  parent_id uuid references public.categories (id) on delete set null,
+  sort_order int not null default 0,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  constraint categories_slug_format check (
+    slug ~ '^[a-z0-9]+(?:-[a-z0-9]+)*$'
+  )
 );
+
+create index categories_parent_id_idx on public.categories (parent_id);
+create index categories_sort_order_idx on public.categories (sort_order);
 
 -- Profiles (linked to auth.users)
 create table public.profiles (
@@ -21,7 +33,7 @@ create table public.profiles (
 create table public.products (
   id uuid primary key default gen_random_uuid(),
   slug text not null unique,
-  category public.product_category not null,
+  category_id uuid not null references public.categories (id) on delete restrict,
   status public.product_status not null default 'draft',
   title_tr text not null,
   title_en text not null,
@@ -35,7 +47,7 @@ create table public.products (
 );
 
 create index products_status_idx on public.products (status);
-create index products_category_idx on public.products (category);
+create index products_category_id_idx on public.products (category_id);
 create index products_updated_at_idx on public.products (updated_at desc);
 
 -- updated_at trigger
@@ -48,6 +60,10 @@ begin
   return new;
 end;
 $$;
+
+create trigger categories_set_updated_at
+before update on public.categories
+for each row execute function public.set_updated_at();
 
 create trigger profiles_set_updated_at
 before update on public.profiles
@@ -95,8 +111,31 @@ as $$
 $$;
 
 -- RLS
+alter table public.categories enable row level security;
 alter table public.profiles enable row level security;
 alter table public.products enable row level security;
+
+-- categories
+create policy "categories_select_public"
+on public.categories for select
+to anon, authenticated
+using (true);
+
+create policy "categories_insert_admin"
+on public.categories for insert
+to authenticated
+with check (public.is_admin());
+
+create policy "categories_update_admin"
+on public.categories for update
+to authenticated
+using (public.is_admin())
+with check (public.is_admin());
+
+create policy "categories_delete_admin"
+on public.categories for delete
+to authenticated
+using (public.is_admin());
 
 -- profiles
 create policy "profiles_select_own"

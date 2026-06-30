@@ -1,0 +1,69 @@
+{
+  "source_dir": "C:/Users/taluc/Desktop/Karpol Plastikler",
+  "mode": "folders",
+  "status": "published",
+  "title_tr": "{code}",
+  "title_en": "{code}",
+  "folders": [
+    {
+      "dir": "Boru Plastikleri",
+      "category_slug": "boru-plastikleri",
+      "title_tr": "Boru Plastikleri {code}",
+      "title_en": "Pipe Plastics {code}"
+    },
+    {
+      "dir": "Boru Tapa Plastikleri",
+      "category_slug": "boru-tapa-plastikleri",
+      "title_tr": "Boru Tapa Plastikleri {code}",
+      "title_en": "Pipe Cap Plastics {code}"
+    },
+    {
+      "dir": "Ekspander",
+      "category_slug": "ekspander-plastik-parcalari",
+      "title_tr": "Ekspander Plastik Parçaları {code}",
+      "title_en": "Expander Plastic Parts {code}"
+    },
+    {
+      "dir": "Genel Plastikler",
+      "category_slug": "genel-plastikler",
+      "title_tr": "Genel Plastikler {code}",
+      "title_en": "General Plastics {code}"
+    },
+    {
+      "dir": "Kova Plastikleri",
+      "category_slug": "kova-plastikleri",
+      "title_tr": "Kova Plastikleri {code}",
+      "title_en": "Bucket Plastics {code}"
+    },
+    {
+      "dir": "Makara Kelepçeleri",
+      "category_slug": "makara-kelepceleri",
+      "title_tr": "Makara Kelepçeleri {code}",
+      "title_en": "Roller Clamps {code}"
+    },
+    {
+      "dir": "Düz Makaralar",
+      "category_slug": "makaralar",
+      "title_tr": "Makaralar {code}",
+      "title_en": "Rollers {code}"
+    },
+    {
+      "dir": "Rulman Yatakları",
+      "category_slug": "rulman-yataklari",
+      "title_tr": "Rulman Yatakları {code}",
+      "title_en": "Bearing Housings {code}"
+    },
+    {
+      "dir": "Tahrikli Makaralar",
+      "category_slug": "tahrik-makaralari",
+      "title_tr": "Tahrik Makaraları {code}",
+      "title_en": "Drive Rollers {code}"
+    },
+    {
+      "dir": "TPU Plastikleri",
+      "category_slug": "tpu-plastikleri",
+      "title_tr": "TPU Plastikleri {code}",
+      "title_en": "TPU Plastics {code}"
+    }
+  ]
+}

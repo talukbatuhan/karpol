@@ -5,6 +5,7 @@ import type { CategorySummary } from "@/types/category";
 import type { ProductRow, ProductStatus } from "@/types/product";
 import type { ProductUpsertInput } from "@/lib/schemas/product";
 import { ServiceError, logServiceError } from "@/services/_shared/errors";
+import { fetchAllPages } from "@/services/_shared/paginate-query";
 import { isSupabaseConfigured } from "@/services/_shared/supabase-config";
 import { attachCategories } from "@/services/products/product.mapper";
 
@@ -45,25 +46,31 @@ export async function findPublishedProducts(): Promise<ProductRow[]> {
   if (!isSupabaseConfigured()) return [];
 
   const supabase = createPublicClient();
-  const { data, error } = await supabase
-    .from("products")
-    .select("*")
-    .eq("status", "published")
-    .order("updated_at", { ascending: false });
 
-  if (error) {
-    logServiceError("findPublishedProducts", error);
+  let data: Omit<ProductRow, "category">[];
+  try {
+    data = await fetchAllPages(async (from, to) => {
+      const result = await supabase
+        .from("products")
+        .select("*")
+        .eq("status", "published")
+        .order("updated_at", { ascending: false })
+        .range(from, to);
+      return { data: result.data, error: result.error };
+    });
+  } catch (error) {
+    logServiceError("findPublishedProducts", error as { message: string });
     return [];
   }
 
-  if (!data?.length) return [];
+  if (!data.length) return [];
 
   const categories = await fetchCategoriesByIds(
     data.map((row) => row.category_id),
     supabase,
   );
 
-  return attachCategories(data as Omit<ProductRow, "category">[], categories);
+  return attachCategories(data, categories);
 }
 
 export async function findPublishedProductBySlug(
@@ -95,25 +102,39 @@ export async function findPublishedProductSlugs(): Promise<string[]> {
   if (!isSupabaseConfigured()) return [];
 
   const supabase = createPublicClient();
-  const { data, error } = await supabase
-    .from("products")
-    .select("slug")
-    .eq("status", "published");
 
-  if (error || !data) return [];
-  return data.map((r) => r.slug);
+  try {
+    const data = await fetchAllPages(async (from, to) => {
+      const result = await supabase
+        .from("products")
+        .select("slug")
+        .eq("status", "published")
+        .order("slug", { ascending: true })
+        .range(from, to);
+      return { data: result.data, error: result.error };
+    });
+    return data.map((r) => r.slug);
+  } catch {
+    return [];
+  }
 }
 
 export async function findAllProductsAdmin(
   supabase: DbClient,
 ): Promise<ProductRow[]> {
-  const { data, error } = await supabase
-    .from("products")
-    .select(PRODUCT_SELECT)
-    .order("updated_at", { ascending: false });
-
-  if (error) throw new ServiceError(error.message, error.code);
-  return (data ?? []) as ProductRow[];
+  try {
+    return await fetchAllPages(async (from, to) => {
+      const result = await supabase
+        .from("products")
+        .select(PRODUCT_SELECT)
+        .order("updated_at", { ascending: false })
+        .range(from, to);
+      return { data: result.data as ProductRow[] | null, error: result.error };
+    });
+  } catch (error) {
+    const err = error as { message: string; code?: string };
+    throw new ServiceError(err.message, err.code);
+  }
 }
 
 export async function findProductByIdAdmin(

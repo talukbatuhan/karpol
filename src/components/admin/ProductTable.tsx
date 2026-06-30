@@ -73,7 +73,13 @@ export function ProductTable({ products, categories }: ProductTableProps) {
           active={categoryId}
           onChange={setCategoryId}
         />
-        <div className="flex gap-2">
+        <div className="flex flex-wrap items-center gap-3">
+          <p className="font-mono text-xs text-muted-foreground">
+            {filtered.length === products.length
+              ? `${products.length} ürün`
+              : `${filtered.length} / ${products.length} ürün`}
+          </p>
+          <div className="flex gap-2">
           {(["all", "draft", "published"] as const).map((s) => (
             <Button
               key={s}
@@ -90,6 +96,7 @@ export function ProductTable({ products, categories }: ProductTableProps) {
                   : "Yayında"}
             </Button>
           ))}
+          </div>
         </div>
       </div>
 

@@ -42,10 +42,8 @@ Dashboard → **SQL** → sırayla çalıştırın:
 
 1. `supabase/migrations/20260521000001_init_cms.sql`
 2. `supabase/migrations/20260521000002_storage.sql`
-3. `supabase/migrations/20260521000003_seed_products.sql`
-4. `supabase/migrations/20260522000004_categories.sql`
 
-Sonra `npm run dev` yeniden başlatın ve `/tr/products` sayfasını kontrol edin.
+Sonra `npm run dev` yeniden başlatın. Admin panelden önce kategori, ardından ürün ekleyin.
 
 ## İlk admin
 
@@ -68,7 +66,7 @@ where id = '<auth-user-uuid>';
 
 - Tablo: `public.products` — `category_id` ile kategoriye bağlı
 - Durum: `draft` | `published` — anon yalnızca `published` okur (RLS).
-- Seed: `20260521000003_seed_products.sql` (makara, damper, silim).
+- Ürün eklemek için önce en az bir kategori oluşturun (`/admin/categories`).
 
 Public sayfalar `revalidate = 60`; admin mutasyonları `revalidatePath` ile `/tr|en/products` günceller.
 
