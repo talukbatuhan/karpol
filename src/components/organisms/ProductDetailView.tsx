@@ -20,6 +20,9 @@ export interface ProductDetailViewProps {
     specTitle: string;
     technicalDrawingTitle: string;
     technicalTableTitle: string;
+    technicalTablePage: string;
+    technicalTablePrevious: string;
+    technicalTableNext: string;
     openTool: string;
     downloadCad: string;
     downloadPdf: string;
@@ -174,6 +177,11 @@ export function ProductDetailView({ product, labels }: ProductDetailViewProps) {
             tableTitle={product.technicalTable.title}
             headers={product.technicalTable.headers}
             rows={product.technicalTable.rows}
+            labels={{
+              page: labels.technicalTablePage,
+              previous: labels.technicalTablePrevious,
+              next: labels.technicalTableNext,
+            }}
           />
         ) : null}
 

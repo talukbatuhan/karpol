@@ -3,9 +3,9 @@ import type { Metadata } from "next";
 import { buildStaticPageMetadata } from "@/lib/seo/page-metadata";
 import { PageShell } from "@/components/organisms/PageShell";
 import { PageHeader } from "@/components/organisms/PageHeader";
-import { CatalogCard } from "@/components/molecules/CatalogCard";
+import { EcatalogCard } from "@/components/molecules/EcatalogCard";
 import { Reveal } from "@/components/motion/Reveal";
-import { catalogs } from "@/lib/catalogs";
+import { getPublishedEcatalogCards } from "@/services/ecatalogs";
 
 type Props = { params: Promise<{ locale: string }> };
 
@@ -18,7 +18,7 @@ export default async function CatalogPage({ params }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
   const tPage = await getTranslations("catalogPage");
-  const tCatalogs = await getTranslations("catalogs");
+  const catalogs = await getPublishedEcatalogCards(locale);
 
   return (
     <PageShell>
@@ -30,22 +30,29 @@ export default async function CatalogPage({ params }: Props) {
         </p>
       </Reveal>
 
-      <div className="col-span-12 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 md:grid-cols-4">
-        {catalogs.map((catalog) => (
-          <Reveal key={catalog.id} className="min-w-0">
-            <CatalogCard
-              title={tCatalogs(`${catalog.messageKey}.title`)}
-              description={tCatalogs(`${catalog.messageKey}.description`)}
-              year={tCatalogs(`${catalog.messageKey}.year`)}
-              pdfHref={catalog.pdfHref}
-              viewLabel={tPage("viewPdf")}
-              downloadLabel={tPage("downloadPdf")}
-              soonLabel={tPage("pdfSoon")}
-              compact
-            />
-          </Reveal>
-        ))}
-      </div>
+      {catalogs.length === 0 ? (
+        <div className="col-span-12 border border-navy-800/20 bg-ivory-100 px-8 py-16 text-center">
+          <p className="font-display text-xl font-bold text-navy-950">
+            {tPage("emptyTitle")}
+          </p>
+          <p className="mt-3 text-sm text-navy-800/75">{tPage("emptyDescription")}</p>
+        </div>
+      ) : (
+        <div className="col-span-12 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
+          {catalogs.map((catalog) => (
+            <Reveal key={catalog.slug} className="min-w-0">
+              <EcatalogCard
+                slug={catalog.slug}
+                title={catalog.title}
+                description={catalog.description}
+                year={catalog.year || undefined}
+                coverImage={catalog.coverImage}
+                readLabel={tPage("readCatalog")}
+              />
+            </Reveal>
+          ))}
+        </div>
+      )}
     </PageShell>
   );
 }

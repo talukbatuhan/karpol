@@ -11,7 +11,7 @@ export async function fetchAllPages<T>(
     const to = from + SUPABASE_PAGE_SIZE - 1;
     const { data, error } = await fetchPage(from, to);
     if (error) {
-      throw error;
+      throw new Error(error.message || "Veritabanı sorgusu başarısız.");
     }
 
     const batch = data ?? [];

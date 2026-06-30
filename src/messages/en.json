@@ -23,7 +23,7 @@
       },
       "catalog": {
         "title": "E-Catalog | Karpol Polyurethane",
-        "description": "Browse or download our PDF catalogs for general products, marble machinery, conveyor rollers and rubber solutions."
+        "description": "Browse Karpol digital product catalogs with interactive product links."
       },
       "tools": {
         "title": "Engineering Tools | Karpol Polyurethane",
@@ -88,11 +88,17 @@
   },
   "catalogPage": {
     "title": "E-Catalog",
-    "subtitle": "Browse and download our product catalogs.",
-    "intro": "View or download our PDF catalogs for polyurethane, rubber, marble machinery and conveyor applications.",
-    "viewPdf": "View",
-    "downloadPdf": "Download",
-    "pdfSoon": "PDF coming soon"
+    "subtitle": "Browse our digital product catalogs like a book.",
+    "intro": "Explore high-resolution catalog spreads with direct links to product pages.",
+    "readCatalog": "Open catalog",
+    "emptyTitle": "No published e-catalogs yet",
+    "emptyDescription": "E-catalogs will appear here once they are published from the admin panel.",
+    "backToCatalogs": "Back to e-catalogs",
+    "previousPage": "Previous",
+    "nextPage": "Next",
+    "pageOf": "Page {current} / {total}",
+    "goToProduct": "Go to product",
+    "readerEmpty": "This catalog has no pages yet."
   },
   "catalogs": {
     "general": {
@@ -153,13 +159,18 @@
     "emptyDescription": "Products will appear here once they are published from the admin panel.",
     "emptyFilterTitle": "No products in this category",
     "emptyFilterDescription": "Try another category or view all products.",
+    "browseSubcategories": "Select a subcategory",
+    "productCount": "{count} products",
     "productImageTitle": "Product image",
     "specTitle": "Technical specifications",
     "downloadCad": "Download CAD",
     "downloadPdf": "Download PDF",
     "backToProducts": "Back to products",
     "technicalDrawingTitle": "Technical drawing",
-    "technicalTableTitle": "Technical table"
+    "technicalTableTitle": "Technical table",
+    "technicalTablePage": "Page",
+    "technicalTablePrevious": "Previous",
+    "technicalTableNext": "Next"
   },
   "contact": {
     "title": "Contact",

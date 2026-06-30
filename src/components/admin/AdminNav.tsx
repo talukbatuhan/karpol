@@ -7,6 +7,7 @@ const nav = [
   { href: "/admin", label: "Dashboard", exact: true },
   { href: "/admin/products", label: "Ürünler", exact: false },
   { href: "/admin/categories", label: "Kategoriler", exact: false },
+  { href: "/admin/ecatalogs", label: "E-Kataloglar", exact: false },
   { href: "/admin/files", label: "Dosyalar", exact: false },
 ];
 

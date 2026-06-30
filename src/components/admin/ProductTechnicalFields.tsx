@@ -9,11 +9,17 @@ import type {
 } from "react-hook-form";
 import { useFieldArray } from "react-hook-form";
 import type { ProductUpsertInput } from "@/lib/schemas/product";
+import {
+  padRowToLength,
+  parseMarkdownTable,
+  parseMarkdownTableDataRows,
+} from "@/lib/parse-markdown-table";
 import { uploadStorageFile } from "@/actions/storage-actions";
 import { resolveProductFileUrl, resolveProductImageUrl } from "@/lib/product-image";
 import { ProportionalProductImage } from "@/components/molecules/ProportionalProductImage";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { FormField } from "@/components/molecules/FormField";
 
 export interface ProductTechnicalFieldsProps {
@@ -47,6 +53,7 @@ export function ProductTechnicalFields({
     fields: columnFields,
     append: appendColumn,
     remove: removeColumn,
+    replace: replaceColumns,
   } = useFieldArray({
     control,
     name: "metadata.technical_table.columns",
@@ -56,10 +63,14 @@ export function ProductTechnicalFields({
     fields: rowFields,
     append: appendRow,
     remove: removeRow,
+    replace: replaceRows,
   } = useFieldArray({
     control,
     name: "metadata.technical_table.rows",
   });
+
+  const [pasteText, setPasteText] = useState("");
+  const [pasteMessage, setPasteMessage] = useState<string | null>(null);
 
   const columnCount = columnFields.length;
 
@@ -105,6 +116,67 @@ export function ProductTechnicalFields({
       cells_tr: ["", ""],
       cells_en: ["", ""],
     });
+  }
+
+  function applyImportedTable(
+    headers: string[],
+    dataRows: string[][],
+    mode: "replace" | "append",
+  ) {
+    if (mode === "replace") {
+      replaceColumns(
+        headers.map((header) => ({ header_tr: header, header_en: header })),
+      );
+      replaceRows(
+        dataRows.map((row) => ({
+          cells_tr: row,
+          cells_en: [...row],
+        })),
+      );
+      setPasteMessage(`${headers.length} sütun, ${dataRows.length} satır içe aktarıldı.`);
+      return;
+    }
+
+    const existingColumns = watch("metadata.technical_table.columns") ?? [];
+    const existingRows = watch("metadata.technical_table.rows") ?? [];
+    const colCount = existingColumns.length;
+
+    if (colCount === 0) {
+      setPasteMessage("Önce tabloyu içe aktarın veya en az bir sütun ekleyin.");
+      return;
+    }
+
+    const normalized = dataRows.map((row) => padRowToLength(row, colCount));
+    replaceRows([
+      ...existingRows,
+      ...normalized.map((row) => ({
+        cells_tr: row,
+        cells_en: [...row],
+      })),
+    ]);
+    setPasteMessage(`${normalized.length} satır eklendi.`);
+  }
+
+  function handlePasteImport() {
+    setPasteMessage(null);
+    const result = parseMarkdownTable(pasteText);
+    if (!result.ok) {
+      setPasteMessage(result.error);
+      return;
+    }
+    applyImportedTable(result.table.headers, result.table.rows, "replace");
+    setPasteText("");
+  }
+
+  function handlePasteAppend() {
+    setPasteMessage(null);
+    const result = parseMarkdownTableDataRows(pasteText);
+    if (!result.ok) {
+      setPasteMessage(result.error);
+      return;
+    }
+    applyImportedTable([], result.table.rows, "append");
+    setPasteText("");
   }
 
   return (
@@ -176,6 +248,49 @@ export function ProductTechnicalFields({
                 {errors.technical_table.columns.message}
               </p>
             ) : null}
+
+            <div className="space-y-3 rounded-lg border border-dashed border-gold-500/40 bg-muted/30 p-4">
+              <p className="font-mono text-[10px] uppercase tracking-widest text-gold-600">
+                Markdown / Excel yapıştır
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Markdown tablosunu veya Excel&apos;den kopyalanan satırları yapıştırın.
+                İlk kullanımda tabloyu oluşturur; sonradan yalnızca yeni satırları eklemek
+                için &quot;Satır ekle&quot; kullanın.
+              </p>
+              <Textarea
+                value={pasteText}
+                onChange={(event) => setPasteText(event.target.value)}
+                placeholder={`| MODEL | Dış Çap (A) | İç Çap (B) |\n| :---- | ----------: | ---------: |\n| KRP-KPL-001 | 62 | 21 |`}
+                rows={6}
+                className="font-mono text-xs"
+              />
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handlePasteImport}
+                  disabled={!pasteText.trim()}
+                  className="font-mono text-xs uppercase tracking-widest"
+                >
+                  Tabloyu içe aktar
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={handlePasteAppend}
+                  disabled={!pasteText.trim() || columnCount === 0}
+                  className="font-mono text-xs uppercase tracking-widest"
+                >
+                  Satır ekle
+                </Button>
+              </div>
+              {pasteMessage ? (
+                <p className="font-mono text-[10px] text-muted-foreground">{pasteMessage}</p>
+              ) : null}
+            </div>
 
             <div className="space-y-3">
               <div className="flex items-center justify-between">

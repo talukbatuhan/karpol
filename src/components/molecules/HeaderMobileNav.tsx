@@ -124,9 +124,11 @@ function HamburgerIcon({ open }: { open: boolean }) {
 export function HeaderMenuButton({
   open,
   onToggle,
+  variant = "dark",
 }: {
   open: boolean;
   onToggle: () => void;
+  variant?: "light" | "dark";
 }) {
   const t = useTranslations("nav");
 
@@ -137,7 +139,11 @@ export function HeaderMenuButton({
       aria-expanded={open}
       aria-controls="header-mobile-nav"
       aria-label={open ? t("menuClose") : t("menuOpen")}
-      className="inline-flex h-10 w-10 shrink-0 items-center justify-center border border-gold-500/50 text-ivory-100 transition-colors hover:border-gold-500 hover:text-gold-300 lg:hidden"
+      className={`inline-flex h-10 w-10 shrink-0 items-center justify-center border transition-colors lg:hidden ${
+        variant === "light"
+          ? "border-navy-800/35 text-navy-950 hover:border-navy-950 hover:text-navy-800"
+          : "border-gold-500/50 text-ivory-100 hover:border-gold-500 hover:text-gold-300"
+      }`}
     >
       <HamburgerIcon open={open} />
     </button>

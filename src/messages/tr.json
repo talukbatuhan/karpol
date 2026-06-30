@@ -23,7 +23,7 @@
       },
       "catalog": {
         "title": "E-Katalog | Karpol Poliüretan",
-        "description": "Genel ürün, mermer makineleri, konveyör-makara ve kauçuk ürün kataloglarımızı PDF olarak görüntüleyin veya indirin."
+        "description": "Dijital ürün kataloglarımızı kitap gibi inceleyin; sayfalardan ürünlere doğrudan geçiş yapın."
       },
       "tools": {
         "title": "Mühendislik Araçları | Karpol Poliüretan",
@@ -88,11 +88,17 @@
   },
   "catalogPage": {
     "title": "E-Katalog",
-    "subtitle": "Ürün ve çözüm kataloglarımızı inceleyin veya indirin.",
-    "intro": "Poliüretan, kauçuk, mermer makineleri ve konveyör uygulamalarına özel kataloglarımızı PDF olarak görüntüleyebilir veya indirebilirsiniz.",
-    "viewPdf": "Görüntüle",
-    "downloadPdf": "İndir",
-    "pdfSoon": "PDF yakında"
+    "subtitle": "Dijital ürün kataloglarımızı kitap gibi inceleyin.",
+    "intro": "Yüksek çözünürlüklü sayfa görselleriyle hazırlanan e-kataloglarımızda ürünlere doğrudan bağlantılarla ulaşabilirsiniz.",
+    "readCatalog": "Kataloğu aç",
+    "emptyTitle": "Henüz yayınlanmış e-katalog yok",
+    "emptyDescription": "E-kataloglar admin panelinden eklendikçe burada listelenecek.",
+    "backToCatalogs": "E-kataloglara dön",
+    "previousPage": "Önceki",
+    "nextPage": "Sonraki",
+    "pageOf": "Sayfa {current} / {total}",
+    "goToProduct": "Ürüne git",
+    "readerEmpty": "Bu katalogda henüz sayfa yok."
   },
   "catalogs": {
     "general": {
@@ -153,13 +159,18 @@
     "emptyDescription": "Ürünler admin panelinden eklendikçe burada listelenecek.",
     "emptyFilterTitle": "Bu kategoride ürün yok",
     "emptyFilterDescription": "Başka bir kategori seçin veya tümünü görüntüleyin.",
+    "browseSubcategories": "Alt kategori seçin",
+    "productCount": "{count} ürün",
     "productImageTitle": "Ürün görseli",
     "specTitle": "Teknik özellikler",
     "downloadCad": "CAD indir",
     "downloadPdf": "PDF indir",
     "backToProducts": "Ürünlere dön",
     "technicalDrawingTitle": "Teknik resim",
-    "technicalTableTitle": "Teknik tablo"
+    "technicalTableTitle": "Teknik tablo",
+    "technicalTablePage": "Sayfa",
+    "technicalTablePrevious": "Önceki",
+    "technicalTableNext": "Sonraki"
   },
   "contact": {
     "title": "İletişim",

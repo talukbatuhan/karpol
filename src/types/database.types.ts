@@ -163,6 +163,92 @@ export type Database = {
           },
         ]
       }
+      ecatalogs: {
+        Row: {
+          cover_image: string
+          created_at: string
+          description_en: string
+          description_tr: string
+          id: string
+          slug: string
+          sort_order: number
+          status: Database["public"]["Enums"]["product_status"]
+          title_en: string
+          title_tr: string
+          updated_at: string
+          year: string
+        }
+        Insert: {
+          cover_image?: string
+          created_at?: string
+          description_en?: string
+          description_tr?: string
+          id?: string
+          slug: string
+          sort_order?: number
+          status?: Database["public"]["Enums"]["product_status"]
+          title_en: string
+          title_tr: string
+          updated_at?: string
+          year?: string
+        }
+        Update: {
+          cover_image?: string
+          created_at?: string
+          description_en?: string
+          description_tr?: string
+          id?: string
+          slug?: string
+          sort_order?: number
+          status?: Database["public"]["Enums"]["product_status"]
+          title_en?: string
+          title_tr?: string
+          updated_at?: string
+          year?: string
+        }
+        Relationships: []
+      }
+      ecatalog_spreads: {
+        Row: {
+          created_at: string
+          ecatalog_id: string
+          id: string
+          left_image: string
+          links: Json
+          right_image: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          ecatalog_id: string
+          id?: string
+          left_image?: string
+          links?: Json
+          right_image?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          ecatalog_id?: string
+          id?: string
+          left_image?: string
+          links?: Json
+          right_image?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ecatalog_spreads_ecatalog_id_fkey"
+            columns: ["ecatalog_id"]
+            isOneToOne: false
+            referencedRelation: "ecatalogs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string

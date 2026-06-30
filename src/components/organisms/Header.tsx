@@ -21,6 +21,11 @@ const SCROLL_HIDE_AFTER = 64;
 const SCROLL_DOWN_TO_HIDE = 56;
 const SCROLL_UP_TO_SHOW = 28;
 const TOGGLE_COOLDOWN_MS = 320;
+const MOBILE_MAX_WIDTH = 1023;
+
+function isMobileViewport() {
+  return window.matchMedia(`(max-width: ${MOBILE_MAX_WIDTH}px)`).matches;
+}
 
 type HeaderProps = {
   minimal?: boolean;
@@ -58,9 +63,11 @@ export function Header({ minimal: minimalProp }: HeaderProps = {}) {
   const [topBandMaxHeight, setTopBandMaxHeight] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
   const [reduceMotion, setReduceMotion] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   const isTopCollapsed = isMinimal || topHidden;
   isTopCollapsedRef.current = isTopCollapsed;
+  const collapseTopBand = isTopCollapsed && !isMobile;
 
   const applySiteHeaderHeight = useCallback((collapsed: boolean) => {
     const nav = navHeightRef.current;
@@ -105,7 +112,7 @@ export function Header({ minimal: minimalProp }: HeaderProps = {}) {
   );
 
   const syncTopFromScroll = useCallback(() => {
-    if (isMinimal) return;
+    if (isMinimal || isMobileViewport()) return;
 
     if (scrollCtrl.current.ticking) return;
     scrollCtrl.current.ticking = true;
@@ -180,12 +187,27 @@ export function Header({ minimal: minimalProp }: HeaderProps = {}) {
       return;
     }
 
-    const hidden = y > SCROLL_HIDE_AFTER;
+    const mobile = isMobileViewport();
+    const hidden = mobile ? false : window.scrollY > SCROLL_HIDE_AFTER;
     scrollCtrl.current.hidden = hidden;
     setTopHidden(hidden);
     isTopCollapsedRef.current = hidden;
     requestAnimationFrame(measureBandHeights);
   }, [pathname, isMinimal, measureBandHeights]);
+
+  useEffect(() => {
+    const mq = window.matchMedia(`(max-width: ${MOBILE_MAX_WIDTH}px)`);
+    const syncMobile = () => {
+      const mobile = mq.matches;
+      setIsMobile(mobile);
+      if (mobile && scrollCtrl.current.hidden) {
+        commitTopHidden(false, true);
+      }
+    };
+    syncMobile();
+    mq.addEventListener("change", syncMobile);
+    return () => mq.removeEventListener("change", syncMobile);
+  }, [commitTopHidden]);
 
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -233,24 +255,24 @@ export function Header({ minimal: minimalProp }: HeaderProps = {}) {
     : "transition-[max-height,border-color] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]";
 
   return (
-    <header className="sticky top-0 z-50 shrink-0 bg-navy-950">
+    <header className="sticky top-0 z-50 shrink-0 bg-ivory-50 lg:bg-navy-950">
       <div
         className={`overflow-hidden bg-ivory-50 ${topTransition} ${
-          isTopCollapsed
+          collapseTopBand
             ? "pointer-events-none border-b-0"
             : "border-b border-navy-800"
         }`}
         style={{
-          maxHeight: isTopCollapsed ? 0 : topBandMaxHeight || undefined,
+          maxHeight: collapseTopBand ? 0 : topBandMaxHeight || undefined,
         }}
         onTransitionEnd={handleTopBandTransitionEnd}
-        aria-hidden={isTopCollapsed}
+        aria-hidden={collapseTopBand}
       >
         <div
           ref={topBandRef}
-          className="mx-auto flex w-full max-w-[1440px] flex-col items-start gap-2.5 py-2.5 pl-6 pr-6 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between sm:gap-x-4 sm:gap-y-3 md:gap-x-6 md:pr-10"
+          className="mx-auto flex w-full max-w-[1440px] items-start justify-between gap-3 py-2.5 pl-6 pr-6 sm:gap-x-4 md:pr-10"
         >
-          <div className="flex w-full min-w-0 flex-col items-start gap-2 sm:flex-1 sm:flex-row sm:items-center sm:gap-3 md:gap-4">
+          <div className="flex min-w-0 flex-1 flex-col items-start gap-2 sm:flex-row sm:items-center sm:gap-3 md:gap-4">
             <Link
               href="/"
               className="flex shrink-0 items-center"
@@ -270,43 +292,23 @@ export function Header({ minimal: minimalProp }: HeaderProps = {}) {
               {tBrand("headerSlogan")}
             </p>
           </div>
-          <HeaderContact className="hidden w-full text-left sm:block sm:w-auto sm:text-right sm:[&_p]:justify-end" />
+          <div className="flex shrink-0 items-center gap-3">
+            <HeaderContact className="hidden text-right sm:block sm:[&_p]:justify-end" />
+            <HeaderMenuButton
+              variant="light"
+              open={menuOpen}
+              onToggle={() => setMenuOpen((value) => !value)}
+            />
+          </div>
         </div>
       </div>
 
       <div
         ref={navInnerRef}
-        className="mx-auto grid w-full max-w-[1440px] grid-cols-12 items-center gap-3 py-3 pl-6 pr-6 md:gap-4 md:pr-10"
+        className="mx-auto hidden w-full max-w-[1440px] grid-cols-12 items-center gap-3 py-3 pl-6 pr-6 md:gap-4 md:pr-10 lg:grid"
       >
-        <div
-          className={`col-span-12 flex items-center gap-3 lg:hidden ${
-            isTopCollapsed ? "justify-between" : "justify-end"
-          }`}
-        >
-          {isTopCollapsed ? (
-            <Link
-              href="/"
-              className="flex shrink-0 items-center"
-              aria-label={tBrand("name")}
-            >
-              <img
-                src="/karpol-logo-nav.png"
-                alt=""
-                width={2025}
-                height={510}
-                decoding="async"
-                className="h-8 w-auto object-contain"
-              />
-            </Link>
-          ) : null}
-          <HeaderMenuButton
-            open={menuOpen}
-            onToggle={() => setMenuOpen((value) => !value)}
-          />
-        </div>
-
         <nav
-          className="col-span-12 hidden items-center justify-center gap-6 lg:col-span-9 lg:flex lg:justify-start lg:gap-8"
+          className="col-span-9 flex items-center justify-start gap-8"
           aria-label={t("menuTitle")}
         >
           <NavLink href="/" label={t("home")} />
@@ -316,7 +318,7 @@ export function Header({ minimal: minimalProp }: HeaderProps = {}) {
           <NavLink href="/contact" label={t("contact")} />
         </nav>
 
-        <div className="col-span-12 hidden items-center justify-end gap-3 lg:col-span-3 lg:flex">
+        <div className="col-span-3 flex items-center justify-end gap-3">
           <HeaderCatalogLink />
           <HeaderSocialLinks />
           <LocaleSwitch />
