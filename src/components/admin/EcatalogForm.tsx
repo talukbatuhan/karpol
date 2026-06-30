@@ -3,15 +3,21 @@
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ecatalogUpsertSchema,
+  type EcatalogUpsertFormValues,
   type EcatalogUpsertInput,
 } from "@/lib/schemas/ecatalog";
-import { parseEcatalogLinks } from "@/lib/ecatalog-links";
+import {
+  formPagesToSpreadRows,
+  sortFilesNaturally,
+  spreadRowToFormPages,
+  uploadEcatalogImage,
+} from "@/lib/ecatalog-pages";
 import type { EcatalogWithSpreads } from "@/services/ecatalogs/ecatalog.repository";
 import { createEcatalog, updateEcatalog } from "@/actions/ecatalog-actions";
-import { EcatalogSpreadEditor } from "@/components/admin/EcatalogSpreadEditor";
+import { EcatalogPageEditor } from "@/components/admin/EcatalogPageEditor";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -32,13 +38,7 @@ function rowToInput(row: EcatalogWithSpreads): EcatalogUpsertInput {
     cover_image: row.cover_image,
     year: row.year,
     sort_order: row.sort_order,
-    spreads: row.spreads.map((spread) => ({
-      id: spread.id,
-      sort_order: spread.sort_order,
-      left_image: spread.left_image,
-      right_image: spread.right_image,
-      links: parseEcatalogLinks(spread.links),
-    })),
+    spreads: spreadRowToFormPages(row.spreads),
   };
 }
 
@@ -49,8 +49,12 @@ export interface EcatalogFormProps {
 
 export function EcatalogForm({ ecatalog, productSlugs }: EcatalogFormProps) {
   const router = useRouter();
+  const bulkInputRef = useRef<HTMLInputElement>(null);
+  const isMountedRef = useRef(false);
   const [error, setError] = useState<string | null>(null);
   const [coverUploading, setCoverUploading] = useState(false);
+  const [bulkUploading, setBulkUploading] = useState(false);
+  const [bulkProgress, setBulkProgress] = useState<string | null>(null);
   const isEdit = Boolean(ecatalog);
 
   const emptyDefaults: EcatalogUpsertInput = {
@@ -73,7 +77,7 @@ export function EcatalogForm({ ecatalog, productSlugs }: EcatalogFormProps) {
     watch,
     setValue,
     formState: { errors, isSubmitting },
-  } = useForm<EcatalogUpsertInput>({
+  } = useForm<EcatalogUpsertFormValues, unknown, EcatalogUpsertInput>({
     resolver: zodResolver(ecatalogUpsertSchema),
     defaultValues: ecatalog ? rowToInput(ecatalog) : emptyDefaults,
   });
@@ -81,10 +85,18 @@ export function EcatalogForm({ ecatalog, productSlugs }: EcatalogFormProps) {
   const { fields, append, remove, move } = useFieldArray({
     control,
     name: "spreads",
+    keyName: "fieldId",
   });
 
   const coverImage = watch("cover_image");
   const coverPreview = resolveEcatalogImageUrl(coverImage);
+
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
 
   async function uploadCover(file: File) {
     setCoverUploading(true);
@@ -93,11 +105,46 @@ export function EcatalogForm({ ecatalog, productSlugs }: EcatalogFormProps) {
     formData.set("folder", "ecatalog");
     try {
       const result = await uploadStorageFile("product-images", formData);
+      if (!isMountedRef.current) return;
       if ("path" in result && result.path) {
         setValue("cover_image", result.path, { shouldDirty: true });
       }
     } finally {
-      setCoverUploading(false);
+      if (isMountedRef.current) setCoverUploading(false);
+    }
+  }
+
+  async function handleBulkUpload(fileList: FileList) {
+    const files = sortFilesNaturally([...fileList]);
+    if (files.length === 0) return;
+
+    setBulkUploading(true);
+    setBulkProgress(`0 / ${files.length}`);
+    setError(null);
+
+    try {
+      const startIndex = fields.length;
+      for (let i = 0; i < files.length; i++) {
+        if (!isMountedRef.current) return;
+        setBulkProgress(`${i + 1} / ${files.length}`);
+        const path = await uploadEcatalogImage(files[i]);
+        if (!isMountedRef.current) return;
+        if (!path) {
+          setError(`${files[i].name} yüklenemedi.`);
+          continue;
+        }
+        append({
+          sort_order: startIndex + i,
+          left_image: path,
+          right_image: "",
+          links: [],
+        });
+      }
+    } finally {
+      if (!isMountedRef.current) return;
+      setBulkUploading(false);
+      setBulkProgress(null);
+      if (bulkInputRef.current) bulkInputRef.current.value = "";
     }
   }
 
@@ -106,10 +153,7 @@ export function EcatalogForm({ ecatalog, productSlugs }: EcatalogFormProps) {
     try {
       const normalized = {
         ...data,
-        spreads: data.spreads.map((spread, index) => ({
-          ...spread,
-          sort_order: index,
-        })),
+        spreads: formPagesToSpreadRows(data.spreads),
       };
       if (isEdit && ecatalog) {
         await updateEcatalog(ecatalog.id, normalized);
@@ -193,54 +237,76 @@ export function EcatalogForm({ ecatalog, productSlugs }: EcatalogFormProps) {
       </FormField>
 
       <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h2 className="font-mono text-xs uppercase tracking-widest text-gold-600">
-            Sayfa çiftleri
-          </h2>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={() =>
-              append({
-                sort_order: fields.length,
-                left_image: "",
-                right_image: "",
-                links: [],
-              })
-            }
-          >
-            + Sayfa çifti
-          </Button>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 className="font-mono text-xs uppercase tracking-widest text-gold-600">
+              Sayfalar ({fields.length})
+            </h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Her satır bir sayfa. Dosya adına göre sıralı toplu yükleme yapabilirsiniz.
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <input
+              ref={bulkInputRef}
+              type="file"
+              accept="image/*"
+              multiple
+              className="hidden"
+              onChange={(event) => {
+                const list = event.target.files;
+                if (list && list.length > 0) void handleBulkUpload(list);
+              }}
+            />
+            <Button
+              type="button"
+              variant="default"
+              size="sm"
+              disabled={bulkUploading}
+              onClick={() => bulkInputRef.current?.click()}
+            >
+              {bulkUploading ? bulkProgress ?? "Yükleniyor…" : "Toplu yükle"}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() =>
+                append({
+                  sort_order: fields.length,
+                  left_image: "",
+                  right_image: "",
+                  links: [],
+                })
+              }
+            >
+              + Tek sayfa
+            </Button>
+          </div>
         </div>
 
-        {fields.map((field, index) => (
-          <EcatalogSpreadEditor
-            key={field.id}
-            index={index}
-            leftImage={watch(`spreads.${index}.left_image`)}
-            rightImage={watch(`spreads.${index}.right_image`)}
-            links={watch(`spreads.${index}.links`) ?? []}
-            productSlugs={productSlugs}
-            onLeftImageChange={(path) =>
-              setValue(`spreads.${index}.left_image`, path, { shouldDirty: true })
-            }
-            onRightImageChange={(path) =>
-              setValue(`spreads.${index}.right_image`, path, { shouldDirty: true })
-            }
-            onLinksChange={(links) =>
-              setValue(`spreads.${index}.links`, links, { shouldDirty: true })
-            }
-            onRemove={() => remove(index)}
-            onMoveUp={index > 0 ? () => move(index, index - 1) : undefined}
-            onMoveDown={
-              index < fields.length - 1 ? () => move(index, index + 1) : undefined
-            }
-          />
-        ))}
+        <div className="space-y-2">
+          {fields.map((field, index) => (
+            <EcatalogPageEditor
+              key={field.id}
+              control={control}
+              register={register}
+              setValue={setValue}
+              spreadIndex={index}
+              pageNumber={index + 1}
+              productSlugs={productSlugs}
+              defaultExpanded={fields.length <= 3}
+              onRemove={() => remove(index)}
+              onMoveUp={index > 0 ? () => move(index, index - 1) : undefined}
+              onMoveDown={
+                index < fields.length - 1 ? () => move(index, index + 1) : undefined
+              }
+            />
+          ))}
+        </div>
       </div>
 
-      <Button type="submit" disabled={isSubmitting}>
+      <Button type="submit" disabled={isSubmitting || bulkUploading}>
         {isSubmitting ? "Kaydediliyor…" : isEdit ? "Güncelle" : "Oluştur"}
       </Button>
     </form>

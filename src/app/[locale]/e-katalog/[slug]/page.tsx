@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import { setRequestLocale } from "next-intl/server";
 import type { Metadata } from "next";
 import { PageShell } from "@/components/organisms/PageShell";
 import { EcatalogBookReader } from "@/components/ecatalog/EcatalogBookReader";
@@ -26,21 +26,9 @@ export default async function EcatalogReaderPage({ params }: Props) {
   const catalog = await getPublishedEcatalogBySlug(slug, locale);
   if (!catalog) notFound();
 
-  const tPage = await getTranslations("catalogPage");
-
   return (
     <PageShell>
-      <EcatalogBookReader
-        catalog={catalog}
-        labels={{
-          back: tPage("backToCatalogs"),
-          previous: tPage("previousPage"),
-          next: tPage("nextPage"),
-          spreadOf: tPage("pageOf"),
-          goToProduct: tPage("goToProduct"),
-          empty: tPage("readerEmpty"),
-        }}
-      />
+      <EcatalogBookReader catalog={catalog} />
     </PageShell>
   );
 }

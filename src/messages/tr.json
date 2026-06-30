@@ -98,6 +98,7 @@
     "nextPage": "Sonraki",
     "pageOf": "Sayfa {current} / {total}",
     "goToProduct": "Ürüne git",
+    "goToProductHint": "Detayları Gör",
     "readerEmpty": "Bu katalogda henüz sayfa yok."
   },
   "catalogs": {
@@ -123,7 +124,7 @@
     }
   },
   "home": {
-    "metric": "3200 kg/net · ISO 9001 · poliüretan çözümler",
+    "metric": "· poliüretan çözümler",
     "tapeLabel": "Endüstriyel şerit",
     "featuredTitle": "Öne çıkan ürünler",
     "featuredViewAll": "Tüm ürünler",

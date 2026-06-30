@@ -1,12 +1,27 @@
 import { z } from "zod";
 
+function parsePercent(value: string | number): number {
+  if (typeof value === "number") return Number.isFinite(value) ? value : 0;
+  const trimmed = value.trim();
+  if (!trimmed) return 0;
+  const n = Number(trimmed.replace(",", "."));
+  return Number.isFinite(n) ? n : 0;
+}
+
+function percentField(min: number, max: number) {
+  return z
+    .union([z.number(), z.string()])
+    .transform(parsePercent)
+    .pipe(z.number().min(min).max(max));
+}
+
 const ecatalogLinkSchema = z.object({
   id: z.string().min(1),
   side: z.enum(["left", "right"]),
-  x: z.number().min(0).max(100),
-  y: z.number().min(0).max(100),
-  w: z.number().min(1).max(100),
-  h: z.number().min(1).max(100),
+  x: percentField(0, 100),
+  y: percentField(0, 100),
+  w: percentField(1, 100),
+  h: percentField(1, 100),
   product_slug: z
     .string()
     .min(1, "Ürün slug gerekli")
@@ -40,3 +55,4 @@ export const ecatalogUpsertSchema = z.object({
 });
 
 export type EcatalogUpsertInput = z.infer<typeof ecatalogUpsertSchema>;
+export type EcatalogUpsertFormValues = z.input<typeof ecatalogUpsertSchema>;

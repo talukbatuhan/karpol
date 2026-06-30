@@ -1,6 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/routing";
 import type {
   EcatalogLinkPublicView,
@@ -8,47 +10,74 @@ import type {
 } from "@/types/ecatalog";
 import { Button } from "@/components/ui/button";
 import { ProportionalProductImage } from "@/components/molecules/ProportionalProductImage";
+import { EcatalogHotspotIcon } from "@/components/ecatalog/EcatalogHotspotMarker";
+import { useMediaQuery } from "@/hooks/use-media-query";
 
-type BookPage = {
-  spreadIndex: number;
-  side: "left" | "right";
+type CatalogPage = {
   image: string;
   links: EcatalogLinkPublicView[];
 };
 
 export interface EcatalogBookReaderProps {
   catalog: EcatalogPublicView;
-  labels: {
-    back: string;
-    previous: string;
-    next: string;
-    spreadOf: string;
-    goToProduct: string;
-    empty: string;
-  };
 }
 
-function buildPages(catalog: EcatalogPublicView): BookPage[] {
-  const pages: BookPage[] = [];
+function EcatalogProductHotspot({
+  link,
+  goToProductLabel,
+  goToProductHint,
+}: {
+  link: EcatalogLinkPublicView;
+  goToProductLabel: string;
+  goToProductHint: string;
+}) {
+  if (!link.productSlug?.trim()) return null;
 
-  catalog.spreads.forEach((spread, spreadIndex) => {
-    if (spread.leftImage) {
-      pages.push({
-        spreadIndex,
-        side: "left",
-        image: spread.leftImage,
-        links: spread.links.filter((link) => link.side === "left"),
-      });
+  const title = link.label ?? link.productTitle ?? link.productSlug;
+
+  return (
+    <Link
+      href={`/products/${link.productSlug}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      title={title}
+      className="group absolute z-10 flex items-center justify-center"
+      style={{
+        left: `${link.x}%`,
+        top: `${link.y}%`,
+        width: `${link.w}%`,
+        height: `${link.h}%`,
+      }}
+    >
+      <span className="sr-only">
+        {goToProductLabel}: {title}
+      </span>
+      <EcatalogHotspotIcon complete hint={goToProductHint} />
+    </Link>
+  );
+}
+
+function buildPages(catalog: EcatalogPublicView): CatalogPage[] {
+  const pages: CatalogPage[] = [];
+
+  for (const spread of catalog.spreads) {
+    const leftLinks = spread.links.filter((link) => link.side === "left");
+    const rightLinks = spread.links.filter((link) => link.side === "right");
+
+    if (spread.leftImage && spread.rightImage) {
+      pages.push({ image: spread.leftImage, links: leftLinks });
+      pages.push({ image: spread.rightImage, links: rightLinks });
+      continue;
     }
-    if (spread.rightImage) {
-      pages.push({
-        spreadIndex,
-        side: "right",
-        image: spread.rightImage,
-        links: spread.links.filter((link) => link.side === "right"),
-      });
-    }
-  });
+
+    const image = spread.leftImage ?? spread.rightImage;
+    if (!image) continue;
+
+    pages.push({
+      image,
+      links: spread.links,
+    });
+  }
 
   return pages;
 }
@@ -56,12 +85,14 @@ function buildPages(catalog: EcatalogPublicView): BookPage[] {
 function EcatalogPageSurface({
   page,
   goToProductLabel,
+  goToProductHint,
 }: {
-  page: BookPage;
+  page: CatalogPage;
   goToProductLabel: string;
+  goToProductHint: string;
 }) {
   return (
-    <div className="relative aspect-[3/4] w-full bg-ivory-100 lg:aspect-[2/3]">
+    <div className="relative aspect-[3/4] w-full bg-ivory-100">
       <ProportionalProductImage
         src={page.image}
         alt=""
@@ -69,61 +100,47 @@ function EcatalogPageSurface({
         className="h-full w-full object-contain"
       />
       {page.links.map((link) => (
-        <Link
+        <EcatalogProductHotspot
           key={link.id}
-          href={`/products/${link.productSlug}`}
-          title={link.label ?? link.productTitle ?? link.productSlug}
-          className="absolute z-10 border border-gold-500/70 bg-gold-400/20 transition-colors hover:border-gold-500 hover:bg-gold-400/40"
-          style={{
-            left: `${link.x}%`,
-            top: `${link.y}%`,
-            width: `${link.w}%`,
-            height: `${link.h}%`,
-          }}
-        >
-          <span className="sr-only">
-            {goToProductLabel}: {link.label ?? link.productTitle ?? link.productSlug}
-          </span>
-        </Link>
+          link={link}
+          goToProductLabel={goToProductLabel}
+          goToProductHint={goToProductHint}
+        />
       ))}
     </div>
   );
 }
 
-export function EcatalogBookReader({ catalog, labels }: EcatalogBookReaderProps) {
+export function EcatalogBookReader({ catalog }: EcatalogBookReaderProps) {
+  const t = useTranslations("catalogPage");
   const pages = useMemo(() => buildPages(catalog), [catalog]);
   const [pageIndex, setPageIndex] = useState(0);
-  const [isDesktop, setIsDesktop] = useState(false);
+  const isDesktop = useMediaQuery("(min-width: 1024px)");
 
-  useEffect(() => {
-    const mq = window.matchMedia("(min-width: 1024px)");
-    const sync = () => setIsDesktop(mq.matches);
-    sync();
-    mq.addEventListener("change", sync);
-    return () => mq.removeEventListener("change", sync);
-  }, []);
+  const step = isDesktop ? 2 : 1;
+  const maxIndex = isDesktop
+    ? pages.length <= 1
+      ? 0
+      : pages.length % 2 === 0
+        ? pages.length - 2
+        : pages.length - 1
+    : Math.max(0, pages.length - 1);
 
-  const spreadCount = catalog.spreads.length;
-  const currentSpreadIndex = isDesktop
-    ? Math.min(
-        Math.floor(pageIndex / 2),
-        Math.max(0, spreadCount - 1),
-      )
-    : pages[pageIndex]?.spreadIndex ?? 0;
-
-  const currentSpread = catalog.spreads[currentSpreadIndex];
+  const safeIndex = Math.min(pageIndex, maxIndex);
+  const leftPage = pages[safeIndex];
+  const rightPage = isDesktop ? pages[safeIndex + 1] : null;
 
   const goPrev = useCallback(() => {
-    setPageIndex((index) => Math.max(0, index - (isDesktop ? 2 : 1)));
-  }, [isDesktop]);
+    setPageIndex((index) => Math.max(0, index - step));
+  }, [step]);
 
   const goNext = useCallback(() => {
-    setPageIndex((index) => {
-      const step = isDesktop ? 2 : 1;
-      const max = isDesktop ? Math.max(0, pages.length - 2) : pages.length - 1;
-      return Math.min(max, index + step);
-    });
-  }, [isDesktop, pages.length]);
+    setPageIndex((index) => Math.min(maxIndex, index + step));
+  }, [maxIndex, step]);
+
+  useEffect(() => {
+    setPageIndex((index) => Math.min(index, maxIndex));
+  }, [maxIndex]);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -137,26 +154,31 @@ export function EcatalogBookReader({ catalog, labels }: EcatalogBookReaderProps)
   if (pages.length === 0) {
     return (
       <div className="col-span-12 border border-navy-800/20 bg-ivory-100 px-8 py-16 text-center">
-        <p className="font-sans text-navy-800/80">{labels.empty}</p>
+        <p className="font-sans text-navy-800/80">{t("readerEmpty")}</p>
         <Link
           href="/e-katalog"
           className="mt-4 inline-block font-mono text-xs uppercase tracking-widest text-gold-600 underline"
         >
-          {labels.back}
+          {t("backToCatalogs")}
         </Link>
       </div>
     );
   }
 
-  const pageLabel = isDesktop
-    ? labels.spreadOf
-        .replace("{current}", String(currentSpreadIndex + 1))
-        .replace("{total}", String(spreadCount))
-    : labels.spreadOf
-        .replace("{current}", String(pageIndex + 1))
-        .replace("{total}", String(pages.length));
+  const displayCurrent = isDesktop
+    ? `${safeIndex + 1}${rightPage ? `–${safeIndex + 2}` : ""}`
+    : String(safeIndex + 1);
 
-  const mobilePage = pages[pageIndex];
+  const pageLabel = t("pageOf", {
+    current: displayCurrent,
+    total: pages.length,
+  });
+
+  const mobilePage = pages[safeIndex];
+  const hotspotLabels = {
+    goToProductLabel: t("goToProduct"),
+    goToProductHint: t("goToProductHint"),
+  };
 
   return (
     <div className="col-span-12 space-y-6">
@@ -165,15 +187,27 @@ export function EcatalogBookReader({ catalog, labels }: EcatalogBookReaderProps)
           href="/e-katalog"
           className="font-mono text-xs uppercase tracking-widest text-navy-800 underline decoration-gold-500 underline-offset-4"
         >
-          ← {labels.back}
+          ← {t("backToCatalogs")}
         </Link>
         <p className="font-mono text-[10px] uppercase tracking-widest text-navy-800/70">
           {pageLabel}
         </p>
       </div>
 
-      <div className="mx-auto max-w-5xl">
-        <div className="overflow-hidden border border-navy-800 bg-navy-950 shadow-[12px_12px_0_rgba(201,162,39,0.15)]">
+      <div className="mx-auto flex max-w-5xl items-center gap-2 sm:gap-3 md:gap-4">
+        <Button
+          type="button"
+          variant="outline"
+          size="icon"
+          disabled={safeIndex <= 0}
+          onClick={goPrev}
+          aria-label={t("previousPage")}
+          className="h-10 w-10 shrink-0 border-navy-800/30 bg-ivory-50 text-navy-950 hover:border-gold-500 hover:bg-ivory-100 hover:text-navy-950 disabled:opacity-40"
+        >
+          <ChevronLeft className="h-5 w-5" aria-hidden />
+        </Button>
+
+        <div className="min-w-0 flex-1 overflow-hidden border border-navy-800 bg-navy-950 shadow-[12px_12px_0_rgba(201,162,39,0.15)]">
           <div className="border-b border-navy-800 bg-navy-900 px-4 py-3">
             <h1 className="font-display text-lg font-bold text-ivory-50 md:text-xl">
               {catalog.title}
@@ -186,69 +220,42 @@ export function EcatalogBookReader({ catalog, labels }: EcatalogBookReaderProps)
           </div>
 
           <div className="bg-[#1a1208] p-3 md:p-6">
-            {isDesktop && currentSpread ? (
-              <div className="grid grid-cols-2 gap-px bg-navy-800/50">
-                {currentSpread.leftImage ? (
+            {isDesktop && leftPage ? (
+              <div
+                className={`grid gap-px bg-navy-800/50 ${
+                  rightPage ? "grid-cols-2" : "grid-cols-1"
+                }`}
+              >
+                <EcatalogPageSurface
+                  page={leftPage}
+                  {...hotspotLabels}
+                />
+                {rightPage ? (
                   <EcatalogPageSurface
-                    page={{
-                      spreadIndex: currentSpreadIndex,
-                      side: "left",
-                      image: currentSpread.leftImage,
-                      links: currentSpread.links.filter((l) => l.side === "left"),
-                    }}
-                    goToProductLabel={labels.goToProduct}
+                    page={rightPage}
+                    {...hotspotLabels}
                   />
-                ) : (
-                  <div className="aspect-[2/3] bg-ivory-50/5" />
-                )}
-                {currentSpread.rightImage ? (
-                  <EcatalogPageSurface
-                    page={{
-                      spreadIndex: currentSpreadIndex,
-                      side: "right",
-                      image: currentSpread.rightImage,
-                      links: currentSpread.links.filter((l) => l.side === "right"),
-                    }}
-                    goToProductLabel={labels.goToProduct}
-                  />
-                ) : (
-                  <div className="aspect-[2/3] bg-ivory-50/5" />
-                )}
+                ) : null}
               </div>
             ) : mobilePage ? (
               <EcatalogPageSurface
                 page={mobilePage}
-                goToProductLabel={labels.goToProduct}
+                {...hotspotLabels}
               />
             ) : null}
           </div>
         </div>
-      </div>
 
-      <div className="flex items-center justify-center gap-3">
         <Button
           type="button"
           variant="outline"
-          size="sm"
-          disabled={pageIndex <= 0}
-          onClick={goPrev}
-          className="font-mono text-xs uppercase tracking-widest"
-        >
-          {labels.previous}
-        </Button>
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          disabled={
-            isDesktop
-              ? pageIndex >= Math.max(0, pages.length - 2)
-              : pageIndex >= pages.length - 1
-          }
+          size="icon"
+          disabled={safeIndex >= maxIndex}
           onClick={goNext}
-          className="font-mono text-xs uppercase tracking-widest"
+          aria-label={t("nextPage")}
+          className="h-10 w-10 shrink-0 border-navy-800/30 bg-ivory-50 text-navy-950 hover:border-gold-500 hover:bg-ivory-100 hover:text-navy-950 disabled:opacity-40"
         >
-          {labels.next}
+          <ChevronRight className="h-5 w-5" aria-hidden />
         </Button>
       </div>
     </div>

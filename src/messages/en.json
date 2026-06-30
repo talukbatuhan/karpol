@@ -98,6 +98,7 @@
     "nextPage": "Next",
     "pageOf": "Page {current} / {total}",
     "goToProduct": "Go to product",
+    "goToProductHint": "View details",
     "readerEmpty": "This catalog has no pages yet."
   },
   "catalogs": {
@@ -123,7 +124,7 @@
     }
   },
   "home": {
-    "metric": "3200 kg/net · ISO 9001 · polyurethane solutions",
+    "metric": "· polyurethane solutions",
     "tapeLabel": "Industrial tape",
     "featuredTitle": "Featured products",
     "featuredViewAll": "All products",
