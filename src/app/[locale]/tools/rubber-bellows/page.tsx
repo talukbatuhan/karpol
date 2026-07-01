@@ -1,39 +1,33 @@
 import { setRequestLocale } from "next-intl/server";
 import { getTranslations } from "next-intl/server";
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
 import { buildStaticPageMetadata } from "@/lib/seo/page-metadata";
 import { ToolChrome } from "@/components/tools/ToolChrome";
 import { DesignStudioLoader } from "@/components/design-studio/DesignStudioLoader";
 import { getDesignModule } from "@/features/design-engine/modules/registry";
 import { buildDesignStudioLabels } from "@/lib/design-studio-labels";
-import { getTool } from "@/lib/tools";
+import { notFound } from "next/navigation";
 
 type Props = { params: Promise<{ locale: string }> };
 
-const TOOL_ID = "kaucuk-titresim-takozlari" as const;
-
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
-  return buildStaticPageMetadata(locale, "toolKaucuk");
+  return buildStaticPageMetadata(locale, "toolRubberBellows");
 }
 
-export default async function KaucukTitresimPage({ params }: Props) {
+export default async function RubberBellowsPage({ params }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const tool = getTool(TOOL_ID);
-  if (!tool?.moduleId) notFound();
-
-  const module = getDesignModule(tool.moduleId);
+  const module = getDesignModule("rubber-bellows");
   if (!module || module.status !== "active") notFound();
 
-  const t = await getTranslations("tools.kaucukTitresim");
+  const t = await getTranslations("tools.rubberBellows");
   const tCommon = await getTranslations("toolsCommon");
   const tStudio = await getTranslations("designStudio");
-  const tParams = await getTranslations("designStudio.vibrationDamper.params");
-  const tDerived = await getTranslations("designStudio.vibrationDamper.derived");
-  const tGroups = await getTranslations("designStudio.vibrationDamper.groups");
+  const tParams = await getTranslations("designStudio.rubberBellows.params");
+  const tDerived = await getTranslations("designStudio.rubberBellows.derived");
+  const tGroups = await getTranslations("designStudio.rubberBellows.groups");
   const tErrors = await getTranslations("designStudio.errors");
   const tExport = await getTranslations("designStudio.export");
 
@@ -54,9 +48,9 @@ export default async function KaucukTitresimPage({ params }: Props) {
         backLabel={tCommon("backToHub")}
         backHref="/tools"
       />
-      <div className="flex min-h-0 flex-1 flex-col overflow-hidden touch-none">
+      <div className="relative min-h-0 flex-1 overflow-hidden touch-none">
         <DesignStudioLoader
-          moduleId="vibration-damper"
+          moduleId="rubber-bellows"
           labels={labels}
           drawingTitle={t("drawingTitle")}
         />

@@ -40,6 +40,10 @@
       "toolSilim": {
         "title": "Grinding Strip Technical Design Editor | Karpol",
         "description": "Flange and grinding strip dimensions, technical drawing preview, PNG and PDF export."
+      },
+      "toolRubberBellows": {
+        "title": "Rubber Bellows Parametric Design | Karpol",
+        "description": "Fully parametric rubber bellows design with automatic derived dimensions, 2D technical drawing, 3D preview, STEP and DXF export."
       }
     }
   },
@@ -238,20 +242,57 @@
     "open": "Open app",
     "backToHub": "All tools",
     "badge3d": "3D",
-    "badgeLegacy": "Technical drawing"
+    "badgeLegacy": "Technical drawing",
+    "badgeParametric": "Parametric CAD",
+    "badgePlanned": "Coming soon"
   },
   "tools": {
+    "rubberBellows": {
+      "title": "Rubber Bellows Design Studio",
+      "description": "Parametric bellows with auto-derived convolution pitch and radii. 2D section, 3D preview, STEP/DXF export.",
+      "drawingTitle": "SECTION A-A"
+    },
     "makara": {
       "title": "3D Spool Box Visualizer",
       "description": "Box size selection, shipping data, and X/Y/Z dimension labels."
     },
     "kaucukTitresim": {
-      "title": "Rubber Vibration Damper Technical Drawing",
-      "description": "Damper type selection, parameter panel, technical drawing, PNG/PDF export."
+      "title": "Rubber Vibration Damper Design Studio",
+      "description": "Parametric damper types, automatic profile regeneration, 2D/3D views, STEP/DXF export.",
+      "drawingTitle": "TECHNICAL DRAWING"
     },
     "silimLastigi": {
-      "title": "Grinding Rubber Technical Design Editor",
-      "description": "Flange and grinding rubber dimensions, drawing preview, PNG/PDF export."
+      "title": "Grinding Rubber Design Studio",
+      "description": "Parametric flange and grinding rubber with constraint validation, 2D/3D views, STEP/DXF export.",
+      "drawingTitle": "GRINDING RUBBER TECHNICAL DRAWING"
+    },
+    "oRing": {
+      "title": "O-Ring Design",
+      "description": "Parametric O-ring sizing and groove design — coming soon."
+    },
+    "rubberProfile": {
+      "title": "Rubber Profile",
+      "description": "Custom rubber extrusion profiles — coming soon."
+    },
+    "extrusion": {
+      "title": "Extrusion Design",
+      "description": "Rubber extrusion cross-section design — coming soon."
+    },
+    "seal": {
+      "title": "Seal Design",
+      "description": "Gasket and seal parametric design — coming soon."
+    },
+    "roller": {
+      "title": "Roller Design",
+      "description": "Industrial roller parametric design — coming soon."
+    },
+    "conveyorComponent": {
+      "title": "Conveyor Components",
+      "description": "Conveyor belt component design — coming soon."
+    },
+    "moldDesign": {
+      "title": "Mold Design",
+      "description": "Rubber mold cavity design — coming soon."
     }
   },
   "ecard": {
@@ -288,6 +329,102 @@
       "1": "2. SPOOL (Ø60 x Ø20 x 64.5 mm)",
       "2": "3. SPOOL (Ø80 x Ø20 x 98.5 mm)",
       "3": "4. All spools (single combined box)"
+    }
+  },
+  "designStudio": {
+    "panelTitle": "Primary parameters",
+    "derivedTitle": "Derived dimensions (read-only)",
+    "view2d": "2D technical drawing",
+    "view3d": "3D preview",
+    "workerError": "3D engine error",
+    "export": {
+      "png": "PNG",
+      "pdf": "PDF",
+      "step": "STEP",
+      "dxf": "DXF",
+      "blocked": "Fix validation errors before export"
+    },
+    "errors": {
+      "convSectionNegative": "Cuff lengths exceed total length — no room for convolutions.",
+      "convOdMin": "Peak OD must be greater than valley ID.",
+      "convCount": "At least one convolution is required.",
+      "pitchZero": "Convolution pitch must be positive.",
+      "icGeDis": "Inner diameter must be less than outer diameter.",
+      "merkezGeDis": "PCD must be less than outer diameter.",
+      "merkezLeIc": "PCD must be greater than inner diameter.",
+      "delikTooLarge": "Bolt hole does not fit in body.",
+      "dimsPositive": "All dimensions must be positive.",
+      "kucukGeDis": "Waist diameter must be less than outer diameter."
+    },
+    "rubberBellows": {
+      "params": {
+        "cuffIdLeft": "Left cuff ID (1)",
+        "cuffIdRight": "Right cuff ID (2)",
+        "cuffLengthLeft": "Left cuff length (4)",
+        "cuffLengthRight": "Right cuff length (5)",
+        "totalLength": "Total length (3)",
+        "convOdMax": "Convolution peak OD (6)",
+        "convIdMin": "Convolution valley ID (7)",
+        "wallThickness": "Wall thickness",
+        "convolutionCount": "Number of convolutions"
+      },
+      "derived": {
+        "convSectionLength": "Convolution section length",
+        "pitch": "Pitch per convolution",
+        "peakRadius": "Peak arc radius",
+        "cuffOdLeft": "Left cuff OD",
+        "cuffOdRight": "Right cuff OD"
+      },
+      "groups": {
+        "cuffs": "Cuffs",
+        "overall": "Overall",
+        "convolutions": "Convolutions"
+      }
+    },
+    "grindingRubber": {
+      "params": {
+        "disCap": "Outer diameter",
+        "merkezCapi": "Bolt circle diameter",
+        "icCap": "Inner diameter",
+        "delikCapi": "Bolt hole diameter",
+        "delikAdeti": "Number of holes",
+        "kalinlik": "Thickness",
+        "shoreSertlik": "Shore hardness",
+        "color": "Color",
+        "marka": "Brand"
+      },
+      "derived": {
+        "outerRadius": "Outer radius",
+        "pcdRadius": "PCD radius",
+        "holeCount": "Hole count"
+      },
+      "groups": {
+        "dimensions": "Dimensions",
+        "holes": "Bolt holes",
+        "material": "Material",
+        "meta": "Drawing info"
+      }
+    },
+    "vibrationDamper": {
+      "params": {
+        "damperType": "Damper type",
+        "disCap": "Outer diameter",
+        "kucukCap": "Waist diameter",
+        "kaucukBoyu": "Rubber height",
+        "sertlik": "Shore hardness",
+        "vidaTipi": "Thread size",
+        "vidaUzunluk": "Male thread length",
+        "disiDerinlik": "Female insert depth"
+      },
+      "derived": {
+        "threadWidth": "Thread width",
+        "plateThickness": "Plate thickness"
+      },
+      "groups": {
+        "type": "Type",
+        "rubber": "Rubber body",
+        "thread": "Threading"
+      }
     }
   }
 }

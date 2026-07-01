@@ -11,6 +11,7 @@ type ToolCardProps = {
   description: string;
   openLabel: string;
   badge?: string;
+  plannedLabel?: string;
 };
 
 export function ToolCard({
@@ -19,12 +20,15 @@ export function ToolCard({
   description,
   openLabel,
   badge,
+  plannedLabel,
 }: ToolCardProps) {
+  const isPlanned = tool.planned === true;
+
   return (
     <motion.article
       className="group relative flex h-full flex-col border border-navy-800 bg-ivory-50 p-8 md:p-10"
       initial="rest"
-      whileHover="hover"
+      whileHover={isPlanned ? "rest" : "hover"}
     >
       <motion.span
         variants={lineDrawVariants}
@@ -42,12 +46,18 @@ export function ToolCard({
       <p className="mt-3 flex-1 font-sans text-sm leading-relaxed text-navy-800/80">
         {description}
       </p>
-      <Link
-        href={tool.href}
-        className="mt-6 inline-block w-fit border border-gold-500 px-5 py-2 font-mono text-xs uppercase tracking-widest text-navy-950 transition-colors hover:bg-gold-500"
-      >
-        {openLabel} →
-      </Link>
+      {isPlanned ? (
+        <span className="mt-6 inline-block w-fit border border-navy-800/40 px-5 py-2 font-mono text-xs uppercase tracking-widest text-navy-800/50">
+          {plannedLabel ?? "—"}
+        </span>
+      ) : (
+        <Link
+          href={tool.href}
+          className="mt-6 inline-block w-fit border border-gold-500 px-5 py-2 font-mono text-xs uppercase tracking-widest text-navy-950 transition-colors hover:bg-gold-500"
+        >
+          {openLabel} →
+        </Link>
+      )}
     </motion.article>
   );
 }

@@ -31,10 +31,15 @@ export default async function ToolsHubPage({ params }: Props) {
             title={tTools(`${tool.messageKey}.title`)}
             description={tTools(`${tool.messageKey}.description`)}
             openLabel={tCommon("open")}
+            plannedLabel={tCommon("badgePlanned")}
             badge={
-              tool.kind === "legacy-html"
-                ? tCommon("badgeLegacy")
-                : tCommon("badge3d")
+              tool.planned
+                ? tCommon("badgePlanned")
+                : tool.kind === "design-module"
+                  ? tCommon("badgeParametric")
+                  : tool.kind === "legacy-html"
+                    ? tCommon("badgeLegacy")
+                    : tCommon("badge3d")
             }
           />
         </div>

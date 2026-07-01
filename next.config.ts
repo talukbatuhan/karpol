@@ -10,6 +10,27 @@ const projectRoot = path.dirname(fileURLToPath(import.meta.url));
 const nextConfig: NextConfig = {
   turbopack: {
     root: projectRoot,
+    resolveAlias: {
+      fs: "./src/lib/empty-module.ts",
+    },
+  },
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        path: false,
+      };
+    }
+    config.experiments = {
+      ...config.experiments,
+      asyncWebAssembly: true,
+    };
+    config.output = {
+      ...config.output,
+      webassemblyModuleFilename: "static/wasm/[modulehash].wasm",
+    };
+    return config;
   },
   experimental: {
     serverActions: {

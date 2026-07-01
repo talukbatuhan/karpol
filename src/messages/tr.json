@@ -40,6 +40,10 @@
       "toolSilim": {
         "title": "Silim Lastiği Teknik Tasarım Düzenleyici | Karpol",
         "description": "Flanş ve silim lastiği ölçüleri, teknik resim önizleme, PNG ve PDF dışa aktarma."
+      },
+      "toolRubberBellows": {
+        "title": "Kauçuk Körük Parametrik Tasarım | Karpol",
+        "description": "Tam parametrik kauçuk körük tasarımı, otomatik türetilmiş ölçüler, 2D teknik resim, 3D önizleme, STEP ve DXF dışa aktarma."
       }
     }
   },
@@ -238,20 +242,57 @@
     "open": "Uygulamayı aç",
     "backToHub": "Tüm araçlar",
     "badge3d": "3D",
-    "badgeLegacy": "Teknik resim"
+    "badgeLegacy": "Teknik resim",
+    "badgeParametric": "Parametrik CAD",
+    "badgePlanned": "Yakında"
   },
   "tools": {
+    "rubberBellows": {
+      "title": "Kauçuk Körük Tasarım Stüdyosu",
+      "description": "Otomatik türetilmiş kıvrım adımı ve yarıçaplarla parametrik körük. 2D kesit, 3D önizleme, STEP/DXF dışa aktarma.",
+      "drawingTitle": "KESİT A-A"
+    },
     "makara": {
       "title": "3D Makara Kutusu Görselleştirici",
       "description": "Kutu boyutu seçimi, sevkiyat verileri ve X/Y/Z ölçü etiketleri."
     },
     "kaucukTitresim": {
-      "title": "Kauçuk Titreşim Takozları Teknik Resim",
-      "description": "Takoz tipi seçimi, parametre paneli, teknik çizim ve PNG/PDF dışa aktarma."
+      "title": "Kauçuk Titreşim Takozu Tasarım Stüdyosu",
+      "description": "Parametrik takoz tipleri, otomatik profil yenileme, 2D/3D görünüm, STEP/DXF dışa aktarma.",
+      "drawingTitle": "TEKNİK RESİM"
     },
     "silimLastigi": {
-      "title": "Silim Lastiği Teknik Tasarım Düzenleyici",
-      "description": "Flanş ve silim lastiği ölçüleri, teknik resim önizleme, PNG/PDF dışa aktarma."
+      "title": "Silim Lastiği Tasarım Stüdyosu",
+      "description": "Kısıt doğrulamalı parametrik flanş ve silim lastiği, 2D/3D görünüm, STEP/DXF dışa aktarma.",
+      "drawingTitle": "SİLİM LASTİĞİ TEKNİK RESİM"
+    },
+    "oRing": {
+      "title": "O-Ring Tasarımı",
+      "description": "Parametrik O-ring boyutlandırma — yakında."
+    },
+    "rubberProfile": {
+      "title": "Kauçuk Profil",
+      "description": "Özel kauçuk ekstrüzyon profilleri — yakında."
+    },
+    "extrusion": {
+      "title": "Ekstrüzyon Tasarımı",
+      "description": "Kauçuk ekstrüzyon kesit tasarımı — yakında."
+    },
+    "seal": {
+      "title": "Conta Tasarımı",
+      "description": "Conta ve sızdırmazlık elemanı tasarımı — yakında."
+    },
+    "roller": {
+      "title": "Rulo Tasarımı",
+      "description": "Endüstriyel rulo parametrik tasarım — yakında."
+    },
+    "conveyorComponent": {
+      "title": "Konveyör Bileşenleri",
+      "description": "Konveyör bant bileşeni tasarımı — yakında."
+    },
+    "moldDesign": {
+      "title": "Kalıp Tasarımı",
+      "description": "Kauçuk kalıp boşluğu tasarımı — yakında."
     }
   },
   "ecard": {
@@ -288,6 +329,102 @@
       "1": "2. MAKARA (Ø60 x Ø20 x 64,5 mm)",
       "2": "3. MAKARA (Ø80 x Ø20 x 98,5 mm)",
       "3": "4. Tüm Makaralar (Tek Birleşik Kutu)"
+    }
+  },
+  "designStudio": {
+    "panelTitle": "Birincil parametreler",
+    "derivedTitle": "Türetilmiş ölçüler (salt okunur)",
+    "view2d": "2D teknik resim",
+    "view3d": "3D önizleme",
+    "workerError": "3D motor hatası",
+    "export": {
+      "png": "PNG",
+      "pdf": "PDF",
+      "step": "STEP",
+      "dxf": "DXF",
+      "blocked": "Dışa aktarmadan önce doğrulama hatalarını düzeltin"
+    },
+    "errors": {
+      "convSectionNegative": "Manşon boyları toplam uzunluğu aşıyor — kıvrım bölgesi kalmadı.",
+      "convOdMin": "Tepe dış çap, çukur iç çaptan büyük olmalı.",
+      "convCount": "En az bir kıvrım gerekli.",
+      "pitchZero": "Kıvrım adımı pozitif olmalı.",
+      "icGeDis": "İç çap dış çaptan küçük olmalı.",
+      "merkezGeDis": "Delik merkez çapı dış çaptan küçük olmalı.",
+      "merkezLeIc": "Delik merkez çapı iç çaptan büyük olmalı.",
+      "delikTooLarge": "Delik çapı gövdeye sığmıyor.",
+      "dimsPositive": "Tüm ölçüler pozitif olmalı.",
+      "kucukGeDis": "Bel çapı dış çaptan küçük olmalı."
+    },
+    "rubberBellows": {
+      "params": {
+        "cuffIdLeft": "Sol manşon iç çap (1)",
+        "cuffIdRight": "Sağ manşon iç çap (2)",
+        "cuffLengthLeft": "Sol manşon boyu (4)",
+        "cuffLengthRight": "Sağ manşon boyu (5)",
+        "totalLength": "Toplam boy (3)",
+        "convOdMax": "Kıvrım tepe dış çap (6)",
+        "convIdMin": "Kıvrım çukur iç çap (7)",
+        "wallThickness": "Duvar kalınlığı",
+        "convolutionCount": "Kıvrım sayısı"
+      },
+      "derived": {
+        "convSectionLength": "Kıvrım bölgesi uzunluğu",
+        "pitch": "Kıvrım adımı",
+        "peakRadius": "Tepe yarıçapı",
+        "cuffOdLeft": "Sol manşon dış çap",
+        "cuffOdRight": "Sağ manşon dış çap"
+      },
+      "groups": {
+        "cuffs": "Manşonlar",
+        "overall": "Genel",
+        "convolutions": "Kıvrımlar"
+      }
+    },
+    "grindingRubber": {
+      "params": {
+        "disCap": "Dış çap",
+        "merkezCapi": "Delik merkez çapı",
+        "icCap": "İç çap",
+        "delikCapi": "Delik çapı",
+        "delikAdeti": "Delik adedi",
+        "kalinlik": "Kalınlık",
+        "shoreSertlik": "Shore sertlik",
+        "color": "Renk",
+        "marka": "Marka"
+      },
+      "derived": {
+        "outerRadius": "Dış yarıçap",
+        "pcdRadius": "PCD yarıçapı",
+        "holeCount": "Delik sayısı"
+      },
+      "groups": {
+        "dimensions": "Ölçüler",
+        "holes": "Delikler",
+        "material": "Malzeme",
+        "meta": "Resim bilgisi"
+      }
+    },
+    "vibrationDamper": {
+      "params": {
+        "damperType": "Takoz tipi",
+        "disCap": "Dış çap",
+        "kucukCap": "Bel çapı",
+        "kaucukBoyu": "Kauçuk boyu",
+        "sertlik": "Shore sertlik",
+        "vidaTipi": "Vida tipi",
+        "vidaUzunluk": "Erkek vida boyu",
+        "disiDerinlik": "Dişi insert derinliği"
+      },
+      "derived": {
+        "threadWidth": "Vida genişliği",
+        "plateThickness": "Plaka kalınlığı"
+      },
+      "groups": {
+        "type": "Tip",
+        "rubber": "Kauçuk gövde",
+        "thread": "Vidalama"
+      }
     }
   }
 }

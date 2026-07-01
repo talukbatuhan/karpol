@@ -10,7 +10,8 @@ type SeoPageKey =
   | "tools"
   | "toolMakara"
   | "toolKaucuk"
-  | "toolSilim";
+  | "toolSilim"
+  | "toolRubberBellows";
 
 const SEO_PATHS: Record<SeoPageKey, string> = {
   home: "/",
@@ -22,6 +23,7 @@ const SEO_PATHS: Record<SeoPageKey, string> = {
   toolMakara: "/tools/makara",
   toolKaucuk: "/tools/kaucuk-titresim-takozlari",
   toolSilim: "/tools/silim-lastigi",
+  toolRubberBellows: "/tools/rubber-bellows",
 };
 
 export async function buildStaticPageMetadata(

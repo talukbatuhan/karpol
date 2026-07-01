@@ -23,6 +23,7 @@
 # misc
 .DS_Store
 *.pem
+/public/wasm/replicad_single.wasm
 
 # debug
 npm-debug.log*
