@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { ProductMediaFrame } from "@/components/molecules/ProductMediaFrame";
 import { ProportionalProductImage } from "@/components/molecules/ProportionalProductImage";
 import { TechnicalDrawingContent } from "@/components/molecules/TechnicalDrawingContent";
-import { TechnicalTableView } from "@/components/molecules/TechnicalTableView";
+import { TechnicalTablesSection } from "@/components/molecules/TechnicalTablesSection";
 
 export interface ProductDetailViewProps {
   product: ProductPublicView;
@@ -20,6 +20,7 @@ export interface ProductDetailViewProps {
     specTitle: string;
     technicalDrawingTitle: string;
     technicalTableTitle: string;
+    technicalTablesTitle: string;
     technicalTablePage: string;
     technicalTablePrevious: string;
     technicalTableNext: string;
@@ -37,9 +38,7 @@ export function ProductDetailView({ product, labels }: ProductDetailViewProps) {
   const hasSpecs = product.specs.length > 0;
   const hasDownloads = Boolean(cadUrl || pdfUrl);
   const hasTechnicalDrawing = Boolean(product.technicalDrawing);
-  const hasTechnicalTable = Boolean(
-    product.technicalTable && product.technicalTable.headers.length > 0,
-  );
+  const hasTechnicalTables = product.technicalTables.length > 0;
   const showProductImage = Boolean(imageUrl);
   const showTechnicalDrawing = hasTechnicalDrawing && product.technicalDrawing;
   const showMediaRow = showProductImage || showTechnicalDrawing;
@@ -171,27 +170,49 @@ export function ProductDetailView({ product, labels }: ProductDetailViewProps) {
           {product.body}
         </p>
 
-        {hasTechnicalTable && product.technicalTable ? (
-          <TechnicalTableView
-            title={labels.technicalTableTitle}
-            tableTitle={product.technicalTable.title}
-            headers={product.technicalTable.headers}
-            rows={product.technicalTable.rows}
+        {hasTechnicalTables && product.technicalTables.length === 1 ? (
+          <TechnicalTablesSection
+            tables={product.technicalTables}
             labels={{
-              page: labels.technicalTablePage,
-              previous: labels.technicalTablePrevious,
-              next: labels.technicalTableNext,
+              technicalTableTitle: labels.technicalTableTitle,
+              technicalTablesTitle: labels.technicalTablesTitle,
+              technicalTablePage: labels.technicalTablePage,
+              technicalTablePrevious: labels.technicalTablePrevious,
+              technicalTableNext: labels.technicalTableNext,
             }}
           />
         ) : null}
 
-        <Link
-          href="/urunler"
-          className="inline-block font-mono text-xs uppercase tracking-widest text-navy-800 underline decoration-gold-500 underline-offset-4"
-        >
-          ← {labels.backToProducts}
-        </Link>
+        {product.technicalTables.length <= 1 ? (
+          <Link
+            href="/urunler"
+            className="inline-block font-mono text-xs uppercase tracking-widest text-navy-800 underline decoration-gold-500 underline-offset-4"
+          >
+            ← {labels.backToProducts}
+          </Link>
+        ) : null}
       </Reveal>
+
+      {hasTechnicalTables && product.technicalTables.length > 1 ? (
+        <Reveal className="col-span-12 space-y-6">
+          <TechnicalTablesSection
+            tables={product.technicalTables}
+            labels={{
+              technicalTableTitle: labels.technicalTableTitle,
+              technicalTablesTitle: labels.technicalTablesTitle,
+              technicalTablePage: labels.technicalTablePage,
+              technicalTablePrevious: labels.technicalTablePrevious,
+              technicalTableNext: labels.technicalTableNext,
+            }}
+          />
+          <Link
+            href="/urunler"
+            className="inline-block font-mono text-xs uppercase tracking-widest text-navy-800 underline decoration-gold-500 underline-offset-4"
+          >
+            ← {labels.backToProducts}
+          </Link>
+        </Reveal>
+      ) : null}
     </>
   );
 }

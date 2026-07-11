@@ -140,6 +140,7 @@ export default async function ProductDetailPage({ params }: Props) {
           specTitle: tPage("specTitle"),
           technicalDrawingTitle: tPage("technicalDrawingTitle"),
           technicalTableTitle: tPage("technicalTableTitle"),
+          technicalTablesTitle: tPage("technicalTablesTitle"),
           technicalTablePage: tPage("technicalTablePage"),
           technicalTablePrevious: tPage("technicalTablePrevious"),
           technicalTableNext: tPage("technicalTableNext"),

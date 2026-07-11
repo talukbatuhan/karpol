@@ -1,4 +1,4 @@
-import type { ProductMetadata } from "@/types/product";
+import type { ProductMetadata, TechnicalTableMeta } from "@/types/product";
 
 export const defaultTechnicalDrawing = {
   enabled: false,
@@ -7,13 +7,44 @@ export const defaultTechnicalDrawing = {
   caption_en: "",
 } as const;
 
-export const defaultTechnicalTable = {
-  enabled: false,
+export const defaultTechnicalTable = (): TechnicalTableMeta => ({
   title_tr: "",
   title_en: "",
-  columns: [] as { header_tr: string; header_en: string }[],
-  rows: [] as { cells_tr: string[]; cells_en: string[] }[],
-} as const;
+  columns: [],
+  rows: [],
+});
+
+function migrateLegacyTable(
+  metadata: ProductMetadata,
+): TechnicalTableMeta[] {
+  if (metadata.technical_tables && metadata.technical_tables.length > 0) {
+    return metadata.technical_tables.map((table) => ({
+      title_tr: table.title_tr ?? "",
+      title_en: table.title_en ?? "",
+      columns: table.columns ?? [],
+      rows: table.rows ?? [],
+    }));
+  }
+
+  const legacy = metadata.technical_table;
+  if (!legacy) return [];
+
+  const hasContent =
+    Boolean(legacy.enabled) ||
+    (legacy.columns?.length ?? 0) > 0 ||
+    (legacy.rows?.length ?? 0) > 0;
+
+  if (!hasContent) return [];
+
+  return [
+    {
+      title_tr: legacy.title_tr ?? "",
+      title_en: legacy.title_en ?? "",
+      columns: legacy.columns ?? [],
+      rows: legacy.rows ?? [],
+    },
+  ];
+}
 
 export function normalizeProductMetadata(
   metadata?: ProductMetadata | null,
@@ -25,11 +56,8 @@ export function normalizeProductMetadata(
       ...defaultTechnicalDrawing,
       ...base.technical_drawing,
     },
-    technical_table: {
-      ...defaultTechnicalTable,
-      ...base.technical_table,
-      columns: base.technical_table?.columns ?? [],
-      rows: base.technical_table?.rows ?? [],
-    },
+    technical_tables: migrateLegacyTable(base),
+    // Keep legacy field cleared in normalized form used by the admin editor.
+    technical_table: undefined,
   };
 }

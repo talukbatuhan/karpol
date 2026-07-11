@@ -33,12 +33,14 @@ export type TechnicalTableRow = {
   cells_en: string[];
 };
 
+/** One technical table (e.g. a product version). */
 export type TechnicalTableMeta = {
-  enabled: boolean;
   title_tr?: string;
   title_en?: string;
   columns: TechnicalTableColumn[];
   rows: TechnicalTableRow[];
+  /** @deprecated Migrated into technical_tables; kept for reading old rows. */
+  enabled?: boolean;
 };
 
 export type ProductMetadata = {
@@ -46,6 +48,9 @@ export type ProductMetadata = {
   specs?: ProductSpec[];
   assets?: ProductAssets;
   technical_drawing?: TechnicalDrawingMeta;
+  /** Preferred: multiple version tables. */
+  technical_tables?: TechnicalTableMeta[];
+  /** @deprecated Use technical_tables. */
   technical_table?: TechnicalTableMeta;
 };
 
@@ -54,6 +59,12 @@ type ProductTableRow = Tables<"products">;
 export type ProductRow = Omit<ProductTableRow, "metadata"> & {
   metadata: ProductMetadata;
   category?: CategorySummary | null;
+};
+
+export type ProductPublicTechnicalTable = {
+  title?: string;
+  headers: string[];
+  rows: string[][];
 };
 
 export type ProductPublicView = {
@@ -72,11 +83,7 @@ export type ProductPublicView = {
     image: string;
     caption?: string;
   } | null;
-  technicalTable: {
-    title?: string;
-    headers: string[];
-    rows: string[][];
-  } | null;
+  technicalTables: ProductPublicTechnicalTable[];
 };
 
 export type ProductListItem = {

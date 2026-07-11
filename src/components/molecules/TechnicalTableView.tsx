@@ -40,6 +40,7 @@ export function TechnicalTableView({
   },
 }: TechnicalTableViewProps) {
   const [page, setPage] = useState(1);
+  const heading = tableTitle?.trim() || title;
 
   const totalPages = Math.max(1, Math.ceil(rows.length / pageSize));
   const safePage = Math.min(page, totalPages);
@@ -49,7 +50,7 @@ export function TechnicalTableView({
 
   useEffect(() => {
     setPage(1);
-  }, [rows]);
+  }, [rows, headers]);
 
   useEffect(() => {
     if (page > totalPages) setPage(totalPages);
@@ -59,9 +60,11 @@ export function TechnicalTableView({
 
   return (
     <section className="space-y-4">
-      <h2 className="font-mono text-xs uppercase tracking-[0.25em] text-navy-800">
-        {tableTitle || title}
-      </h2>
+      <div className="border-l-4 border-gold-500 pl-4">
+        <h2 className="font-display text-xl font-bold tracking-tight text-navy-950 md:text-2xl">
+          {heading}
+        </h2>
+      </div>
       <div className="overflow-x-auto border border-navy-800/30">
         <Table>
           <TableHeader>

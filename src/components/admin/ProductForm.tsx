@@ -15,7 +15,6 @@ import { ProductAssetFields } from "@/components/admin/ProductAssetFields";
 import { ProductTechnicalFields } from "@/components/admin/ProductTechnicalFields";
 import {
   defaultTechnicalDrawing,
-  defaultTechnicalTable,
   normalizeProductMetadata,
 } from "@/lib/product-technical-defaults";
 import { Button } from "@/components/ui/button";
@@ -41,7 +40,7 @@ function rowToInput(row: ProductRow): ProductUpsertInput {
       specs: metadata.specs ?? [],
       assets: metadata.assets ?? {},
       technical_drawing: metadata.technical_drawing ?? defaultTechnicalDrawing,
-      technical_table: metadata.technical_table ?? defaultTechnicalTable,
+      technical_tables: metadata.technical_tables ?? [],
     },
   };
 }
@@ -73,7 +72,7 @@ export function ProductForm({ product, categories }: ProductFormProps) {
       specs: [],
       assets: {},
       technical_drawing: { ...defaultTechnicalDrawing },
-      technical_table: { ...defaultTechnicalTable },
+      technical_tables: [],
     },
   };
 
@@ -258,10 +257,7 @@ export function ProductForm({ product, categories }: ProductFormProps) {
         control={control}
         watch={watch}
         setValue={setValue}
-        errors={{
-          technical_drawing: errors.metadata?.technical_drawing,
-          technical_table: errors.metadata?.technical_table,
-        }}
+        errors={errors.metadata}
       />
 
       <div className="flex gap-4">

@@ -38,8 +38,7 @@ const technicalTableRowSchema = z.object({
   cells_en: z.array(z.string()),
 });
 
-const technicalTableSchema = z.object({
-  enabled: z.boolean(),
+const technicalTableItemSchema = z.object({
   title_tr: z.string().optional(),
   title_en: z.string().optional(),
   columns: z
@@ -84,7 +83,9 @@ export const productMetadataSchema = z
       .pipe(z.array(productSpecSchema)),
     assets: productAssetsSchema,
     technical_drawing: technicalDrawingSchema,
-    technical_table: technicalTableSchema,
+    technical_tables: z
+      .array(technicalTableItemSchema)
+      .transform((tables) => tables.filter((table) => table.columns.length > 0)),
   })
   .superRefine((metadata, ctx) => {
     if (metadata.technical_drawing.enabled && !metadata.technical_drawing.image?.trim()) {
@@ -93,16 +94,6 @@ export const productMetadataSchema = z
         path: ["technical_drawing", "image"],
         message: "Teknik resim açıkken dosya yolu veya yükleme gerekli",
       });
-    }
-
-    if (metadata.technical_table.enabled) {
-      if (metadata.technical_table.columns.length === 0) {
-        ctx.addIssue({
-          code: "custom",
-          path: ["technical_table", "columns"],
-          message: "Teknik tablo açıkken en az bir sütun başlığı gerekli",
-        });
-      }
     }
   });
 

@@ -32,21 +32,19 @@ export function toPublicView(row: ProductRow, locale: string): ProductPublicView
         }
       : null;
 
-  const tableMeta = metadata.technical_table;
-  const technicalTable =
-    tableMeta?.enabled && tableMeta.columns.length > 0
-      ? {
-          title: isEn
-            ? tableMeta.title_en?.trim() || undefined
-            : tableMeta.title_tr?.trim() || undefined,
-          headers: tableMeta.columns.map((column) =>
-            isEn ? column.header_en : column.header_tr,
-          ),
-          rows: tableMeta.rows.map((tableRow) =>
-            isEn ? tableRow.cells_en : tableRow.cells_tr,
-          ),
-        }
-      : null;
+  const technicalTables = (metadata.technical_tables ?? [])
+    .filter((table) => table.columns.length > 0)
+    .map((table) => ({
+      title: isEn
+        ? table.title_en?.trim() || undefined
+        : table.title_tr?.trim() || undefined,
+      headers: table.columns.map((column) =>
+        isEn ? column.header_en : column.header_tr,
+      ),
+      rows: table.rows.map((tableRow) =>
+        isEn ? tableRow.cells_en : tableRow.cells_tr,
+      ),
+    }));
 
   return {
     slug: row.slug,
@@ -58,7 +56,7 @@ export function toPublicView(row: ProductRow, locale: string): ProductPublicView
     specs,
     assets: metadata.assets ?? {},
     technicalDrawing,
-    technicalTable,
+    technicalTables,
   };
 }
 
