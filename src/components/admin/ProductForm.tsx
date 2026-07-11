@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import {
   productUpsertSchema,
+  type ProductUpsertFormValues,
   type ProductUpsertInput,
 } from "@/lib/schemas/product";
 import type { CategoryRow } from "@/types/category";
@@ -14,7 +15,9 @@ import { createProduct, updateProduct } from "@/actions/product-actions";
 import { ProductAssetFields } from "@/components/admin/ProductAssetFields";
 import { ProductTechnicalFields } from "@/components/admin/ProductTechnicalFields";
 import {
+  defaultProductAssets,
   defaultTechnicalDrawing,
+  normalizeProductAssets,
   normalizeProductMetadata,
 } from "@/lib/product-technical-defaults";
 import { Button } from "@/components/ui/button";
@@ -23,7 +26,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { FormField } from "@/components/molecules/FormField";
 import { fieldSelectClass } from "@/lib/utils";
 
-function rowToInput(row: ProductRow): ProductUpsertInput {
+function rowToInput(row: ProductRow): ProductUpsertFormValues {
   const metadata = normalizeProductMetadata(row.metadata);
   return {
     slug: row.slug,
@@ -38,7 +41,7 @@ function rowToInput(row: ProductRow): ProductUpsertInput {
     metadata: {
       tool_href: metadata.tool_href ?? "",
       specs: metadata.specs ?? [],
-      assets: metadata.assets ?? {},
+      assets: normalizeProductAssets(metadata.assets),
       technical_drawing: metadata.technical_drawing ?? defaultTechnicalDrawing,
       technical_tables: metadata.technical_tables ?? [],
     },
@@ -57,7 +60,7 @@ export function ProductForm({ product, categories }: ProductFormProps) {
 
   const defaultCategoryId = categories[0]?.id ?? "";
 
-  const emptyDefaults: ProductUpsertInput = {
+  const emptyDefaults: ProductUpsertFormValues = {
     slug: "",
     category_id: defaultCategoryId,
     status: "draft",
@@ -70,7 +73,7 @@ export function ProductForm({ product, categories }: ProductFormProps) {
     metadata: {
       tool_href: "",
       specs: [],
-      assets: {},
+      assets: defaultProductAssets(),
       technical_drawing: { ...defaultTechnicalDrawing },
       technical_tables: [],
     },
@@ -83,7 +86,7 @@ export function ProductForm({ product, categories }: ProductFormProps) {
     watch,
     setValue,
     formState: { errors, isSubmitting },
-  } = useForm<ProductUpsertInput>({
+  } = useForm<ProductUpsertFormValues, unknown, ProductUpsertInput>({
     resolver: zodResolver(productUpsertSchema),
     defaultValues: product ? rowToInput(product) : emptyDefaults,
   });

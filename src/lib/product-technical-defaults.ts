@@ -1,4 +1,9 @@
-import type { ProductMetadata, TechnicalTableMeta } from "@/types/product";
+import type {
+  ProductAssets,
+  ProductMetadata,
+  TechnicalTableMeta,
+} from "@/types/product";
+import { sortImagePathsByFilename } from "@/lib/product-image-sort";
 
 export const defaultTechnicalDrawing = {
   enabled: false,
@@ -13,6 +18,33 @@ export const defaultTechnicalTable = (): TechnicalTableMeta => ({
   columns: [],
   rows: [],
 });
+
+export const defaultProductAssets = (): ProductAssets => ({
+  images: [],
+  image: "",
+  cad: undefined,
+  pdf: undefined,
+});
+
+export function normalizeProductAssets(
+  assets?: Partial<ProductAssets> | null,
+): ProductAssets {
+  const base = assets ?? {};
+  const fromGallery = (base.images ?? [])
+    .map((path) => path.trim())
+    .filter(Boolean);
+  const legacy = base.image?.trim();
+  const images = sortImagePathsByFilename(
+    fromGallery.length > 0 ? fromGallery : legacy ? [legacy] : [],
+  );
+
+  return {
+    images,
+    image: images[0] ?? "",
+    cad: base.cad?.trim() || undefined,
+    pdf: base.pdf?.trim() || undefined,
+  };
+}
 
 function migrateLegacyTable(
   metadata: ProductMetadata,
@@ -52,6 +84,7 @@ export function normalizeProductMetadata(
   const base = metadata ?? {};
   return {
     ...base,
+    assets: normalizeProductAssets(base.assets),
     technical_drawing: {
       ...defaultTechnicalDrawing,
       ...base.technical_drawing,

@@ -11,9 +11,12 @@ export type ProductSpec = {
 };
 
 export type ProductAssets = {
-  image?: string;
-  cad?: string;
-  pdf?: string;
+  /** Ordered gallery; first image is the cover. */
+  images: string[];
+  /** Cover image (kept in sync with images[0] for list/SEO). */
+  image: string;
+  cad: string | undefined;
+  pdf: string | undefined;
 };
 
 export type TechnicalDrawingMeta = {

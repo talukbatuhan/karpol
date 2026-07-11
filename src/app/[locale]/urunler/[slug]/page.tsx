@@ -137,6 +137,7 @@ export default async function ProductDetailPage({ params }: Props) {
         labels={{
 
           productImageTitle: tPage("productImageTitle"),
+          productGalleryLabel: tPage("productGalleryLabel"),
           specTitle: tPage("specTitle"),
           technicalDrawingTitle: tPage("technicalDrawingTitle"),
           technicalTableTitle: tPage("technicalTableTitle"),

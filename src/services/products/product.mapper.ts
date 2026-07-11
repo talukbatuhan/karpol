@@ -4,7 +4,7 @@ import type {
   ProductPublicView,
   ProductRow,
 } from "@/types/product";
-import { normalizeProductMetadata } from "@/lib/product-technical-defaults";
+import { normalizeProductAssets, normalizeProductMetadata } from "@/lib/product-technical-defaults";
 
 export function toPublicView(row: ProductRow, locale: string): ProductPublicView {
   const isEn = locale === "en";
@@ -54,7 +54,7 @@ export function toPublicView(row: ProductRow, locale: string): ProductPublicView
     body: isEn ? row.body_en : row.body_tr,
     toolHref: metadata.tool_href,
     specs,
-    assets: metadata.assets ?? {},
+    assets: normalizeProductAssets(metadata.assets),
     technicalDrawing,
     technicalTables,
   };

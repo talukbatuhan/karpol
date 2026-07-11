@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { sortImagePathsByFilename } from "@/lib/product-image-sort";
 
 export const productStatusSchema = z.enum(["draft", "published"]);
 
@@ -60,11 +61,29 @@ const technicalTableItemSchema = z.object({
     ),
 });
 
-export const productAssetsSchema = z.object({
-  image: z.string().optional(),
-  cad: z.string().optional(),
-  pdf: z.string().optional(),
-});
+export const productAssetsSchema = z
+  .object({
+    images: z.array(z.string()).optional(),
+    image: z.string().optional(),
+    cad: z.string().optional(),
+    pdf: z.string().optional(),
+  })
+  .transform((assets) => {
+    const fromGallery = (assets.images ?? [])
+      .map((path) => path.trim())
+      .filter(Boolean);
+    const legacy = assets.image?.trim();
+    const images = sortImagePathsByFilename(
+      fromGallery.length > 0 ? fromGallery : legacy ? [legacy] : [],
+    );
+
+    return {
+      images,
+      image: images[0] ?? "",
+      cad: assets.cad?.trim() || undefined,
+      pdf: assets.pdf?.trim() || undefined,
+    };
+  });
 
 export const productMetadataSchema = z
   .object({
@@ -114,4 +133,5 @@ export const productUpsertSchema = z.object({
   metadata: productMetadataSchema,
 });
 
-export type ProductUpsertInput = z.infer<typeof productUpsertSchema>;
+export type ProductUpsertInput = z.output<typeof productUpsertSchema>;
+export type ProductUpsertFormValues = z.input<typeof productUpsertSchema>;

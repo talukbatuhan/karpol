@@ -9,7 +9,7 @@ import type {
   UseFormWatch,
 } from "react-hook-form";
 import { useFieldArray } from "react-hook-form";
-import type { ProductUpsertInput } from "@/lib/schemas/product";
+import type { ProductUpsertFormValues } from "@/lib/schemas/product";
 import {
   padRowToLength,
   parseMarkdownTable,
@@ -24,11 +24,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { FormField } from "@/components/molecules/FormField";
 
 export interface ProductTechnicalFieldsProps {
-  register: UseFormRegister<ProductUpsertInput>;
-  control: Control<ProductUpsertInput>;
-  watch: UseFormWatch<ProductUpsertInput>;
-  setValue: UseFormSetValue<ProductUpsertInput>;
-  errors: FieldErrors<ProductUpsertInput>["metadata"];
+  register: UseFormRegister<ProductUpsertFormValues>;
+  control: Control<ProductUpsertFormValues>;
+  watch: UseFormWatch<ProductUpsertFormValues>;
+  setValue: UseFormSetValue<ProductUpsertFormValues>;
+  errors: FieldErrors<ProductUpsertFormValues>["metadata"];
 }
 
 function padCells(cells: string[], length: number) {
@@ -168,10 +168,10 @@ function TechnicalTableEditor({
 }: {
   tableIndex: number;
   tableCount: number;
-  register: UseFormRegister<ProductUpsertInput>;
-  control: Control<ProductUpsertInput>;
-  watch: UseFormWatch<ProductUpsertInput>;
-  setValue: UseFormSetValue<ProductUpsertInput>;
+  register: UseFormRegister<ProductUpsertFormValues>;
+  control: Control<ProductUpsertFormValues>;
+  watch: UseFormWatch<ProductUpsertFormValues>;
+  setValue: UseFormSetValue<ProductUpsertFormValues>;
   columnsError?: string;
   onRemove: () => void;
 }) {
@@ -600,7 +600,7 @@ function TechnicalDrawingUpload({
   error,
 }: {
   value: string;
-  setValue: UseFormSetValue<ProductUpsertInput>;
+  setValue: UseFormSetValue<ProductUpsertFormValues>;
   error?: string;
 }) {
   const fileRef = useRef<HTMLInputElement>(null);

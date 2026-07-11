@@ -40,6 +40,7 @@ export function ProportionalProductImage({
       fill={fill}
       sizes={sizes}
       priority={priority}
+      decoding="async"
       unoptimized={isExternallyHosted(src)}
       onLoad={onLoad}
       className={cn(

@@ -15,11 +15,14 @@ export interface TechnicalTablesSectionProps {
     technicalTablePrevious: string;
     technicalTableNext: string;
   };
+  /** Side slot: always one table + tabs (no desktop 2-col grid). */
+  compact?: boolean;
 }
 
 export function TechnicalTablesSection({
   tables,
   labels,
+  compact = false,
 }: TechnicalTablesSectionProps) {
   const namedTables = useMemo(
     () =>
@@ -38,6 +41,7 @@ export function TechnicalTablesSection({
   const safeIndex = Math.min(activeIndex, Math.max(0, namedTables.length - 1));
   const activeTable = namedTables[safeIndex];
   const hasMultiple = namedTables.length > 1;
+  const showDesktopGrid = hasMultiple && !compact;
 
   if (namedTables.length === 0) return null;
 
@@ -57,7 +61,10 @@ export function TechnicalTablesSection({
 
       {hasMultiple ? (
         <div
-          className="flex flex-wrap gap-2 md:hidden"
+          className={cn(
+            "flex flex-wrap gap-2",
+            showDesktopGrid && "md:hidden",
+          )}
           role="tablist"
           aria-label={labels.technicalTablesTitle}
         >
@@ -81,8 +88,8 @@ export function TechnicalTablesSection({
         </div>
       ) : null}
 
-      {/* Mobile: one selected table */}
-      <div className={hasMultiple ? "md:hidden" : undefined}>
+      {/* Single selected table: always in compact; mobile-only when desktop grid exists */}
+      <div className={showDesktopGrid ? "md:hidden" : undefined}>
         {activeTable ? (
           <TechnicalTableView
             title={activeTable.displayName}
@@ -94,8 +101,7 @@ export function TechnicalTablesSection({
         ) : null}
       </div>
 
-      {/* Desktop: side by side when multiple */}
-      {hasMultiple ? (
+      {showDesktopGrid ? (
         <div className="hidden gap-6 md:grid md:grid-cols-2">
           {namedTables.map((table, index) => (
             <TechnicalTableView
