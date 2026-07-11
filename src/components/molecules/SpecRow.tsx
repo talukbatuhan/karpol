@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
+import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion";
 import { fadeInView } from "@/lib/motion/variants";
 
 type SpecRowProps = {
@@ -9,7 +10,7 @@ type SpecRowProps = {
 };
 
 export function SpecRow({ label, value }: SpecRowProps) {
-  const reducedMotion = useReducedMotion();
+  const reducedMotion = usePrefersReducedMotion();
 
   return (
     <motion.div
@@ -21,7 +22,7 @@ export function SpecRow({ label, value }: SpecRowProps) {
     >
       <motion.span
         className="absolute left-0 top-0 h-full w-0.5 origin-top bg-gold-500"
-        initial={{ scaleY: 0 }}
+        initial={reducedMotion ? false : { scaleY: 0 }}
         whileInView={{ scaleY: 1 }}
         viewport={{ once: true }}
         transition={{ duration: 0.4, ease: [0.65, 0, 0.35, 1] }}

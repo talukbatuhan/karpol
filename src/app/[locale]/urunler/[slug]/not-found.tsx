@@ -11,7 +11,7 @@ export default async function ProductNotFound() {
       title={t("notFoundTitle")}
       description={t("notFoundDescription")}
       actionLabel={tProducts("title")}
-      actionHref="/products"
+      actionHref="/urunler"
     />
   );
 }

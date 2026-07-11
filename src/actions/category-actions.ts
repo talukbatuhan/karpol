@@ -22,7 +22,7 @@ function revalidateCategoryPaths() {
   revalidatePath("/admin/products");
   revalidatePath("/admin");
   for (const locale of ["tr", "en"]) {
-    revalidatePath(`/${locale}/products`);
+    revalidatePath(`/${locale}/urunler`);
   }
 }
 

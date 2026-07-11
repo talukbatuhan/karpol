@@ -5,14 +5,7 @@ import { Link, usePathname } from "@/i18n/routing";
 import { navUnderline } from "@/lib/motion/variants";
 
 type NavLinkProps = {
-  href:
-    | "/"
-    | "/about"
-    | "/products"
-    | "/tools"
-    | "/tools/makara"
-    | "/tools/kaucuk-titresim-takozlari"
-    | "/contact";
+  href: "/" | "/hakkimizda" | "/urunler" | "/iletisim";
   label: string;
 };
 

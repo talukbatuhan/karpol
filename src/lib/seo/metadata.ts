@@ -4,7 +4,7 @@ import { DEFAULT_OG_IMAGE, getSiteUrl } from "@/lib/seo/site";
 
 export type BuildPageMetadataInput = {
   locale: string;
-  /** Locale öneki olmadan yol: `/`, `/about`, `/tools/makara` */
+  /** Locale öneki olmadan yol: `/`, `/hakkimizda`, `/urunler` */
   path: string;
   title: string;
   description: string;

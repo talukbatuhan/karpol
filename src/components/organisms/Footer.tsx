@@ -1,16 +1,15 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Link, usePathname } from "@/i18n/routing";
+import { Link } from "@/i18n/routing";
 import { HeaderSocialLinks } from "@/components/molecules/HeaderSocialLinks";
 
 const navLinks = [
   { href: "/" as const, key: "home" },
-  { href: "/about" as const, key: "about" },
-  { href: "/products" as const, key: "products" },
+  { href: "/hakkimizda" as const, key: "about" },
+  { href: "/urunler" as const, key: "products" },
   { href: "/e-katalog" as const, key: "ecatalog" },
-  { href: "/tools" as const, key: "tools" },
-  { href: "/contact" as const, key: "contact" },
+  { href: "/iletisim" as const, key: "contact" },
 ] as const;
 
 export function Footer() {
@@ -18,11 +17,6 @@ export function Footer() {
   const tBrand = useTranslations("brand");
   const tFooter = useTranslations("footer");
   const tContact = useTranslations("contact");
-  const pathname = usePathname();
-
-  if (pathname.includes("/tools/")) {
-    return null;
-  }
 
   return (
     <footer className="mt-auto border-t border-navy-800 bg-ivory-50 text-navy-950">

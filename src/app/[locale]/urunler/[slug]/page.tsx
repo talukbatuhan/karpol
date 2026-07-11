@@ -62,7 +62,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
       locale,
 
-      path: `/products/${slug}`,
+      path: `/urunler/${slug}`,
 
       title: "Karpol Poliüretan",
 
@@ -94,7 +94,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
     locale,
 
-    path: `/products/${slug}`,
+    path: `/urunler/${slug}`,
 
     title: `${product.title} | ${titleSuffix}`,
 

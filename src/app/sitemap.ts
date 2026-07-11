@@ -5,15 +5,14 @@ import { STATIC_SEO_PATHS } from "@/lib/seo/routes";
 
 function pathPriority(path: string): number {
   if (path === "/") return 1;
-  if (path === "/products") return 0.9;
-  if (path.startsWith("/tools/")) return 0.75;
+  if (path === "/urunler") return 0.9;
   return 0.7;
 }
 
 function pathChangeFrequency(
   path: string,
 ): MetadataRoute.Sitemap[number]["changeFrequency"] {
-  if (path === "/" || path === "/products") return "weekly";
+  if (path === "/" || path === "/urunler") return "weekly";
   return "monthly";
 }
 
@@ -45,7 +44,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     for (const slug of slugs) {
       for (const locale of routing.locales) {
         entries.push({
-          url: `${siteUrl}/${locale}/products/${slug}`,
+          url: `${siteUrl}/${locale}/urunler/${slug}`,
           lastModified,
           changeFrequency: "weekly",
           priority: 0.85,

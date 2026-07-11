@@ -1,29 +1,14 @@
 import { getTranslations } from "next-intl/server";
 import { buildPageMetadata } from "@/lib/seo/metadata";
 
-type SeoPageKey =
-  | "home"
-  | "about"
-  | "products"
-  | "contact"
-  | "catalog"
-  | "tools"
-  | "toolMakara"
-  | "toolKaucuk"
-  | "toolSilim"
-  | "toolRubberBellows";
+type SeoPageKey = "home" | "about" | "products" | "contact" | "catalog";
 
 const SEO_PATHS: Record<SeoPageKey, string> = {
   home: "/",
-  about: "/about",
-  products: "/products",
-  contact: "/contact",
+  about: "/hakkimizda",
+  products: "/urunler",
+  contact: "/iletisim",
   catalog: "/e-katalog",
-  tools: "/tools",
-  toolMakara: "/tools/makara",
-  toolKaucuk: "/tools/kaucuk-titresim-takozlari",
-  toolSilim: "/tools/silim-lastigi",
-  toolRubberBellows: "/tools/rubber-bellows",
 };
 
 export async function buildStaticPageMetadata(

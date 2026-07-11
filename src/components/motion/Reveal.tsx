@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
+import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion";
 import { fadeInView } from "@/lib/motion/variants";
 
 export interface RevealProps {
@@ -12,7 +13,7 @@ export function Reveal({
   children,
   className = "",
 }: RevealProps) {
-  const reducedMotion = useReducedMotion();
+  const reducedMotion = usePrefersReducedMotion();
 
   if (reducedMotion) {
     return <div className={className}>{children}</div>;

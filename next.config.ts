@@ -8,6 +8,40 @@ const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 const projectRoot = path.dirname(fileURLToPath(import.meta.url));
 
 const nextConfig: NextConfig = {
+  async redirects() {
+    return [
+      {
+        source: "/:locale(tr|en)/about",
+        destination: "/:locale/hakkimizda",
+        permanent: true,
+      },
+      {
+        source: "/:locale(tr|en)/products",
+        destination: "/:locale/urunler",
+        permanent: true,
+      },
+      {
+        source: "/:locale(tr|en)/products/:slug",
+        destination: "/:locale/urunler/:slug",
+        permanent: true,
+      },
+      {
+        source: "/:locale(tr|en)/contact",
+        destination: "/:locale/iletisim",
+        permanent: true,
+      },
+      {
+        source: "/:locale(tr|en)/tools",
+        destination: "/:locale",
+        permanent: true,
+      },
+      {
+        source: "/:locale(tr|en)/tools/:path*",
+        destination: "/:locale",
+        permanent: true,
+      },
+    ];
+  },
   turbopack: {
     root: projectRoot,
     resolveAlias: {

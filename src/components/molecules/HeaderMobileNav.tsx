@@ -11,10 +11,9 @@ import { Rule } from "@/components/atoms/Rule";
 
 const NAV_ITEMS = [
   { href: "/" as const, key: "home" },
-  { href: "/about" as const, key: "about" },
-  { href: "/products" as const, key: "products" },
-  { href: "/tools" as const, key: "tools" },
-  { href: "/contact" as const, key: "contact" },
+  { href: "/hakkimizda" as const, key: "about" },
+  { href: "/urunler" as const, key: "products" },
+  { href: "/iletisim" as const, key: "contact" },
 ] as const;
 
 type HeaderMobileNavProps = {

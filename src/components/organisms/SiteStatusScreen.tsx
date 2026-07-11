@@ -5,7 +5,7 @@ export interface SiteStatusScreenProps {
   title: string;
   description: string;
   actionLabel?: string;
-  actionHref?: "/" | "/contact" | "/products";
+  actionHref?: "/" | "/iletisim" | "/urunler";
   loading?: boolean;
 }
 

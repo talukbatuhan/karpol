@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
+import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion";
 import { wordRevealContainer, wordRevealItem } from "@/lib/motion/variants";
 
 type PageHeaderProps = {
@@ -9,7 +10,7 @@ type PageHeaderProps = {
 };
 
 export function PageHeader({ title, subtitle }: PageHeaderProps) {
-  const reducedMotion = useReducedMotion();
+  const reducedMotion = usePrefersReducedMotion();
   const words = title.split(/\s+/).filter(Boolean);
 
   return (

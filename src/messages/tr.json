@@ -15,7 +15,7 @@
       },
       "products": {
         "title": "Ürünler | Karpol Poliüretan",
-        "description": "Makara, silim lastiği, vibrasyon damperleri ve ölçüye özel poliüretan-kauçuk ürünleri. Teknik detaylar ve mühendislik araçlarına tek tık."
+        "description": "Makara, silim lastiği, vibrasyon damperleri ve ölçüye özel poliüretan-kauçuk ürünleri."
       },
       "contact": {
         "title": "İletişim | Karpol Poliüretan",
@@ -24,26 +24,6 @@
       "catalog": {
         "title": "E-Katalog | Karpol Poliüretan",
         "description": "Dijital ürün kataloglarımızı kitap gibi inceleyin; sayfalardan ürünlere doğrudan geçiş yapın."
-      },
-      "tools": {
-        "title": "Mühendislik Araçları | Karpol Poliüretan",
-        "description": "3D makara görselleştirici, kauçuk titreşim takozları ve silim lastiği teknik çizim düzenleyicileri — tek merkezden erişin."
-      },
-      "toolMakara": {
-        "title": "3D Makara Kutusu Görselleştirici | Karpol",
-        "description": "Makara kutu boyutu seçimi, sevkiyat ağırlığı ve hacim hesapları, X/Y/Z ölçü etiketleri ile 3D önizleme."
-      },
-      "toolKaucuk": {
-        "title": "Kauçuk Titreşim Takozları Teknik Resim | Karpol",
-        "description": "Takoz tipi seçimi, parametre paneli, teknik çizim önizleme ve PNG/PDF dışa aktarma aracı."
-      },
-      "toolSilim": {
-        "title": "Silim Lastiği Teknik Tasarım Düzenleyici | Karpol",
-        "description": "Flanş ve silim lastiği ölçüleri, teknik resim önizleme, PNG ve PDF dışa aktarma."
-      },
-      "toolRubberBellows": {
-        "title": "Kauçuk Körük Parametrik Tasarım | Karpol",
-        "description": "Tam parametrik kauçuk körük tasarımı, otomatik türetilmiş ölçüler, 2D teknik resim, 3D önizleme, STEP ve DXF dışa aktarma."
       }
     }
   },
@@ -83,7 +63,6 @@
     "home": "Ana Sayfa",
     "about": "Hakkımızda",
     "products": "Ürünler",
-    "tools": "Araçlar",
     "contact": "İletişim",
     "ecatalog": "E-Katalog",
     "menuTitle": "Menü",
@@ -166,6 +145,10 @@
     "emptyFilterDescription": "Başka bir kategori seçin veya tümünü görüntüleyin.",
     "browseSubcategories": "Alt kategori seçin",
     "productCount": "{count} ürün",
+    "paginationPrevious": "Önceki",
+    "paginationNext": "Sonraki",
+    "paginationPage": "Sayfa {page}",
+    "paginationNav": "Ürün sayfaları",
     "productImageTitle": "Ürün görseli",
     "specTitle": "Teknik özellikler",
     "downloadCad": "CAD indir",

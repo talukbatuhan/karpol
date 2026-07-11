@@ -21,11 +21,16 @@ async function loadWasmBinary(): Promise<ArrayBuffer> {
   return response.arrayBuffer();
 }
 
+/** Emscripten Module factory — runtime accepts config; package .d.ts declares init() with 0 args. */
+type OpenCascadeFactory = (config?: {
+  wasmBinary?: ArrayBuffer;
+}) => Promise<Parameters<typeof setOC>[0]>;
+
 async function ensureOc(): Promise<void> {
   if (ocReady) return;
-  const opencascade = (await import(
-    "replicad-opencascadejs/src/replicad_single.js"
-  )).default;
+  const opencascade = (
+    await import("replicad-opencascadejs/src/replicad_single.js")
+  ).default as OpenCascadeFactory;
   const wasmBinary = await loadWasmBinary();
   const OC = await opencascade({ wasmBinary });
   setOC(OC);

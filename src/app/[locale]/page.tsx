@@ -4,7 +4,6 @@ import { buildStaticPageMetadata } from "@/lib/seo/page-metadata";
 import { TypographicManifest } from "@/components/organisms/TypographicManifest";
 import { ScrollLinkedTape } from "@/components/organisms/ScrollLinkedTape";
 import { FeaturedProducts } from "@/components/organisms/FeaturedProducts";
-import { MaterialIndex } from "@/components/organisms/MaterialIndex";
 import { SpecStrip } from "@/components/organisms/SpecStrip";
 import { getFeaturedPublishedProducts } from "@/services/products";
 
@@ -46,10 +45,6 @@ export default async function HomePage({ params }: Props) {
             viewDetail: tProducts("viewDetail"),
           }}
         />
-
-        <section className="col-span-12 py-12 md:py-16">
-          <MaterialIndex />
-        </section>
 
         <section className="col-span-12 pb-20">
           <SpecStrip />

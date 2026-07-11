@@ -107,7 +107,7 @@ export function ProductCard({
           }`}
         >
           <Link
-            href={`/products/${slug}`}
+            href={`/urunler/${slug}`}
             className={`inline-flex items-center justify-center border border-input bg-background font-mono uppercase tracking-widest transition-colors hover:bg-muted ${
               compact
                 ? "h-7 px-2 text-[10px]"

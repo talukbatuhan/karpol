@@ -48,7 +48,7 @@ export function ProductDetailView({ product, labels }: ProductDetailViewProps) {
     <>
       <div className="col-span-12 space-y-4">
         {product.category ? (
-          <Link href="/products">
+          <Link href="/urunler">
             <Badge
               variant="secondary"
               className="font-mono text-[10px] uppercase tracking-widest transition-colors hover:bg-secondary/80"
@@ -186,7 +186,7 @@ export function ProductDetailView({ product, labels }: ProductDetailViewProps) {
         ) : null}
 
         <Link
-          href="/products"
+          href="/urunler"
           className="inline-block font-mono text-xs uppercase tracking-widest text-navy-800 underline decoration-gold-500 underline-offset-4"
         >
           ← {labels.backToProducts}

@@ -3,7 +3,6 @@
 import { useLayoutEffect } from "react";
 import { usePathname } from "@/i18n/routing";
 import { isEcatalogReaderPath } from "@/lib/ecatalog-path";
-import { isToolSubpagePath } from "@/lib/tools-path";
 import {
   clearSiteHeaderHeight,
   setSiteHeaderHeight,
@@ -20,29 +19,16 @@ type SiteShellProps = {
 
 export function SiteShell({ children }: SiteShellProps) {
   const pathname = usePathname();
-  const isToolWorkspace = isToolSubpagePath(pathname);
   const isMobile = useMediaQuery("(max-width: 1023px)");
   const isEcatalogReaderMobile =
     isMobile && isEcatalogReaderPath(pathname);
-  const hideChrome = isToolWorkspace || isEcatalogReaderMobile;
+  const hideChrome = isEcatalogReaderMobile;
 
   useLayoutEffect(() => {
     const root = document.documentElement;
 
-    if (isToolWorkspace) {
-      root.classList.add("tools-workspace");
-      root.classList.remove("ecatalog-reader-fullscreen");
-      setSiteHeaderHeight(0);
-      return () => {
-        root.classList.remove("tools-workspace");
-        clearSiteHeaderHeight();
-        document.body.style.overflow = "";
-      };
-    }
-
     if (isEcatalogReaderMobile) {
       root.classList.add("ecatalog-reader-fullscreen");
-      root.classList.remove("tools-workspace");
       setSiteHeaderHeight(0);
       return () => {
         root.classList.remove("ecatalog-reader-fullscreen");
@@ -51,10 +37,10 @@ export function SiteShell({ children }: SiteShellProps) {
       };
     }
 
-    root.classList.remove("tools-workspace", "ecatalog-reader-fullscreen");
+    root.classList.remove("ecatalog-reader-fullscreen");
     clearSiteHeaderHeight();
     document.body.style.overflow = "";
-  }, [isToolWorkspace, isEcatalogReaderMobile]);
+  }, [isEcatalogReaderMobile]);
 
   return (
     <HeaderModeProvider minimal={false}>

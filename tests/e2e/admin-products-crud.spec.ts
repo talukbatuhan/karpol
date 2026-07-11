@@ -46,7 +46,7 @@ test.describe("Admin product CRUD", () => {
     await page.getByRole("button", { name: /Oluştur/i }).click();
     await expect(page).toHaveURL(/\/admin\/products/);
 
-    await page.goto(`/tr/products/${slug}`);
+    await page.goto(`/tr/urunler/${slug}`);
     await expect(page.getByRole("heading", { name: titleTr })).toBeVisible({
       timeout: 15_000,
     });

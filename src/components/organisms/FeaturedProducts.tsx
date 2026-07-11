@@ -22,7 +22,7 @@ export function FeaturedProducts({ products, labels }: FeaturedProductsProps) {
           {labels.title}
         </h2>
         <Link
-          href="/products"
+          href="/urunler"
           className="font-mono text-xs uppercase tracking-widest text-gold-500 hover:text-navy-950"
         >
           {labels.viewAll} →

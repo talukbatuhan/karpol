@@ -15,7 +15,7 @@
       },
       "products": {
         "title": "Products | Karpol Polyurethane",
-        "description": "Rollers, grinding strips, vibration dampers and custom polyurethane-rubber parts. Technical specs and engineering tools in one click."
+        "description": "Rollers, grinding strips, vibration dampers and custom polyurethane-rubber parts."
       },
       "contact": {
         "title": "Contact | Karpol Polyurethane",
@@ -24,26 +24,6 @@
       "catalog": {
         "title": "E-Catalog | Karpol Polyurethane",
         "description": "Browse Karpol digital product catalogs with interactive product links."
-      },
-      "tools": {
-        "title": "Engineering Tools | Karpol Polyurethane",
-        "description": "3D roller box visualiser, rubber vibration damper drawings and grinding strip design editor — all in one hub."
-      },
-      "toolMakara": {
-        "title": "3D Roller Box Visualiser | Karpol",
-        "description": "Select box size, shipping weight and volume calculations, 3D preview with X/Y/Z dimension labels."
-      },
-      "toolKaucuk": {
-        "title": "Rubber Vibration Damper Technical Drawing | Karpol",
-        "description": "Damper type selection, parameter panel, technical drawing preview and PNG/PDF export."
-      },
-      "toolSilim": {
-        "title": "Grinding Strip Technical Design Editor | Karpol",
-        "description": "Flange and grinding strip dimensions, technical drawing preview, PNG and PDF export."
-      },
-      "toolRubberBellows": {
-        "title": "Rubber Bellows Parametric Design | Karpol",
-        "description": "Fully parametric rubber bellows design with automatic derived dimensions, 2D technical drawing, 3D preview, STEP and DXF export."
       }
     }
   },
@@ -83,7 +63,6 @@
     "home": "Home",
     "about": "About",
     "products": "Products",
-    "tools": "Tools",
     "contact": "Contact",
     "ecatalog": "E-Catalog",
     "menuTitle": "Menu",
@@ -166,6 +145,10 @@
     "emptyFilterDescription": "Try another category or view all products.",
     "browseSubcategories": "Select a subcategory",
     "productCount": "{count} products",
+    "paginationPrevious": "Previous",
+    "paginationNext": "Next",
+    "paginationPage": "Page {page}",
+    "paginationNav": "Product pages",
     "productImageTitle": "Product image",
     "specTitle": "Technical specifications",
     "downloadCad": "Download CAD",

@@ -23,6 +23,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
+const PAGE_SIZE = 25;
+
 export type ProductCatalogItem = ProductPublicView;
 
 export interface ProductsCatalogProps {
@@ -61,7 +63,9 @@ export function ProductsCatalog({
 
   const categoryParam = searchParams.get("category");
   const activeCategory =
-    categoryParam && maps.bySlug.has(categoryParam) ? categoryParam : initialCategory;
+    categoryParam && maps.bySlug.has(categoryParam)
+      ? categoryParam
+      : initialCategory;
 
   const rootCategories = useMemo(
     () => getRootCategories(categoryTabs, maps),
@@ -90,15 +94,52 @@ export function ProductsCatalog({
 
   const filtered = useMemo(() => {
     if (activeCategory === "all") return products;
-    return products.filter((product) => product.category?.slug === activeCategory);
+    return products.filter(
+      (product) => product.category?.slug === activeCategory,
+    );
   }, [products, activeCategory]);
 
-  function selectCategory(slug: string) {
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const pageParam = Number.parseInt(searchParams.get("page") ?? "1", 10);
+  const currentPage =
+    Number.isFinite(pageParam) && pageParam >= 1
+      ? Math.min(pageParam, totalPages)
+      : 1;
+
+  const pageItems = useMemo(() => {
+    const start = (currentPage - 1) * PAGE_SIZE;
+    return filtered.slice(start, start + PAGE_SIZE);
+  }, [filtered, currentPage]);
+
+  function replaceQuery(
+    mutate: (params: URLSearchParams) => void,
+    options?: { scroll?: boolean },
+  ) {
     const params = new URLSearchParams(searchParams.toString());
-    if (slug === "all") params.delete("category");
-    else params.set("category", slug);
+    mutate(params);
     const query = params.toString();
-    router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
+    router.replace(query ? `${pathname}?${query}` : pathname, {
+      scroll: options?.scroll ?? false,
+    });
+  }
+
+  function selectCategory(slug: string) {
+    replaceQuery((params) => {
+      if (slug === "all") params.delete("category");
+      else params.set("category", slug);
+      params.delete("page");
+    });
+  }
+
+  function goToPage(page: number) {
+    const next = Math.min(Math.max(1, page), totalPages);
+    replaceQuery(
+      (params) => {
+        if (next <= 1) params.delete("page");
+        else params.set("page", String(next));
+      },
+      { scroll: true },
+    );
   }
 
   function isRootTabActive(slug: string) {
@@ -209,25 +250,74 @@ export function ProductsCatalog({
       ) : null}
 
       {filtered.length > 0 ? (
-        <div
-          className={`col-span-12 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-5 lg:gap-4 ${
-            showSubcategoryBrowser ? "mt-2" : ""
-          }`}
-        >
-          {filtered.map((product) => (
-            <Reveal key={product.slug} className="min-w-0">
-              <ProductCard
-                compact
-                slug={product.slug}
-                title={product.title}
-                description={product.description}
-                viewLabel={labels.viewDetail}
-                categoryName={product.category?.name}
-                imagePath={product.assets?.image}
-              />
-            </Reveal>
-          ))}
-        </div>
+        <>
+          <div
+            className={`col-span-12 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-5 lg:gap-4 ${
+              showSubcategoryBrowser ? "mt-2" : ""
+            }`}
+          >
+            {pageItems.map((product) => (
+              <Reveal key={product.slug} className="min-w-0">
+                <ProductCard
+                  compact
+                  slug={product.slug}
+                  title={product.title}
+                  description={product.description}
+                  viewLabel={labels.viewDetail}
+                  categoryName={product.category?.name}
+                  imagePath={product.assets?.image}
+                />
+              </Reveal>
+            ))}
+          </div>
+
+          {totalPages > 1 ? (
+            <nav
+              className="col-span-12 flex flex-wrap items-center justify-center gap-2 pt-6"
+              aria-label={tPage("paginationNav")}
+            >
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                disabled={currentPage <= 1}
+                onClick={() => goToPage(currentPage - 1)}
+                className="font-mono text-xs uppercase tracking-widest"
+              >
+                {tPage("paginationPrevious")}
+              </Button>
+
+              {Array.from({ length: totalPages }, (_, index) => {
+                const page = index + 1;
+                return (
+                  <Button
+                    key={page}
+                    type="button"
+                    size="sm"
+                    variant={currentPage === page ? "default" : "outline"}
+                    onClick={() => goToPage(page)}
+                    aria-label={tPage("paginationPage", { page })}
+                    aria-current={currentPage === page ? "page" : undefined}
+                    className="min-w-9 font-mono text-xs tabular-nums"
+                  >
+                    {page}
+                  </Button>
+                );
+              })}
+
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                disabled={currentPage >= totalPages}
+                onClick={() => goToPage(currentPage + 1)}
+                className="font-mono text-xs uppercase tracking-widest"
+              >
+                {tPage("paginationNext")}
+              </Button>
+            </nav>
+          ) : null}
+        </>
       ) : !showSubcategoryBrowser ? (
         <div className="col-span-12 border border-navy-800/20 bg-ivory-100 px-8 py-12 text-center">
           <p className="font-display text-lg font-bold text-navy-950">

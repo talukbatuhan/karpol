@@ -22,8 +22,8 @@ import {
 
 function revalidateProductPaths(slug: string) {
   for (const locale of ["tr", "en"]) {
-    revalidatePath(`/${locale}/products`);
-    revalidatePath(`/${locale}/products/${slug}`);
+    revalidatePath(`/${locale}/urunler`);
+    revalidatePath(`/${locale}/urunler/${slug}`);
     revalidatePath(`/${locale}`);
   }
   revalidatePath("/admin/products");

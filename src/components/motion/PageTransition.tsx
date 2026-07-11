@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
+import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion";
 import { pageTransition } from "@/lib/motion/variants";
 
 export interface PageTransitionProps {
@@ -8,7 +9,7 @@ export interface PageTransitionProps {
 }
 
 export function PageTransition({ children }: PageTransitionProps) {
-  const reducedMotion = useReducedMotion();
+  const reducedMotion = usePrefersReducedMotion();
 
   if (reducedMotion) {
     return (

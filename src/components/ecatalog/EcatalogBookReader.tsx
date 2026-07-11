@@ -79,7 +79,7 @@ function EcatalogProductHotspot({
 
   return (
     <Link
-      href={`/products/${link.productSlug}`}
+      href={`/urunler/${link.productSlug}`}
       target="_blank"
       rel="noopener noreferrer"
       title={title}

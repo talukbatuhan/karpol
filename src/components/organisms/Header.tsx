@@ -312,10 +312,9 @@ export function Header({ minimal: minimalProp }: HeaderProps = {}) {
           aria-label={t("menuTitle")}
         >
           <NavLink href="/" label={t("home")} />
-          <NavLink href="/about" label={t("about")} />
-          <NavLink href="/products" label={t("products")} />
-          <NavLink href="/tools" label={t("tools")} />
-          <NavLink href="/contact" label={t("contact")} />
+          <NavLink href="/hakkimizda" label={t("about")} />
+          <NavLink href="/urunler" label={t("products")} />
+          <NavLink href="/iletisim" label={t("contact")} />
         </nav>
 
         <div className="col-span-3 flex items-center justify-end gap-3">
